@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: deposito_db
+      POSTGRES_USER: deposito_user
+      POSTGRES_PASSWORD: deposito_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./data/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: deposito_db
+      DB_USER: deposito_user
+      DB_PASSWORD: deposito_pass
+      API_DEBUG: "true"
+      API_RELOAD: "true"
+    depends_on:
+      - db
+    volumes:
+      - ./logs:/app/logs
+      - .:/app
+    command: python -m agente_deposito.main
+
+  test:
+    build: .
+    environment:
+      TEST_DB_URL: sqlite:///./test.db
+    volumes:
+      - .:/app
+    command: pytest -v
+    profiles:
+      - test
+
+volumes:
+  postgres_data:

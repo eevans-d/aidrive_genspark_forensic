@@ -1,0 +1,238 @@
+# ==========================================
+# .gitignore para Sistema Multi-Agente Retail Argentino
+# ==========================================
+
+# === CONFIGURACIÓN SENSIBLE ===
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+config/secrets.py
+secrets/
+credentials/
+
+# === BASE DE DATOS ===
+*.db
+*.sqlite
+*.sqlite3
+data/
+*.sql
+*.dump
+backups/
+*.backup
+
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# === VIRTUAL ENVIRONMENTS ===
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# === IDE Y EDITORES ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+*.sublime-project
+*.sublime-workspace
+
+# === JUPYTER NOTEBOOKS ===
+.ipynb_checkpoints
+*.ipynb
+
+# === LOGS ===
+*.log
+logs/
+log/
+*.out
+*.err
+
+# === CACHE ===
+.cache/
+.pytest_cache/
+.coverage
+.nyc_output
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# === OCR Y IMÁGENES ===
+uploads/
+temp_images/
+processed_images/
+ocr_cache/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.pdf
+samples/
+test_images/
+
+# === MONITOREO ===
+.prometheus/
+metrics/
+monitoring/
+profiler/
+
+# === TEMPORAL ===
+tmp/
+temp/
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# === DEPLOYMENT ===
+docker-compose.override.yml
+.dockerignore
+Dockerfile.local
+*.pid
+*.sock
+
+# === SSL Y CERTIFICADOS ===
+*.pem
+*.key
+*.crt
+*.csr
+ssl/
+certificates/
+
+# === NGINX ===
+nginx/logs/
+nginx/ssl/
+nginx/*.conf.backup
+
+# === SYSTEMD ===
+*.service.backup
+
+# === BACKUP Y ARCHIVOS ===
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+archive/
+old/
+
+# === TESTING ===
+.pytest_cache/
+test-reports/
+coverage/
+.coverage*
+junit.xml
+test_results/
+
+# === MYPY ===
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# === PROFILING ===
+.prof
+
+# === DOCUMENTACIÓN ===
+docs/_build/
+docs/build/
+site/
+
+# === MACHINE LEARNING ===
+models/
+*.pkl
+*.joblib
+*.model
+checkpoints/
+tensorboard/
+
+# === REDIS ===
+dump.rdb
+
+# === SPECIFIC FILES ===
+# Evitar archivos específicos del proyecto
+facturas_reales/
+datos_produccion/
+clientes_reales/
+proveedores_reales/
+informes_confidenciales/
+
+# === CONFIGURACIÓN LOCAL ===
+local_settings.py
+settings_local.py
+config_local.py
+
+# === SCRIPTS PERSONALES ===
+scripts/personal/
+scripts/testing/
+scripts/*.local.*
+
+# === DATOS DE TESTING ===
+fixtures/real_data/
+test_data/confidential/
+
+# ==========================================
+# ARCHIVOS QUE SÍ INCLUIR (COMENTADOS)
+# ==========================================
+
+# Incluir estos archivos importantes:
+# !.env.template
+# !.env.example
+# !requirements.txt
+# !README.md
+# !docker-compose.yml
+# !Dockerfile
+# !nginx/inventario-retail.conf.template
+# !systemd/*.service.template
+# !scripts/deployment/
+# !tests/
+# !docs/
+
+# ==========================================
+# NOTAS IMPORTANTES
+# ==========================================
+#
+# 1. NUNCA commitear archivos .env con datos reales
+# 2. NUNCA commitear bases de datos con información real
+# 3. NUNCA commitear logs con información sensible
+# 4. NUNCA commitear certificados SSL privados
+# 5. NUNCA commitear claves de API o tokens
+# 6. Revisar siempre antes de hacer commit
+# 7. Usar .env.template para documentar variables
+#

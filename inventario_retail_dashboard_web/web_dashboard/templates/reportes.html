@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes - Sistema Inventario{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'navbar.html' %}
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-bar"></i> Reportes y Análisis</h1>
+            <p>Genera reportes detallados y análisis de tu inventario</p>
+        </div>
+
+        <!-- Quick Reports -->
+        <div class="quick-reports">
+            <h3>📊 Reportes Rápidos</h3>
+            <div class="quick-reports-grid">
+                <div class="quick-report-card" onclick="generateQuickReport('stock-bajo')">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Stock Bajo</h4>
+                    <p>Productos con stock crítico</p>
+                </div>
+
+                <div class="quick-report-card" onclick="generateQuickReport('ventas-dia')">
+                    <i class="fas fa-calendar-day"></i>
+                    <h4>Ventas del Día</h4>
+                    <p>Resumen diario de movimientos</p>
+                </div>
+
+                <div class="quick-report-card" onclick="generateQuickReport('predicciones')">
+                    <i class="fas fa-crystal-ball"></i>
+                    <h4>Predicciones ML</h4>
+                    <p>Forecast próximos 7 días</p>
+                </div>
+
+                <div class="quick-report-card" onclick="generateQuickReport('rentabilidad')">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Rentabilidad</h4>
+                    <p>Análisis financiero productos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Report Builder -->
+        <div class="report-builder">
+            <h3>🛠️ Constructor de Reportes</h3>
+            <div class="builder-content">
+                <div class="builder-filters">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Tipo de Reporte</label>
+                            <select id="reportType" class="form-control">
+                                <option value="stock">Análisis de Stock</option>
+                                <option value="ventas">Análisis de Ventas</option>
+                                <option value="predicciones">Predicciones ML</option>
+                                <option value="financiero">Análisis Financiero</option>
+                                <option value="alertas">Alertas y Críticos</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Período</label>
+                            <select id="reportPeriod" class="form-control">
+                                <option value="hoy">Hoy</option>
+                                <option value="ayer">Ayer</option>
+                                <option value="semana">Esta Semana</option>
+                                <option value="mes">Este Mes</option>
+                                <option value="trimestre">Trimestre</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Formato</label>
+                            <select id="reportFormat" class="form-control">
+                                <option value="pdf">PDF</option>
+                                <option value="excel">Excel</option>
+                                <option value="csv">CSV</option>
+                                <option value="web">Vista Web</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="date-range-filter" id="dateRangeFilter" style="display: none;">
+                        <div class="filter-group">
+                            <label>Fecha Inicio</label>
+                            <input type="date" id="startDate" class="form-control">
+                        </div>
+                        <div class="filter-group">
+                            <label>Fecha Fin</label>
+                            <input type="date" id="endDate" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="builder-actions">
+                        <button class="btn btn-primary" onclick="generateCustomReport()">
+                            <i class="fas fa-play"></i> Generar Reporte
+                        </button>
+                        <button class="btn btn-secondary" onclick="previewReport()">
+                            <i class="fas fa-eye"></i> Vista Previa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Preview -->
+        <div class="report-preview" id="reportPreview" style="display: none;">
+            <div class="preview-header">
+                <h3>👁️ Vista Previa del Reporte</h3>
+                <div class="preview-actions">
+                    <button class="btn btn-success" onclick="downloadReport()">
+                        <i class="fas fa-download"></i> Descargar
+                    </button>
+                    <button class="btn btn-secondary" onclick="scheduleReport()">
+                        <i class="fas fa-clock"></i> Programar
+                    </button>
+                </div>
+            </div>
+            <div class="preview-content" id="previewContent">
+                <!-- Vista previa del reporte -->
+            </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="recent-reports">
+            <h3>📁 Reportes Recientes</h3>
+            <div class="reports-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Reporte</th>
+                            <th>Tipo</th>
+                            <th>Generado</th>
+                            <th>Tamaño</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentReportsTable">
+                        <tr>
+                            <td>Stock Bajo - 22/08/2025</td>
+                            <td><span class="badge badge-warning">Stock</span></td>
+                            <td>22/08/2025 14:30</td>
+                            <td>245 KB</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary" onclick="downloadRecentReport(1)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="viewRecentReport(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/reportes.js') }}"></script>
+{% endblock %}

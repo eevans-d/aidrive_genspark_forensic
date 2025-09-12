@@ -1,0 +1,46 @@
+# Dashboard Web Interactivo - Sistema Inventario Retail Argentino
+# Dependencias Python
+
+# Web Framework
+Flask==2.3.3
+Flask-SocketIO==5.3.6
+
+# Database
+psycopg2-binary==2.9.7
+SQLAlchemy==2.0.21
+
+# Redis Cache
+redis==5.0.1
+hiredis==2.2.3
+
+# HTTP Requests
+requests==2.31.0
+urllib3==2.0.5
+
+# Security
+Werkzeug==2.3.7
+cryptography==41.0.7
+
+# File handling
+Pillow==10.0.1
+python-magic==0.4.27
+
+# Date/Time
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Logging
+structlog==23.1.0
+
+# Environment
+python-dotenv==1.0.0
+
+# Performance monitoring (opcional)
+psutil==5.9.6
+
+# WSGI Server
+gunicorn==21.2.0
+eventlet==0.33.3
+
+# Development (opcional)
+flask-cors==4.0.0

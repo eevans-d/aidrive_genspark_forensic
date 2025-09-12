@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalado Cloud + Performance - Producción Ready</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .code-block {
+            background-color: #1a202c;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .argentina-flag {
+            background: linear-gradient(to bottom, #74c0fc 33%, #ffffff 33%, #ffffff 66%, #74c0fc 66%);
+        }
+        .metric-card {
+            transition: transform 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2">
+                        <i class="fas fa-cloud-upload-alt mr-3"></i>
+                        Escalado Cloud + Performance
+                    </h1>
+                    <p class="text-xl opacity-90">Sistema Inventario Retail Argentino - Producción Ready</p>
+                </div>
+                <div class="argentina-flag w-16 h-12 rounded shadow-lg"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex space-x-6">
+                    <a href="#cloud-deployment" class="text-blue-600 hover:text-blue-800 font-medium">
+                        <i class="fas fa-server mr-1"></i> Cloud Deployment
+                    </a>
+                    <a href="#postgresql" class="text-blue-600 hover:text-blue-800 font-medium">
+                        <i class="fas fa-database mr-1"></i> PostgreSQL
+                    </a>
+                    <a href="#optimizaciones" class="text-blue-600 hover:text-blue-800 font-medium">
+                        <i class="fas fa-tachometer-alt mr-1"></i> Optimizaciones
+                    </a>
+                    <a href="#scripts" class="text-blue-600 hover:text-blue-800 font-medium">
+                        <i class="fas fa-code mr-1"></i> Scripts
+                    </a>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <i class="fas fa-calendar mr-1"></i> Prompt 6/8 - Cadena Extendida
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Resumen Ejecutivo -->
+        <section class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-rocket text-blue-500 mr-3"></i>
+                Resumen Ejecutivo
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="metric-card bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm uppercase tracking-wide">Cloud Ready</p>
+                            <p class="text-3xl font-bold">AWS + DO</p>
+                        </div>
+                        <i class="fas fa-cloud text-4xl opacity-80"></i>
+                    </div>
+                </div>
+                <div class="metric-card bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm uppercase tracking-wide">Performance</p>
+                            <p class="text-3xl font-bold">Redis + NGINX</p>
+                        </div>
+                        <i class="fas fa-tachometer-alt text-4xl opacity-80"></i>
+                    </div>
+                </div>
+                <div class="metric-card bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-100 text-sm uppercase tracking-wide">Costo Mensual</p>
+                            <p class="text-3xl font-bold">< $20</p>
+                        </div>
+                        <i class="fas fa-dollar-sign text-4xl opacity-80"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cloud Deployment -->
+        <section id="cloud-deployment" class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-server text-blue-500 mr-3"></i>
+                Cloud Deployment Scripts
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">
+                        <i class="fab fa-aws mr-2"></i> AWS EC2 Deployment
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Provisioning automático Ubuntu 22.04</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Security Groups configurados</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Auto-scaling por CPU >80%</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Load Balancer Application</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">
+                        <i class="fas fa-server mr-2"></i> DigitalOcean Droplet
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Droplet $10/mes optimizado</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Firewall + SSH keys</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Monitoring automático</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i> Backup daily automático</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-file-code mr-2"></i> Script: deploy_cloud.sh
+            </h3>
+            <div class="code-block">#!/bin/bash
+set -e
+
+echo "🚀 DEPLOYMENT CLOUD - Sistema Inventario Retail Argentino"
+
+# Configuración
+CLOUD_PROVIDER=${1:-"digitalocean"}  # aws o digitalocean
+INSTANCE_SIZE=${2:-"s-2vcpu-4gb"}    # DO: s-2vcpu-4gb, AWS: t3.medium
+REGION=${3:-"nyc1"}                  # DO: nyc1, AWS: us-east-1
+
+# Validar provider
+if [[ "$CLOUD_PROVIDER" != "aws" && "$CLOUD_PROVIDER" != "digitalocean" ]]; then
+    echo "❌ Provider debe ser 'aws' o 'digitalocean'"
+    exit 1
+fi
+
+echo "📋 Configuración:"
+echo "  Provider: $CLOUD_PROVIDER"
+echo "  Size: $INSTANCE_SIZE"
+echo "  Region: $REGION"
+
+# Función deploy AWS
+deploy_aws() {
+    echo "☁️ Deploying to AWS EC2..."
+    
+    # Crear Security Group
+    aws ec2 create-security-group \
+        --group-name inventario-retail-sg \
+        --description "Security group for Inventario Retail System" \
+        --region $REGION
+    
+    # Reglas de firewall
+    aws ec2 authorize-security-group-ingress \
+        --group-name inventario-retail-sg \
+        --protocol tcp --port 22 --cidr 0.0.0.0/0 \
+        --region $REGION
+    
+    aws ec2 authorize-security-group-ingress \
+        --group-name inventario-retail-sg \
+        --protocol tcp --port 80 --cidr 0.0.0.0/0 \
+        --region $REGION
+    
+    aws ec2 authorize-security-group-ingress \
+        --group-name inventario-retail-sg \
+        --protocol tcp --port 443 --cidr 0.0.0.0/0 \
+        --region $REGION
+    
+    # Lanzar instancia
+    INSTANCE_ID=$(aws ec2 run-instances \
+        --image-id ami-0c02fb55956c7d316 \
+        --count 1 \
+        --instance-type $INSTANCE_SIZE \
+        --key-name inventario-retail-key \
+        --security-groups inventario-retail-sg \
+        --region $REGION \
+        --query 'Instances[0].InstanceId' \
+        --output text)
+    
+    echo "✅ EC2 Instance creada: $INSTANCE_ID"
+    
+    # Esperar que esté running
+    aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region $REGION
+    
+    # Obtener IP pública
+    PUBLIC_IP=$(aws ec2 describe-instances \
+        --instance-ids $INSTANCE_ID \
+        --region $REGION \
+        --query 'Reservations[0].Instances[0].PublicIpAddress' \
+        --output text)
+    
+    echo "🌐 IP Pública: $PUBLIC_IP"
+    
+    # Configurar Auto Scaling Group
+    create_aws_autoscaling $INSTANCE_ID
+}
+
+# Función deploy DigitalOcean
+deploy_digitalocean() {
+    echo "🌊 Deploying to DigitalOcean..."
+    
+    # Crear SSH key si no existe
+    if ! doctl compute ssh-key list | grep -q "inventario-retail"; then
+        doctl compute ssh-key import inventario-retail \
+            --public-key-file ~/.ssh/id_rsa.pub
+    fi
+    
+    # Crear Droplet
+    DROPLET_ID=$(doctl compute droplet create inventario-retail-prod \
+        --image ubuntu-22-04-x64 \
+        --size $INSTANCE_SIZE \
+        --region $REGION \
+        --ssh-keys inventario-retail \
+        --enable-monitoring \
+        --enable-backups \
+        --format ID --no-header)
+    
+    echo "✅ Droplet creado: $DROPLET_ID"
+    
+    # Esperar que esté activo
+    echo "⏳ Esperando que Droplet esté activo..."
+    while [[ $(doctl compute droplet get $DROPLET_ID --format Status --no-header) != "active" ]]; do
+        sleep 10
+        echo "  Esperando..."
+    done
+    
+    # Obtener IP pública
+    PUBLIC_IP=$(doctl compute droplet get $DROPLET_ID --format PublicIPv4 --no-header)
+    echo "🌐 IP Pública: $PUBLIC_IP"
+    
+    # Configurar Firewall
+    create_do_firewall $DROPLET_ID
+}
+
+# Función configurar Auto Scaling AWS
+create_aws_autoscaling() {
+    local INSTANCE_ID=$1
+    
+    echo "📈 Configurando Auto Scaling..."
+    
+    # Crear Launch Template
+    aws ec2 create-launch-template \
+        --launch-template-name inventario-retail-template \
+        --version-description "Inventario Retail Launch Template" \
+        --launch-template-data '{
+            "ImageId": "ami-0c02fb55956c7d316",
+            "InstanceType": "'$INSTANCE_SIZE'",
+            "KeyName": "inventario-retail-key",
+            "SecurityGroups": ["inventario-retail-sg"],
+            "UserData": "'$(base64 -w 0 scripts/cloud_init.sh)'"
+        }' \
+        --region $REGION
+    
+    # Crear Auto Scaling Group
+    aws autoscaling create-auto-scaling-group \
+        --auto-scaling-group-name inventario-retail-asg \
+        --launch-template LaunchTemplateName=inventario-retail-template,Version=1 \
+        --min-size 1 \
+        --max-size 3 \
+        --desired-capacity 1 \
+        --availability-zones ${REGION}a ${REGION}b \
+        --health-check-type ELB \
+        --health-check-grace-period 300
+    
+    # Política de scaling por CPU
+    aws autoscaling put-scaling-policy \
+        --auto-scaling-group-name inventario-retail-asg \
+        --policy-name cpu-scale-up \
+        --policy-type TargetTrackingScaling \
+        --target-tracking-configuration '{
+            "TargetValue": 80.0,
+            "PredefinedMetricSpecification": {
+                "PredefinedMetricType": "ASGAverageCPUUtilization"
+            }
+        }'
+    
+    echo "✅ Auto Scaling configurado (1-3 instancias, CPU target 80%)"
+}
+
+# Función configurar Firewall DO
+create_do_firewall() {
+    local DROPLET_ID=$1
+    
+    echo "🔥 Configurando Firewall..."
+    
+    doctl compute firewall create \
+        --name inventario-retail-fw \
+        --inbound-rules "protocol:tcp,ports:22,sources:addresses:0.0.0.0/0,::0/0 protocol:tcp,ports:80,sources:addresses:0.0.0.0/0,::0/0 protocol:tcp,ports:443,sources:addresses:0.0.0.0/0,::0/0" \
+        --outbound-rules "protocol:tcp,ports:all,destinations:addresses:0.0.0.0/0,::0/0 protocol:udp,ports:all,destinations:addresses:0.0.0.0/0,::0/0" \
+        --droplet-ids $DROPLET_ID
+    
+    echo "✅ Firewall configurado"
+}
+
+# Función setup servidor
+setup_server() {
+    local SERVER_IP=$1
+    
+    echo "⚙️ Configurando servidor $SERVER_IP..."
+    
+    # Esperar SSH
+    echo "⏳ Esperando SSH..."
+    while ! ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no root@$SERVER_IP 'exit' 2>/dev/null; do
+        sleep 10
+    done
+    
+    # Copiar archivos
+    echo "📦 Copiando archivos del sistema..."
+    rsync -avz --exclude='.git' --exclude='venv' --exclude='__pycache__' \
+        . root@$SERVER_IP:/opt/inventario-retail/
+    
+    # Ejecutar setup
+    ssh root@$SERVER_IP "
+        cd /opt/inventario-retail
+        chmod +x scripts/setup_production.sh
+        ./scripts/setup_production.sh
+    "
+    
+    echo "✅ Servidor configurado correctamente"
+}
+
+# Función mostrar resumen
+show_summary() {
+    local SERVER_IP=$1
+    
+    echo ""
+    echo "🎉 DEPLOYMENT COMPLETADO"
+    echo "========================"
+    echo "🌐 IP Pública: $SERVER_IP"
+    echo "🔗 URLs del sistema:"
+    echo "   - AgenteNegocio: http://$SERVER_IP:8001"
+    echo "   - AgenteDepósito: http://$SERVER_IP:8002"
+    echo "   - ML Predictor: http://$SERVER_IP:8003"
+    echo "   - Dashboard: http://$SERVER_IP:8004"
+    echo "   - Streamlit UI: http://$SERVER_IP:8501"
+    echo ""
+    echo "📊 Monitoreo:"
+    echo "   - Logs: ssh root@$SERVER_IP 'tail -f /opt/inventario-retail/logs/app.log'"
+    echo "   - Status: ssh root@$SERVER_IP 'systemctl status inventario-*'"
+    echo ""
+    echo "💰 Costo estimado mensual:"
+    if [[ "$CLOUD_PROVIDER" == "aws" ]]; then
+        echo "   - AWS t3.medium: ~\$30/mes"
+    else
+        echo "   - DigitalOcean \$10/mes droplet: \$10/mes"
+    fi
+}
+
+# Ejecución principal
+case $CLOUD_PROVIDER in
+    "aws")
+        deploy_aws
+        ;;
+    "digitalocean")
+        deploy_digitalocean
+        ;;
+esac
+
+setup_server $PUBLIC_IP
+show_summary $PUBLIC_IP
+
+echo "🚀 Deployment cloud completado exitosamente!"
+</div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- PostgreSQL Migration -->
+        <section id="postgresql" class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-database text-green-500 mr-3"></i>
+                Migración PostgreSQL
+            </h2>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                <div class="flex">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
+                    <div>
+                        <p class="text-yellow-700 font-medium">Migración Opcional</p>
+                        <p class="text-yellow-600 text-sm mt-1">PostgreSQL recomendado para >10,000 productos o >1,000 facturas/día</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-green-600">
+                        <i class="fas fa-check-circle mr-2"></i> Ventajas PostgreSQL
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-bolt text-blue-500 mr-2"></i> Mejor performance en consultas complejas</li>
+                        <li><i class="fas fa-users text-blue-500 mr-2"></i> Soporte real para concurrencia</li>
+                        <li><i class="fas fa-shield-alt text-blue-500 mr-2"></i> ACID completo con WAL</li>
+                        <li><i class="fas fa-search text-blue-500 mr-2"></i> Full-text search nativo</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-orange-600">
+                        <i class="fas fa-balance-scale mr-2"></i> Cuándo Migrar
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-chart-line text-orange-500 mr-2"></i> >10,000 productos en inventario</li>
+                        <li><i class="fas fa-file-invoice text-orange-500 mr-2"></i> >1,000 facturas procesadas/día</li>
+                        <li><i class="fas fa-clock text-orange-500 mr-2"></i> Consultas SQLite >500ms p95</li>
+                        <li><i class="fas fa-server text-orange-500 mr-2"></i> Múltiples instancias del sistema</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-file-code mr-2"></i> Script: migrate_postgres.sh
+            </h3>
+            <div class="code-block">#!/bin/bash
+set -e
+
+echo "🐘 MIGRACIÓN A POSTGRESQL - Sistema Inventario Retail"
+
+# Configuración
+POSTGRES_HOST=${1:-"localhost"}
+POSTGRES_PORT=${2:-"5432"}
+POSTGRES_DB=${3:-"inventario_retail"}
+POSTGRES_USER=${4:-"inventario_user"}
+POSTGRES_PASSWORD=${5:-"$(openssl rand -base64 32)"}
+
+SQLITE_DB=${6:-"data/inventario.db"}
+BACKUP_DIR="data/migration_backup_$(date +%Y%m%d_%H%M%S)"
+
+echo "📋 Configuración migración:"
+echo "  PostgreSQL Host: $POSTGRES_HOST:$POSTGRES_PORT"
+echo "  Database: $POSTGRES_DB"
+echo "  Usuario: $POSTGRES_USER"
+echo "  SQLite origen: $SQLITE_DB"
+echo "  Backup dir: $BACKUP_DIR"
+
+# Función validar prerequisitos
+validate_prerequisites() {
+    echo "✅ Validando prerequisitos..."
+    
+    # Verificar SQLite existe
+    if [[ ! -f "$SQLITE_DB" ]]; then
+        echo "❌ Base datos SQLite no encontrada: $SQLITE_DB"
+        exit 1
+    fi
+    
+    # Verificar herramientas
+    for tool in psql pg_dump sqlite3; do
+        if ! command -v $tool &> /dev/null; then
+            echo "❌ Herramienta requerida no encontrada: $tool"
+            echo "   Instalar: sudo apt-get install postgresql-client sqlite3"
+            exit 1
+        fi
+    done
+    
+    echo "✅ Prerequisitos validados"
+}
+
+# Función crear backup
+create_backup() {
+    echo "💾 Creando backup completo..."
+    
+    mkdir -p $BACKUP_DIR
+    
+    # Backup SQLite
+    cp $SQLITE_DB $BACKUP_DIR/inventario_backup.db
+    
+    # Export datos como SQL
+    sqlite3 $SQLITE_DB .dump > $BACKUP_DIR/sqlite_dump.sql
+    
+    # Backup archivos config
+    cp .env $BACKUP_DIR/env_backup
+    cp -r data/uploads $BACKUP_DIR/ 2>/dev/null || true
+    
+    echo "✅ Backup creado en: $BACKUP_DIR"
+}
+
+# Función instalar PostgreSQL si no existe
+install_postgresql() {
+    if ! systemctl is-active --quiet postgresql 2>/dev/null; then
+        echo "🐘 Instalando PostgreSQL..."
+        
+        sudo apt-get update
+        sudo apt-get install -y postgresql postgresql-contrib
+        
+        sudo systemctl start postgresql
+        sudo systemctl enable postgresql
+        
+        echo "✅ PostgreSQL instalado y iniciado"
+    else
+        echo "✅ PostgreSQL ya está corriendo"
+    fi
+}
+
+# Función configurar base datos
+setup_database() {
+    echo "🔧 Configurando base de datos..."
+    
+    # Crear usuario y database
+    sudo -u postgres psql << EOF
+CREATE USER $POSTGRES_USER WITH ENCRYPTED PASSWORD '$POSTGRES_PASSWORD';
+CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;
+GRANT ALL PRIVILEGES ON DATABASE $POSTGRES_DB TO $POSTGRES_USER;
+ALTER USER $POSTGRES_USER CREATEDB;
+\q
+EOF
+    
+    # Configurar conexión
+    export PGPASSWORD=$POSTGRES_PASSWORD
+    
+    # Test conexión
+    if psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT 1;" > /dev/null; then
+        echo "✅ Conexión PostgreSQL exitosa"
+    else
+        echo "❌ Error conectando a PostgreSQL"
+        exit 1
+    fi
+}
+
+# Función migrar schema
+migrate_schema() {
+    echo "📊 Migrando schema de tablas..."
+    
+    # Generar script conversión SQLite -> PostgreSQL
+    cat > $BACKUP_DIR/postgres_schema.sql << 'EOF'
+-- Conversión automática SQLite -> PostgreSQL
+-- Sistema Inventario Retail Argentino
+
+-- Tabla productos
+CREATE TABLE productos (
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(50) UNIQUE NOT NULL,
+    nombre VARCHAR(200) NOT NULL,
+    descripcion TEXT,
+    stock_actual INTEGER NOT NULL DEFAULT 0 CHECK (stock_actual >= 0),
+    stock_minimo INTEGER NOT NULL DEFAULT 0 CHECK (stock_minimo >= 0),
+    precio_compra NUMERIC(10,2) NOT NULL CHECK (precio_compra > 0),
+    precio_venta NUMERIC(10,2) CHECK (precio_venta IS NULL OR precio_venta > 0),
+    categoria VARCHAR(100),
+    proveedor VARCHAR(200),
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices productos
+CREATE INDEX idx_producto_codigo ON productos(codigo);
+CREATE INDEX idx_producto_categoria ON productos(categoria);
+CREATE INDEX idx_producto_proveedor ON productos(proveedor);
+CREATE INDEX idx_producto_activo ON productos(activo);
+
+-- Tabla movimientos_stock
+CREATE TABLE movimientos_stock (
+    id SERIAL PRIMARY KEY,
+    producto_id INTEGER NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
+    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('entrada', 'salida', 'ajuste')),
+    cantidad INTEGER NOT NULL CHECK (cantidad != 0),
+    stock_anterior INTEGER NOT NULL CHECK (stock_anterior >= 0),
+    stock_posterior INTEGER NOT NULL CHECK (stock_posterior >= 0),
+    motivo VARCHAR(500),
+    referencia VARCHAR(100),
+    usuario VARCHAR(100),
+    precio_unitario NUMERIC(10,2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices movimientos_stock
+CREATE INDEX idx_movimiento_producto ON movimientos_stock(producto_id);
+CREATE INDEX idx_movimiento_tipo ON movimientos_stock(tipo);
+CREATE INDEX idx_movimiento_fecha ON movimientos_stock(created_at);
+
+-- Tabla facturas
+CREATE TABLE facturas (
+    id SERIAL PRIMARY KEY,
+    numero VARCHAR(50) NOT NULL,
+    tipo VARCHAR(5) NOT NULL CHECK (tipo IN ('A', 'B', 'C')),
+    punto_venta VARCHAR(10),
+    cuit_emisor VARCHAR(11) NOT NULL,
+    nombre_emisor VARCHAR(200),
+    subtotal NUMERIC(10,2),
+    iva NUMERIC(10,2),
+    total NUMERIC(10,2) NOT NULL CHECK (total > 0),
+    fecha_emision TIMESTAMP WITH TIME ZONE,
+    fecha_procesamiento TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    estado_procesamiento VARCHAR(20) DEFAULT 'pendiente' 
+        CHECK (estado_procesamiento IN ('pendiente', 'procesada', 'error')),
+    archivo_original VARCHAR(500),
+    datos_ocr TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices facturas
+CREATE INDEX idx_factura_numero ON facturas(numero);
+CREATE INDEX idx_factura_cuit ON facturas(cuit_emisor);
+CREATE INDEX idx_factura_estado ON facturas(estado_procesamiento);
+CREATE INDEX idx_factura_fecha ON facturas(fecha_emision);
+
+-- Tabla factura_items
+CREATE TABLE factura_items (
+    id SERIAL PRIMARY KEY,
+    factura_id INTEGER NOT NULL REFERENCES facturas(id) ON DELETE CASCADE,
+    producto_id INTEGER REFERENCES productos(id),
+    descripcion VARCHAR(500) NOT NULL,
+    cantidad NUMERIC(10,3) NOT NULL CHECK (cantidad > 0),
+    precio_unitario NUMERIC(10,2) NOT NULL CHECK (precio_unitario > 0),
+    subtotal NUMERIC(10,2) NOT NULL CHECK (subtotal > 0),
+    confianza_matching NUMERIC(3,2) CHECK (confianza_matching IS NULL OR 
+        (confianza_matching >= 0 AND confianza_matching <= 1)),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices factura_items
+CREATE INDEX idx_item_factura ON factura_items(factura_id);
+CREATE INDEX idx_item_producto ON factura_items(producto_id);
+
+-- Función actualizar updated_at automáticamente
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Triggers para updated_at
+CREATE TRIGGER update_productos_updated_at BEFORE UPDATE ON productos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_movimientos_updated_at BEFORE UPDATE ON movimientos_stock
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_facturas_updated_at BEFORE UPDATE ON facturas
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_items_updated_at BEFORE UPDATE ON factura_items
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Extensiones útiles
+CREATE EXTENSION IF NOT EXISTS pg_trgm;  -- Para búsqueda texto similar
+CREATE EXTENSION IF NOT EXISTS btree_gin;  -- Índices GIN para texto
+
+-- Índice full-text search para productos
+CREATE INDEX idx_producto_search ON productos USING GIN (
+    to_tsvector('spanish', COALESCE(nombre, '') || ' ' || COALESCE(descripcion, ''))
+);
+
+COMMENT ON TABLE productos IS 'Productos del inventario con validaciones argentinas';
+COMMENT ON TABLE movimientos_stock IS 'Auditoría completa de movimientos de stock';
+COMMENT ON TABLE facturas IS 'Facturas AFIP procesadas con OCR';
+COMMENT ON TABLE factura_items IS 'Items de facturas con matching automático';
+EOF
+
+    # Ejecutar schema
+    psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB \
+        -f $BACKUP_DIR/postgres_schema.sql
+    
+    echo "✅ Schema migrado correctamente"
+}
+
+# Función migrar datos
+migrate_data() {
+    echo "📦 Migrando datos..."
+    
+    # Crear script conversión datos
+    python3 << 'EOF'
+import sqlite3
+import psycopg2
+import psycopg2.extras
+import os
+import sys
+from datetime import datetime
+
+# Configuración desde variables entorno
+POSTGRES_CONFIG = {
+    'host': os.getenv('POSTGRES_HOST', 'localhost'),
+    'port': os.getenv('POSTGRES_PORT', '5432'),
+    'database': os.getenv('POSTGRES_DB', 'inventario_retail'),
+    'user': os.getenv('POSTGRES_USER', 'inventario_user'),
+    'password': os.getenv('POSTGRES_PASSWORD')
+}
+
+SQLITE_DB = os.getenv('SQLITE_DB', 'data/inventario.db')
+
+def migrate_table(sqlite_cursor, postgres_cursor, table_name, columns, transform_fn=None):
+    """Migrar tabla específica con transformaciones opcionales"""
+    print(f"  Migrando tabla {table_name}...")
+    
+    # Obtener datos de SQLite
+    sqlite_cursor.execute(f"SELECT {', '.join(columns)} FROM {table_name}")
+    rows = sqlite_cursor.fetchall()
+    
+    if not rows:
+        print(f"    No hay datos en {table_name}")
+        return
+    
+    # Preparar inserción PostgreSQL
+    columns_pg = [col.replace('id', 'id') for col in columns]  # Mantener nombres
+    placeholders = ', '.join(['%s'] * len(columns_pg))
+    
+    # Excluir id de auto-increment en PostgreSQL
+    if 'id' in columns_pg:
+        columns_pg = [col for col in columns_pg if col != 'id']
+        placeholders = ', '.join(['%s'] * len(columns_pg))
+        rows = [row[1:] for row in rows]  # Excluir primera columna (id)
+    
+    insert_sql = f"INSERT INTO {table_name} ({', '.join(columns_pg)}) VALUES ({placeholders})"
+    
+    # Transformar datos si es necesario
+    if transform_fn:
+        rows = [transform_fn(row) for row in rows]
+    
+    # Insertar en lotes
+    batch_size = 1000
+    for i in range(0, len(rows), batch_size):
+        batch = rows[i:i + batch_size]
+        postgres_cursor.executemany(insert_sql, batch)
+    
+    print(f"    ✅ {len(rows)} registros migrados")
+
+def transform_datetime(value):
+    """Convertir datetime SQLite a PostgreSQL"""
+    if value is None:
+        return None
+    try:
+        # SQLite guarda datetime como string
+        if isinstance(value, str):
+            return datetime.fromisoformat(value.replace('Z', '+00:00'))
+        return value
+    except:
+        return datetime.now()
+
+def transform_productos(row):
+    """Transformar fila de productos"""
+    row = list(row)
+    # Convertir created_at y updated_at
+    if len(row) > 10:
+        row[10] = transform_datetime(row[10])  # created_at
+    if len(row) > 11:
+        row[11] = transform_datetime(row[11])  # updated_at
+    return tuple(row)
+
+def transform_movimientos(row):
+    """Transformar fila de movimientos_stock"""
+    row = list(row)
+    # Convertir created_at y updated_at
+    if len(row) > 9:
+        row[9] = transform_datetime(row[9])   # created_at
+    if len(row) > 10:
+        row[10] = transform_datetime(row[10])  # updated_at
+    return tuple(row)
+
+# Conectar a bases de datos
+try:
+    sqlite_conn = sqlite3.connect(SQLITE_DB)
+    sqlite_cursor = sqlite_conn.cursor()
+    
+    postgres_conn = psycopg2.connect(**POSTGRES_CONFIG)
+    postgres_cursor = postgres_conn.cursor()
+    
+    print("🔄 Iniciando migración de datos...")
+    
+    # Migrar productos
+    migrate_table(
+        sqlite_cursor, postgres_cursor, 
+        'productos',
+        ['id', 'codigo', 'nombre', 'descripcion', 'stock_actual', 'stock_minimo',
+         'precio_compra', 'precio_venta', 'categoria', 'proveedor', 'activo',
+         'created_at', 'updated_at'],
+        transform_productos
+    )
+    
+    # Migrar movimientos_stock
+    migrate_table(
+        sqlite_cursor, postgres_cursor,
+        'movimientos_stock', 
+        ['id', 'producto_id', 'tipo', 'cantidad', 'stock_anterior', 'stock_posterior',
+         'motivo', 'referencia', 'usuario', 'precio_unitario', 'created_at', 'updated_at'],
+        transform_movimientos
+    )
+    
+    # Migrar facturas
+    migrate_table(
+        sqlite_cursor, postgres_cursor,
+        'facturas',
+        ['id', 'numero', 'tipo', 'punto_venta', 'cuit_emisor', 'nombre_emisor',
+         'subtotal', 'iva', 'total', 'fecha_emision', 'fecha_procesamiento',
+         'estado_procesamiento', 'archivo_original', 'datos_ocr', 'created_at', 'updated_at']
+    )
+    
+    # Migrar factura_items
+    migrate_table(
+        sqlite_cursor, postgres_cursor,
+        'factura_items',
+        ['id', 'factura_id', 'producto_id', 'descripcion', 'cantidad',
+         'precio_unitario', 'subtotal', 'confianza_matching', 'created_at', 'updated_at']
+    )
+    
+    # Actualizar secuencias PostgreSQL
+    postgres_cursor.execute("SELECT setval('productos_id_seq', (SELECT MAX(id) FROM productos));")
+    postgres_cursor.execute("SELECT setval('movimientos_stock_id_seq', (SELECT MAX(id) FROM movimientos_stock));")
+    postgres_cursor.execute("SELECT setval('facturas_id_seq', (SELECT MAX(id) FROM facturas));")
+    postgres_cursor.execute("SELECT setval('factura_items_id_seq', (SELECT MAX(id) FROM factura_items));")
+    
+    postgres_conn.commit()
+    print("✅ Migración de datos completada")
+    
+except Exception as e:
+    print(f"❌ Error en migración: {e}")
+    sys.exit(1)
+    
+finally:
+    if 'sqlite_conn' in locals():
+        sqlite_conn.close()
+    if 'postgres_conn' in locals():
+        postgres_conn.close()
+
+EOF
+    
+    # Ejecutar migración datos
+    POSTGRES_HOST=$POSTGRES_HOST POSTGRES_PORT=$POSTGRES_PORT \
+    POSTGRES_DB=$POSTGRES_DB POSTGRES_USER=$POSTGRES_USER \
+    POSTGRES_PASSWORD=$POSTGRES_PASSWORD SQLITE_DB=$SQLITE_DB \
+    python3 << 'EOF'
+# Código Python aquí está incluido arriba
+EOF
+}
+
+# Función actualizar configuración
+update_config() {
+    echo "⚙️ Actualizando configuración..."
+    
+    # Backup .env actual
+    cp .env .env.sqlite.backup
+    
+    # Crear nueva configuración PostgreSQL
+    cat > .env.postgres << EOF
+# Base de Datos PostgreSQL
+DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB
+DATABASE_WAL_MODE=false
+
+# Configuración anterior mantenida
+$(grep -v '^DATABASE_' .env)
+
+# Configuración específica PostgreSQL
+POSTGRES_HOST=$POSTGRES_HOST
+POSTGRES_PORT=$POSTGRES_PORT
+POSTGRES_DB=$POSTGRES_DB
+POSTGRES_USER=$POSTGRES_USER
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+# Pool de conexiones
+DATABASE_POOL_SIZE=20
+DATABASE_MAX_OVERFLOW=30
+DATABASE_POOL_TIMEOUT=30
+DATABASE_POOL_RECYCLE=3600
+EOF
+    
+    echo "✅ Configuración actualizada (.env.postgres creado)"
+    echo "📝 Para usar PostgreSQL: cp .env.postgres .env"
+}
+
+# Función test migración
+test_migration() {
+    echo "🧪 Testeando migración..."
+    
+    # Test conexión
+    if ! psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT 1;" > /dev/null; then
+        echo "❌ Test conexión falló"
+        return 1
+    fi
+    
+    # Test conteo registros
+    local pg_productos=$(psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -t -c "SELECT COUNT(*) FROM productos;")
+    local sqlite_productos=$(sqlite3 $SQLITE_DB "SELECT COUNT(*) FROM productos;")
+    
+    echo "📊 Conteo registros:"
+    echo "  Productos PostgreSQL: $pg_productos"
+    echo "  Productos SQLite: $sqlite_productos"
+    
+    if [[ "$pg_productos" -eq "$sqlite_productos" ]]; then
+        echo "✅ Conteo de productos coincide"
+    else
+        echo "❌ Conteo de productos no coincide"
+        return 1
+    fi
+    
+    # Test consulta compleja
+    psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -c "
+        SELECT 
+            p.codigo, p.nombre, p.stock_actual,
+            COUNT(m.id) as movimientos
+        FROM productos p
+        LEFT JOIN movimientos_stock m ON p.id = m.producto_id
+        GROUP BY p.id, p.codigo, p.nombre, p.stock_actual
+        ORDER BY movimientos DESC
+        LIMIT 5;
+    " > /dev/null
+    
+    if [[ $? -eq 0 ]]; then
+        echo "✅ Test consulta compleja exitoso"
+    else
+        echo "❌ Test consulta compleja falló"
+        return 1
+    fi
+    
+    echo "✅ Tests de migración exitosos"
+}
+
+# Función mostrar resumen
+show_migration_summary() {
+    echo ""
+    echo "🎉 MIGRACIÓN POSTGRESQL COMPLETADA"
+    echo "=================================="
+    echo "🐘 PostgreSQL Database: $POSTGRES_DB"
+    echo "🔗 Connection string: postgresql://$POSTGRES_USER:***@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
+    echo "💾 Backup SQLite: $BACKUP_DIR"
+    echo ""
+    echo "📝 Próximos pasos:"
+    echo "1. cp .env.postgres .env  # Usar configuración PostgreSQL"
+    echo "2. Reiniciar servicios del sistema"
+    echo "3. Verificar funcionamiento completo"
+    echo "4. Una vez validado, eliminar: $SQLITE_DB"
+    echo ""
+    echo "🔄 Para rollback:"
+    echo "1. cp .env.sqlite.backup .env"
+    echo "2. Restaurar: cp $BACKUP_DIR/inventario_backup.db $SQLITE_DB"
+    echo ""
+    echo "💡 Performance esperada:"
+    echo "   - Consultas complejas: 5-10x más rápidas"
+    echo "   - Concurrencia: Sin límites prácticos"
+    echo "   - Full-text search: Nativo con índices GIN"
+}
+
+# Ejecución principal
+main() {
+    validate_prerequisites
+    create_backup
+    install_postgresql
+    setup_database
+    migrate_schema
+    migrate_data
+    update_config
+    test_migration
+    show_migration_summary
+    
+    echo "🚀 Migración PostgreSQL completada exitosamente!"
+}
+
+# Ejecutar si es llamado directamente
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
+</div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Optimizaciones Performance -->
+        <section id="optimizaciones" class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-tachometer-alt text-red-500 mr-3"></i>
+                Optimizaciones Performance
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-400">
+                    <h3 class="text-xl font-semibold mb-4 text-red-600">
+                        <i class="fab fa-redis mr-2"></i> Redis Cache
+                    </h3>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li><i class="fas fa-clock text-red-500 mr-1"></i> TTL 4h precios/OCR</li>
+                        <li><i class="fas fa-memory text-red-500 mr-1"></i> Cache inteligente ML</li>
+                        <li><i class="fas fa-sync text-red-500 mr-1"></i> Invalidación automática</li>
+                        <li><i class="fas fa-chart-line text-red-500 mr-1"></i> Hit rate >80%</li>
+                    </ul>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-400">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600">
+                        <i class="fas fa-server mr-2"></i> NGINX
+                    </h3>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li><i class="fas fa-balance-scale text-blue-500 mr-1"></i> Load balancing</li>
+                        <li><i class="fas fa-compress text-blue-500 mr-1"></i> Gzip compression</li>
+                        <li><i class="fas fa-shield-alt text-blue-500 mr-1"></i> Rate limiting</li>
+                        <li><i class="fas fa-rocket text-blue-500 mr-1"></i> Static file serving</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
+                    <h3 class="text-xl font-semibold mb-4 text-green-600">
+                        <i class="fas fa-database mr-2"></i> BD Optimizada
+                    </h3>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li><i class="fas fa-search text-green-500 mr-1"></i> Índices adicionales</li>
+                        <li><i class="fas fa-bolt text-green-500 mr-1"></i> Async endpoints</li>
+                        <li><i class="fas fa-link text-green-500 mr-1"></i> Connection pooling</li>
+                        <li><i class="fas fa-chart-bar text-green-500 mr-1"></i> Query optimization</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-file-code mr-2"></i> Script: optimize_performance.py
+            </h3>
+            <div class="code-block">#!/usr/bin/env python3
+"""
+Optimizaciones de Performance - Sistema Inventario Retail Argentino
+Incluye: Redis cache, índices BD, profiling, y métricas
+"""
+
+import asyncio
+import time
+import redis
+import json
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional, List
+from functools import wraps
+import psutil
+import py_spy
+
+# Configuración
+REDIS_URL = "redis://localhost:6379/0"
+CACHE_TTL_HOURS = 4
+PERFORMANCE_LOG = "data/performance.log"
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(PERFORMANCE_LOG),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+class PerformanceCache:
+    """Cache Redis optimizado para el sistema"""
+    
+    def __init__(self, redis_url: str = REDIS_URL):
+        try:
+            self.redis_client = redis.from_url(redis_url, decode_responses=True)
+            self.redis_client.ping()
+            logger.info("✅ Redis conectado correctamente")
+        except Exception as e:
+            logger.error(f"❌ Error conectando Redis: {e}")
+            self.redis_client = None
+    
+    def get(self, key: str) -> Optional[Any]:
+        """Obtener valor del cache"""
+        if not self.redis_client:
+            return None
+        
+        try:
+            value = self.redis_client.get(key)
+            if value:
+                return json.loads(value)
+        except Exception as e:
+            logger.error(f"Error obteniendo cache {key}: {e}")
+        
+        return None
+    
+    def set(self, key: str, value: Any, ttl_hours: int = CACHE_TTL_HOURS) -> bool:
+        """Guardar valor en cache con TTL"""
+        if not self.redis_client:
+            return False
+        
+        try:
+            ttl_seconds = ttl_hours * 3600
+            serialized = json.dumps(value, default=str)
+            return self.redis_client.setex(key, ttl_seconds, serialized)
+        except Exception as e:
+            logger.error(f"Error guardando cache {key}: {e}")
+            return False
+    
+    def invalidate_pattern(self, pattern: str) -> int:
+        """Invalidar múltiples keys por patrón"""
+        if not self.redis_client:
+            return 0
+        
+        try:
+            keys = self.redis_client.keys(pattern)
+            if keys:
+                return self.redis_client.delete(*keys)
+            return 0
+        except Exception as e:
+            logger.error(f"Error invalidando patrón {pattern}: {e}")
+            return 0
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Obtener estadísticas del cache"""
+        if not self.redis_client:
+            return {}
+        
+        try:
+            info = self.redis_client.info()
+            return {
+                "connected_clients": info.get("connected_clients", 0),
+                "used_memory_human": info.get("used_memory_human", "0B"),
+                "keyspace_hits": info.get("keyspace_hits", 0),
+                "keyspace_misses": info.get("keyspace_misses", 0),
+                "total_keys": len(self.redis_client.keys("*")),
+                "hit_rate": self._calculate_hit_rate(info)
+            }
+        except Exception as e:
+            logger.error(f"Error obteniendo stats cache: {e}")
+            return {}
+    
+    def _calculate_hit_rate(self, info: Dict) -> float:
+        """Calcular hit rate del cache"""
+        hits = info.get("keyspace_hits", 0)
+        misses = info.get("keyspace_misses", 0)
+        total = hits + misses
+        
+        if total == 0:
+            return 0.0
+        
+        return round((hits / total) * 100, 2)
+
+# Instancia global cache
+cache = PerformanceCache()
+
+def cached(key_pattern: str, ttl_hours: int = CACHE_TTL_HOURS):
+    """Decorator para cachear resultados de funciones"""
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            # Generar key único
+            key_parts = [key_pattern]
+            key_parts.extend(str(arg) for arg in args)
+            key_parts.extend(f"{k}={v}" for k, v in sorted(kwargs.items()))
+            cache_key = ":".join(key_parts)
+            
+            # Intentar obtener del cache
+            cached_result = cache.get(cache_key)
+            if cached_result is not None:
+                logger.debug(f"Cache HIT: {cache_key}")
+                return cached_result
+            
+            # Ejecutar función y cachear resultado
+            logger.debug(f"Cache MISS: {cache_key}")
+            result = await func(*args, **kwargs)
+            cache.set(cache_key, result, ttl_hours)
+            
+            return result
+        return wrapper
+    return decorator
+
+class DatabaseOptimizer:
+    """Optimizador de queries y índices de BD"""
+    
+    def __init__(self, db_session):
+        self.db = db_session
+        self.slow_queries = []
+    
+    def add_indexes(self):
+        """Agregar índices adicionales para performance"""
+        indexes_sql = [
+            # Índices compuestos para consultas frecuentes
+            "CREATE INDEX IF NOT EXISTS idx_productos_categoria_activo ON productos(categoria, activo);",
+            "CREATE INDEX IF NOT EXISTS idx_productos_stock_categoria ON productos(stock_actual, categoria);",
+            "CREATE INDEX IF NOT EXISTS idx_movimientos_producto_fecha ON movimientos_stock(producto_id, created_at);",
+            "CREATE INDEX IF NOT EXISTS idx_movimientos_tipo_fecha ON movimientos_stock(tipo, created_at);",
+            "CREATE INDEX IF NOT EXISTS idx_facturas_estado_fecha ON facturas(estado_procesamiento, fecha_procesamiento);",
+            "CREATE INDEX IF NOT EXISTS idx_facturas_cuit_fecha ON facturas(cuit_emisor, fecha_emision);",
+            
+            # Índices para joins frecuentes
+            "CREATE INDEX IF NOT EXISTS idx_items_factura_producto ON factura_items(factura_id, producto_id);",
+            
+            # Índices para ordenamiento
+            "CREATE INDEX IF NOT EXISTS idx_productos_nombre_lower ON productos(LOWER(nombre));",
+            "CREATE INDEX IF NOT EXISTS idx_movimientos_timestamp_desc ON movimientos_stock(created_at DESC);",
+        ]
+        
+        for sql in indexes_sql:
+            try:
+                self.db.execute(sql)
+                logger.info(f"✅ Índice creado: {sql.split('idx_')[1].split(' ')[0]}")
+            except Exception as e:
+                logger.error(f"Error creando índice: {e}")
+        
+        self.db.commit()
+    
+    def analyze_slow_queries(self, threshold_ms: int = 100):
+        """Analizar queries lentas"""
+        if hasattr(self.db, 'bind') and 'postgresql' in str(self.db.bind.url):
+            # PostgreSQL: habilitar log de queries lentas
+            slow_query_sql = f"""
+            ALTER SYSTEM SET log_min_duration_statement = {threshold_ms};
+            SELECT pg_reload_conf();
+            """
+            try:
+                self.db.execute(slow_query_sql)
+                logger.info(f"✅ Log queries lentas habilitado (>{threshold_ms}ms)")
+            except Exception as e:
+                logger.warning(f"No se pudo habilitar log queries lentas: {e}")
+    
+    def get_table_stats(self) -> Dict[str, Any]:
+        """Obtener estadísticas de tablas"""
+        stats = {}
+        
+        tables = ['productos', 'movimientos_stock', 'facturas', 'factura_items']
+        
+        for table in tables:
+            try:
+                count_result = self.db.execute(f"SELECT COUNT(*) FROM {table}").scalar()
+                stats[table] = {"count": count_result}
+                
+                # Estadísticas adicionales PostgreSQL
+                if hasattr(self.db, 'bind') and 'postgresql' in str(self.db.bind.url):
+                    size_result = self.db.execute(f"""
+                        SELECT pg_size_pretty(pg_total_relation_size('{table}')) as size
+                    """).scalar()
+                    stats[table]["size"] = size_result
+                    
+            except Exception as e:
+                logger.error(f"Error obteniendo stats de {table}: {e}")
+                stats[table] = {"error": str(e)}
+        
+        return stats
+
+class PerformanceProfiler:
+    """Profiler de performance del sistema"""
+    
+    def __init__(self):
+        self.metrics = []
+        self.start_time = datetime.now()
+    
+    def measure_endpoint(self, endpoint_name: str):
+        """Decorator para medir performance de endpoints"""
+        def decorator(func):
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                start_time = time.time()
+                start_memory = psutil.Process().memory_info().rss
+                
+                try:
+                    result = await func(*args, **kwargs)
+                    status = "success"
+                    error = None
+                except Exception as e:
+                    result = None
+                    status = "error"
+                    error = str(e)
+                    raise
+                finally:
+                    end_time = time.time()
+                    end_memory = psutil.Process().memory_info().rss
+                    
+                    metric = {
+                        "endpoint": endpoint_name,
+                        "duration_ms": round((end_time - start_time) * 1000, 2),
+                        "memory_delta_mb": round((end_memory - start_memory) / 1024 / 1024, 2),
+                        "timestamp": datetime.now().isoformat(),
+                        "status": status,
+                        "error": error
+                    }
+                    
+                    self.metrics.append(metric)
+                    logger.info(f"📊 {endpoint_name}: {metric['duration_ms']}ms, "
+                              f"mem: {metric['memory_delta_mb']}MB")
+                
+                return result
+            return wrapper
+        return decorator
+    
+    def get_performance_report(self) -> Dict[str, Any]:
+        """Generar reporte de performance"""
+        if not self.metrics:
+            return {"message": "No hay métricas disponibles"}
+        
+        # Agrupar por endpoint
+        endpoint_stats = {}
+        for metric in self.metrics:
+            endpoint = metric["endpoint"]
+            if endpoint not in endpoint_stats:
+                endpoint_stats[endpoint] = {
+                    "count": 0,
+                    "total_duration": 0,
+                    "max_duration": 0,
+                    "min_duration": float('inf'),
+                    "errors": 0,
+                    "durations": []
+                }
+            
+            stats = endpoint_stats[endpoint]
+            duration = metric["duration_ms"]
+            
+            stats["count"] += 1
+            stats["total_duration"] += duration
+            stats["max_duration"] = max(stats["max_duration"], duration)
+            stats["min_duration"] = min(stats["min_duration"], duration)
+            stats["durations"].append(duration)
+            
+            if metric["status"] == "error":
+                stats["errors"] += 1
+        
+        # Calcular estadísticas
+        for endpoint, stats in endpoint_stats.items():
+            durations = sorted(stats["durations"])
+            n = len(durations)
+            
+            stats["avg_duration"] = round(stats["total_duration"] / stats["count"], 2)
+            stats["p50_duration"] = durations[n // 2] if n > 0 else 0
+            stats["p95_duration"] = durations[int(n * 0.95)] if n > 0 else 0
+            stats["p99_duration"] = durations[int(n * 0.99)] if n > 0 else 0
+            stats["error_rate"] = round((stats["errors"] / stats["count"]) * 100, 2)
+            
+            # Limpiar lista de duraciones para el reporte
+            del stats["durations"]
+        
+        # Estadísticas del sistema
+        process = psutil.Process()
+        system_stats = {
+            "uptime_seconds": (datetime.now() - self.start_time).total_seconds(),
+            "cpu_percent": psutil.cpu_percent(interval=1),
+            "memory_percent": psutil.virtual_memory().percent,
+            "disk_percent": psutil.disk_usage('/').percent,
+            "process_memory_mb": round(process.memory_info().rss / 1024 / 1024, 2),
+            "process_cpu_percent": process.cpu_percent()
+        }
+        
+        return {
+            "endpoints": endpoint_stats,
+            "system": system_stats,
+            "cache": cache.get_stats(),
+            "total_requests": len(self.metrics),
+            "report_generated": datetime.now().isoformat()
+        }
+    
+    def save_report(self, filename: str = None):
+        """Guardar reporte en archivo"""
+        if not filename:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"data/performance_report_{timestamp}.json"
+        
+        report = self.get_performance_report()
+        
+        with open(filename, 'w') as f:
+            json.dump(report, f, indent=2)
+        
+        logger.info(f"📄 Reporte guardado: {filename}")
+        return filename
+
+class NginxOptimizer:
+    """Generador de configuración NGINX optimizada"""
+    
+    @staticmethod
+    def generate_config(domain: str = "inventario-retail.local") -> str:
+        """Generar configuración NGINX optimizada"""
+        
+        config = f"""# NGINX Configuration - Sistema Inventario Retail Argentino
+# Optimizado para performance y seguridad
+
+upstream agente_negocio {{
+    least_conn;
+    server 127.0.0.1:8001 max_fails=3 fail_timeout=30s;
+    server 127.0.0.1:8011 max_fails=3 fail_timeout=30s backup;
+}}
+
+upstream agente_deposito {{
+    least_conn;
+    server 127.0.0.1:8002 max_fails=3 fail_timeout=30s;
+    server 127.0.0.1:8012 max_fails=3 fail_timeout=30s backup;
+}}
+
+upstream ml_predictor {{
+    least_conn;
+    server 127.0.0.1:8003 max_fails=3 fail_timeout=30s;
+}}
+
+upstream enhanced_dashboard {{
+    least_conn;
+    server 127.0.0.1:8004 max_fails=3 fail_timeout=30s;
+}}
+
+upstream streamlit_ui {{
+    least_conn;
+    server 127.0.0.1:8501 max_fails=3 fail_timeout=30s;
+}}
+
+# Rate limiting zones
+limit_req_zone $binary_remote_addr zone=api:10m rate=100r/m;
+limit_req_zone $binary_remote_addr zone=upload:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=ml:10m rate=30r/m;
+
+# Cache zones
+proxy_cache_path /var/cache/nginx/inventario 
+                 levels=1:2 keys_zone=inventario_cache:100m 
+                 max_size=1g inactive=60m use_temp_path=off;
+
+server {{
+    listen 80;
+    listen [::]:80;
+    server_name {domain};
+    
+    # Redirect HTTP to HTTPS
+    return 301 https://$server_name$request_uri;
+}}
+
+server {{
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name {domain};
+    
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/{domain}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{domain}/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+    
+    # Modern SSL configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+    ssl_prefer_server_ciphers off;
+    
+    # Security headers
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Referrer-Policy "strict-origin-when-cross-origin";
+    
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types
+        text/plain
+        text/css
+        text/xml
+        text/javascript
+        application/json
+        application/javascript
+        application/xml+rss
+        application/atom+xml
+        image/svg+xml;
+    
+    # Client settings
+    client_max_body_size 10M;
+    client_body_timeout 60s;
+    client_header_timeout 60s;
+    
+    # Logging
+    access_log /var/log/nginx/inventario_access.log combined;
+    error_log /var/log/nginx/inventario_error.log warn;
+    
+    # Root y index
+    root /opt/inventario-retail/static;
+    index index.html;
+    
+    # Static files con cache largo
+    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {{
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        add_header X-Served-By "nginx-static";
+    }}
+    
+    # Agente Negocio
+    location /api/negocio/ {{
+        limit_req zone=api burst=20 nodelay;
+        
+        proxy_pass http://agente_negocio/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+        
+        # Cache para endpoints GET
+        proxy_cache inventario_cache;
+        proxy_cache_valid 200 5m;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        add_header X-Cache-Status $upstream_cache_status;
+    }}
+    
+    # Upload de facturas con rate limiting especial
+    location /api/negocio/facturas/procesar {{
+        limit_req zone=upload burst=5 nodelay;
+        
+        proxy_pass http://agente_negocio/facturas/procesar;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Timeouts más largos para OCR
+        proxy_timeout 120s;
+        proxy_read_timeout 120s;
+        proxy_send_timeout 120s;
+        
+        # No cache para uploads
+        proxy_cache off;
+    }}
+    
+    # Agente Depósito
+    location /api/deposito/ {{
+        limit_req zone=api burst=20 nodelay;
+        
+        proxy_pass http://agente_deposito/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+        
+        # Cache selectivo
+        proxy_cache inventario_cache;
+        proxy_cache_valid 200 2m;
+        proxy_cache_bypass $http_cache_control;
+        add_header X-Cache-Status $upstream_cache_status;
+    }}
+    
+    # ML Predictor
+    location /api/ml/ {{
+        limit_req zone=ml burst=10 nodelay;
+        
+        proxy_pass http://ml_predictor/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Timeouts más largos para ML
+        proxy_timeout 60s;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+        
+        # Cache largo para predicciones
+        proxy_cache inventario_cache;
+        proxy_cache_valid 200 1h;
+        proxy_cache_use_stale error timeout updating;
+        add_header X-Cache-Status $upstream_cache_status;
+    }}
+    
+    # Dashboard
+    location /dashboard/ {{
+        proxy_pass http://enhanced_dashboard/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_send_timeout 30s;
+        
+        # Cache corto para dashboard
+        proxy_cache inventario_cache;
+        proxy_cache_valid 200 30s;
+        add_header X-Cache-Status $upstream_cache_status;
+    }}
+    
+    # Streamlit UI
+    location /ui/ {{
+        proxy_pass http://streamlit_ui/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # WebSocket support para Streamlit
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        
+        proxy_timeout 60s;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+    }}
+    
+    # Health checks
+    location /health {{
+        access_log off;
+        return 200 "healthy\\n";
+        add_header Content-Type text/plain;
+    }}
+    
+    # Página principal
+    location / {{
+        try_files $uri $uri/ /index.html;
+    }}
+    
+    # Error pages
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+    
+    location = /50x.html {{
+        root /usr/share/nginx/html;
+    }}
+}}
+
+# Status page para monitoreo
+server {{
+    listen 127.0.0.1:8080;
+    location /nginx_status {{
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+    }}
+}}
+"""
+        return config
+    
+    @staticmethod
+    def save_config(config: str, filename: str = "/etc/nginx/sites-available/inventario-retail"):
+        """Guardar configuración NGINX"""
+        try:
+            with open(filename, 'w') as f:
+                f.write(config)
+            logger.info(f"✅ Configuración NGINX guardada: {filename}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Error guardando configuración NGINX: {e}")
+            return False
+
+# Instancia global profiler
+profiler = PerformanceProfiler()
+
+async def run_optimization_suite():
+    """Ejecutar suite completa de optimizaciones"""
+    logger.info("🚀 Iniciando suite de optimizaciones...")
+    
+    # 1. Configurar cache Redis
+    logger.info("🔧 Configurando Redis cache...")
+    cache_stats = cache.get_stats()
+    logger.info(f"📊 Redis stats: {cache_stats}")
+    
+    # 2. Optimizar base de datos (requiere conexión)
+    # db_optimizer = DatabaseOptimizer(db_session)
+    # db_optimizer.add_indexes()
+    # db_stats = db_optimizer.get_table_stats()
+    # logger.info(f"📊 DB stats: {db_stats}")
+    
+    # 3. Generar configuración NGINX
+    logger.info("⚙️ Generando configuración NGINX...")
+    nginx_config = NginxOptimizer.generate_config()
+    NginxOptimizer.save_config(nginx_config, "data/nginx_optimized.conf")
+    
+    # 4. Generar reporte de performance
+    logger.info("📄 Generando reporte de performance...")
+    report_file = profiler.save_report()
+    
+    logger.info("✅ Suite de optimizaciones completada")
+    return {
+        "cache_stats": cache_stats,
+        "nginx_config_generated": True,
+        "performance_report": report_file
+    }
+
+if __name__ == "__main__":
+    # Ejecutar optimizaciones
+    result = asyncio.run(run_optimization_suite())
+    print("🎉 Optimizaciones completadas:")
+    print(json.dumps(result, indent=2))
+</div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Scripts Adicionales -->
+        <section id="scripts" class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-code text-purple-500 mr-3"></i>
+                Scripts de Deployment y Monitoreo
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-purple-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-600">
+                        <i class="fas fa-rocket mr-2"></i> Scripts Deployment
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-server text-purple-500 mr-2"></i> setup_production.sh</li>
+                        <li><i class="fas fa-cloud text-purple-500 mr-2"></i> cloud_init.sh</li>
+                        <li><i class="fas fa-shield-alt text-purple-500 mr-2"></i> security_hardening.sh</li>
+                        <li><i class="fas fa-certificate text-purple-500 mr-2"></i> ssl_setup.sh</li>
+                    </ul>
+                </div>
+                <div class="bg-orange-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-orange-600">
+                        <i class="fas fa-chart-line mr-2"></i> Scripts Monitoreo
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-heartbeat text-orange-500 mr-2"></i> health_monitor.py</li>
+                        <li><i class="fas fa-search text-orange-500 mr-2"></i> performance_profiler.py</li>
+                        <li><i class="fas fa-bell text-orange-500 mr-2"></i> alert_manager.py</li>
+                        <li><i class="fas fa-backup text-orange-500 mr-2"></i> auto_backup.sh</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Costos y Estimaciones -->
+            <div class="bg-gradient-to-r from-green-100 to-blue-100 p-6 rounded-lg mb-6">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-calculator mr-2"></i> Estimación Costos Mensuales Argentina
+                </h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-600 mb-2">DigitalOcean Básico</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Droplet 2CPU/4GB: $24/mes</li>
+                            <li>• Load Balancer: $12/mes</li>
+                            <li>• Backup: $5/mes</li>
+                            <li>• <strong>Total: ~$41/mes</strong></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-600 mb-2">AWS Optimizado</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• t3.medium: $30/mes</li>
+                            <li>• ALB: $16/mes</li>
+                            <li>• RDS PostgreSQL: $25/mes</li>
+                            <li>• <strong>Total: ~$71/mes</strong></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-600 mb-2">Híbrido Local</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• VPS Argentina: $15/mes</li>
+                            <li>• CDN CloudFlare: $0/mes</li>
+                            <li>• SSL Let's Encrypt: $0/mes</li>
+                            <li>• <strong>Total: ~$15/mes</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmarks Performance -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <h3 class="text-2xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-tachometer-alt mr-2"></i> Benchmarks Performance Esperados
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-3">Antes Optimización</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><i class="fas fa-clock text-red-500 mr-2"></i> Consultas complejas: 500-1000ms</li>
+                            <li><i class="fas fa-upload text-red-500 mr-2"></i> Upload facturas: 15-30s</li>
+                            <li><i class="fas fa-brain text-red-500 mr-2"></i> Predicciones ML: 2-5s</li>
+                            <li><i class="fas fa-users text-red-500 mr-2"></i> Concurrencia: 10 usuarios</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-green-600 mb-3">Después Optimización</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><i class="fas fa-clock text-green-500 mr-2"></i> Consultas complejas: 50-150ms</li>
+                            <li><i class="fas fa-upload text-green-500 mr-2"></i> Upload facturas: 3-8s</li>
+                            <li><i class="fas fa-brain text-green-500 mr-2"></i> Predicciones ML: 200-500ms</li>
+                            <li><i class="fas fa-users text-green-500 mr-2"></i> Concurrencia: 100+ usuarios</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resumen Final -->
+        <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-bold mb-6">
+                <i class="fas fa-flag-checkered mr-3"></i>
+                Escalado Cloud Completo
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">✅ Implementado:</h3>
+                    <ul class="space-y-2">
+                        <li><i class="fas fa-cloud mr-2"></i> Scripts deployment AWS + DigitalOcean automáticos</li>
+                        <li><i class="fas fa-database mr-2"></i> Migración PostgreSQL con validación completa</li>
+                        <li><i class="fab fa-redis mr-2"></i> Optimizaciones Redis + NGINX + BD</li>
+                        <li><i class="fas fa-chart-line mr-2"></i> Auto-scaling y load balancing</li>
+                        <li><i class="fas fa-tachometer-alt mr-2"></i> Profiling y métricas performance</li>
+                        <li><i class="fas fa-dollar-sign mr-2"></i> Costos optimizados para Argentina (<$50/mes)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">🎯 Siguiente Paso Sugerido:</h3>
+                    <div class="bg-white bg-opacity-20 p-4 rounded-lg">
+                        <p class="font-medium mb-2">Prompt 7: Integraciones Avanzadas y Compliance Fiscal</p>
+                        <p class="text-sm opacity-90">
+                            Implementar integración AFIP WSFE real, sync MercadoLibre API, 
+                            compliance fiscal (reportes IVA, retención 5 años), y QR facturas RG 4290.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 p-4 bg-white bg-opacity-10 rounded-lg">
+                <p class="text-center text-lg">
+                    <i class="fas fa-rocket mr-2"></i>
+                    <strong>Tu sistema está listo para producción argentina con escalado cloud completo!</strong>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="mb-2">Sistema Inventario Retail Argentino - Escalado Cloud Production Ready</p>
+            <p class="text-gray-400 text-sm">Prompt 6/8 - Cadena Extendida Completada</p>
+        </div>
+    </footer>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDqaaY5vR6dPlC8%2BpJ5qwwOyqRY64xoTgA30ZCZQ1n5ld%2BY2J5EiAkgvNXtzY5uThH7dQReWQf4pbtNlvUVJVdogNB6REfWUXSE09r0Y%2Bq47CqyNsDCZ0Sfs6KGY35IVojkwbq%2Bm7ZPIUh7%2FtX3Mr3bTkAOQ2zJwfyklpkRIw5fskXxe674eW%2FKipmv%2FaE%2Fw40dXBYA2BeLl6px43JjdmX5jrfo4pIYSq19V4rOQUWHcBXo2qf1QG1%2FsTpCpJl7ZQ2J3kzXqqAqXA4ZPsrHAfWaWuHSz57uD9KBqAzSn%2BA7Vb%2Bhc530ZvuWDBUViXn7Uf9JaxHaRVF1YLAlp%2FVm2dbJE0uO8HDBqrre5XyeaLMOCIMdYQFQ6UlAEAww2TTHwq2eUuOEZz5MKBgBvdME9hy2X4Oq1UgfEm%2BbziFnEhEyohso1PU0GRzizC1Elxap4QWrQz95I5BljlRXjMMHksZt1k5FtClepGqpKJycpbzqjO9sAoEF6zLPG1Q9P6bXlSfnif0G1HhLyPEym5OR3Nzlc%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDqaaY5vR6dPlC8+pJ5qwwOyqRY64xoTgA30ZCZQ1n5ld+Y2J5EiAkgvNXtzY5uThH7dQReWQf4pbtNlvUVJVdogNB6REfWUXSE09r0Y+q47CqyNsDCZ0Sfs6KGY35IVojkwbq+m7ZPIUh7/tX3Mr3bTkAOQ2zJwfyklpkRIw5fskXxe674eW/Kipmv/aE/w40dXBYA2BeLl6px43JjdmX5jrfo4pIYSq19V4rOQUWHcBXo2qf1QG1/sTpCpJl7ZQ2J3kzXqqAqXA4ZPsrHAfWaWuHSz57uD9KBqAzSn+A7Vb+hc530ZvuWDBUViXn7Uf9JaxHaRVF1YLAlp/Vm2dbJE0uO8HDBqrre5XyeaLMOCIMdYQFQ6UlAEAww2TTHwq2eUuOEZz5MKBgBvdME9hy2X4Oq1UgfEm+bziFnEhEyohso1PU0GRzizC1Elxap4QWrQz95I5BljlRXjMMHksZt1k5FtClepGqpKJycpbzqjO9sAoEF6zLPG1Q9P6bXlSfnif0G1HhLyPEym5OR3Nzlc=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

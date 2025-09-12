@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}OCR Facturas - Sistema Inventario{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'navbar.html' %}
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-file-invoice"></i> Procesamiento OCR de Facturas</h1>
+            <p>Sube facturas para extraer automáticamente la información de productos y precios</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Arrastra facturas aquí o haz clic para seleccionar</h3>
+                    <p>Formatos soportados: JPG, PNG, PDF (máx. 16MB)</p>
+                    <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" multiple style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-folder-open"></i> Seleccionar Archivos
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Queue -->
+        <div class="processing-section" id="processingSection" style="display: none;">
+            <h3>📋 Cola de Procesamiento</h3>
+            <div class="processing-queue" id="processingQueue">
+                <!-- Archivos en procesamiento -->
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="section-header">
+                <h3>📊 Resultados OCR</h3>
+                <div class="results-actions">
+                    <button class="btn btn-success" onclick="applyAllResults()">
+                        <i class="fas fa-check-double"></i> Aplicar Todos
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportResults()">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-container" id="resultsContainer">
+                <!-- Resultados OCR -->
+            </div>
+        </div>
+
+        <!-- OCR History -->
+        <div class="history-section">
+            <h3>📚 Historial OCR Reciente</h3>
+            <div class="history-list" id="historyList">
+                <div class="history-item">
+                    <div class="history-info">
+                        <div class="history-filename">factura_001.jpg</div>
+                        <div class="history-date">22/08/2025 14:30</div>
+                    </div>
+                    <div class="history-status">
+                        <span class="badge badge-success">Procesado</span>
+                    </div>
+                    <div class="history-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="viewOCRResult(1)">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-info">
+                        <div class="history-filename">factura_002.pdf</div>
+                        <div class="history-date">22/08/2025 13:15</div>
+                    </div>
+                    <div class="history-status">
+                        <span class="badge badge-warning">Requiere revisión</span>
+                    </div>
+                    <div class="history-actions">
+                        <button class="btn btn-sm btn-primary" onclick="reviewOCRResult(2)">
+                            <i class="fas fa-edit"></i> Revisar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal OCR Result Detail -->
+<div class="modal" id="ocrResultModal">
+    <div class="modal-content large-modal">
+        <div class="modal-header">
+            <h3>Resultado OCR Detallado</h3>
+            <button class="modal-close" onclick="closeOCRModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="ocr-result-detail" id="ocrResultDetail">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeOCRModal()">Cerrar</button>
+            <button class="btn btn-warning" onclick="correctOCRData()">
+                <i class="fas fa-edit"></i> Corregir
+            </button>
+            <button class="btn btn-success" onclick="applyOCRResult()">
+                <i class="fas fa-check"></i> Aplicar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/ocr.js') }}"></script>
+{% endblock %}

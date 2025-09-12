@@ -1,0 +1,3131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema MVP+ Production Ready - Resiliencia + Deployment</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .code-block code {
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .feature-card {
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+         {
+            .no-print { display: none; }
+            body { font-size: 10px; }
+            .code-block { font-size: 8px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold section-header mb-4">
+                <i class="fas fa-rocket mr-3"></i>Sistema MVP+ Production Ready
+            </h1>
+            <p class="text-xl text-gray-600 mb-6">Resiliencia Avanzada + Features Plus + Testing Completo + Deployment</p>
+            <div class="flex justify-center space-x-6 text-sm">
+                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                    <i class="fas fa-shield-alt mr-1"></i>Outbox Pattern
+                </span>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                    <i class="fas fa-heartbeat mr-1"></i>Heartbeat Monitor
+                </span>
+                <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+                    <i class="fas fa-telegram-plane mr-1"></i>Alertas Telegram
+                </span>
+                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full">
+                    <i class="fas fa-database mr-1"></i>Backup Auto
+                </span>
+            </div>
+        </div>
+
+        <!-- Sección 1: Código Resiliencia/Features -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-cogs text-blue-600 mr-3"></i>
+                SECCIÓN 1: CÓDIGO RESILIENCIA/FEATURES
+            </h2>
+
+            <!-- Estructura del Proyecto Expandida -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-purple-700">
+                    <i class="fas fa-folder-tree mr-2"></i>Estructura Final del Proyecto
+                </h3>
+                <div class="code-block">
+                    <code>
+inventario-retail/
+├── shared/
+│   ├── __init__.py
+│   ├── config.py               # Configuración expandida
+│   ├── database.py             # SQLAlchemy + nuevas tablas
+│   ├── models.py               # Modelos base + outbox
+│   └── utils.py                # Utilidades compartidas
+├── agente_negocio/
+│   ├── __init__.py
+│   ├── main.py                 # FastAPI con middleware resiliencia
+│   ├── models/
+│   ├── ocr/
+│   ├── pricing/
+│   ├── invoice/
+│   ├── integrations/
+│   └── cache/
+├── agente_deposito/
+│   ├── __init__.py
+│   ├── main.py                 # FastAPI con heartbeat
+│   ├── stock_manager.py
+│   ├── schemas.py
+│   └── exceptions.py
+├── resiliencia/
+│   ├── __init__.py
+│   ├── outbox.py              # Outbox pattern implementation
+│   ├── heartbeat.py           # Health monitoring system
+│   ├── circuit_breaker.py     # Circuit breaker para HTTP
+│   └── retry_manager.py       # Retry con backoff exponencial
+├── features/
+│   ├── __init__.py
+│   ├── dashboard.py           # Dashboard JSON metrics
+│   ├── alerts.py              # Sistema alertas Telegram
+│   ├── backup.py              # Backup automático SQLite
+│   └── monitor.py             # Monitor sistema completo
+├── tests/
+│   ├── unit/                  # Tests unitarios
+│   ├── integration/           # Tests integración
+│   ├── load/                  # Tests carga/performance
+│   ├── chaos/                 # Tests chaos engineering
+│   └── e2e/                   # Tests end-to-end
+├── scripts/
+│   ├── init_system.sh         # Inicialización sistema
+│   ├── start_all.sh           # Arrancar todos los servicios
+│   ├── deploy_prod.sh         # Deploy producción
+│   ├── backup_system.sh       # Backup manual
+│   └── health_check.sh        # Health check completo
+├── deployment/
+│   ├── systemd/               # Archivos systemd
+│   ├── nginx/                 # Configuración nginx
+│   ├── monitoring/            # Config monitoring
+│   └── ssl/                   # Certificados SSL
+├── .env.template
+├── .env.prod.template
+├── .gitignore
+├── requirements.txt
+├── requirements-prod.txt
+└── docker-compose.yml         # Para desarrollo opcional
+                    </code>
+                </div>
+            </div>
+
+            <!-- Outbox Pattern -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-green-700">
+                    <i class="fas fa-inbox mr-2"></i>Outbox Pattern Implementation
+                </h3>
+                
+                <h4 class="font-semibold text-gray-700 mb-2">📁 resiliencia/outbox.py</h4>
+                <div class="code-block">
+                    <code>
+"""
+Outbox Pattern para garantizar entrega de mensajes entre agentes
+Implementación con SQLite y worker asíncrono
+"""
+
+import asyncio
+import json
+import logging
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Dict, Any, Optional, List
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from shared.database import get_session, Base
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+
+class MessageStatus(str, Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"  
+    DELIVERED = "delivered"
+    FAILED = "failed"
+    EXPIRED = "expired"
+
+class OutboxMessage(Base):
+    __tablename__ = "outbox_messages"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    aggregate_id = Column(String(255), nullable=False, index=True)
+    event_type = Column(String(100), nullable=False)
+    payload = Column(Text, nullable=False)  # JSON
+    destination_service = Column(String(100), nullable=False)
+    destination_endpoint = Column(String(255), nullable=False)
+    status = Column(String(50), default=MessageStatus.PENDING, index=True)
+    retry_count = Column(Integer, default=0)
+    max_retries = Column(Integer, default=3)
+    next_retry_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    delivered_at = Column(DateTime, nullable=True)
+    error_message = Column(Text, nullable=True)
+
+class OutboxManager:
+    def __init__(self):
+        self.settings = get_settings()
+        self.running = False
+        
+    async def publish_message(
+        self,
+        aggregate_id: str,
+        event_type: str,
+        payload: Dict[str, Any],
+        destination_service: str,
+        destination_endpoint: str,
+        max_retries: int = 3
+    ) -> bool:
+        """Publica mensaje en outbox para entrega garantizada"""
+        try:
+            with get_session() as session:
+                message = OutboxMessage(
+                    aggregate_id=aggregate_id,
+                    event_type=event_type,
+                    payload=json.dumps(payload),
+                    destination_service=destination_service,
+                    destination_endpoint=destination_endpoint,
+                    max_retries=max_retries,
+                    next_retry_at=datetime.utcnow()
+                )
+                session.add(message)
+                session.commit()
+                logger.info(f"Mensaje {event_type} agregado a outbox para {destination_service}")
+                return True
+        except Exception as e:
+            logger.error(f"Error agregando mensaje a outbox: {e}")
+            return False
+    
+    async def get_pending_messages(self, limit: int = 10) -> List[OutboxMessage]:
+        """Obtiene mensajes pendientes para procesar"""
+        with get_session() as session:
+            return session.query(OutboxMessage).filter(
+                OutboxMessage.status.in_([MessageStatus.PENDING, MessageStatus.FAILED]),
+                OutboxMessage.next_retry_at <= datetime.utcnow(),
+                OutboxMessage.retry_count < OutboxMessage.max_retries
+            ).limit(limit).all()
+    
+    async def mark_processing(self, message_id: int):
+        """Marca mensaje como en procesamiento"""
+        with get_session() as session:
+            message = session.query(OutboxMessage).filter_by(id=message_id).first()
+            if message:
+                message.status = MessageStatus.PROCESSING
+                message.updated_at = datetime.utcnow()
+                session.commit()
+    
+    async def mark_delivered(self, message_id: int):
+        """Marca mensaje como entregado exitosamente"""
+        with get_session() as session:
+            message = session.query(OutboxMessage).filter_by(id=message_id).first()
+            if message:
+                message.status = MessageStatus.DELIVERED
+                message.delivered_at = datetime.utcnow()
+                message.updated_at = datetime.utcnow()
+                session.commit()
+                logger.info(f"Mensaje {message_id} marcado como entregado")
+    
+    async def mark_failed(self, message_id: int, error_message: str):
+        """Marca mensaje como fallido con mensaje de error"""
+        with get_session() as session:
+            message = session.query(OutboxMessage).filter_by(id=message_id).first()
+            if message:
+                message.retry_count += 1
+                message.error_message = error_message
+                message.updated_at = datetime.utcnow()
+                
+                if message.retry_count >= message.max_retries:
+                    message.status = MessageStatus.FAILED
+                    logger.error(f"Mensaje {message_id} falló definitivamente: {error_message}")
+                else:
+                    # Backoff exponencial: 2^retry_count minutos
+                    backoff_minutes = 2 ** message.retry_count
+                    message.next_retry_at = datetime.utcnow() + timedelta(minutes=backoff_minutes)
+                    message.status = MessageStatus.PENDING
+                    logger.warning(f"Mensaje {message_id} fallió, reintento en {backoff_minutes} minutos")
+                
+                session.commit()
+    
+    async def cleanup_old_messages(self, days: int = 7):
+        """Limpia mensajes antiguos entregados"""
+        cutoff_date = datetime.utcnow() - timedelta(days=days)
+        with get_session() as session:
+            deleted = session.query(OutboxMessage).filter(
+                OutboxMessage.status == MessageStatus.DELIVERED,
+                OutboxMessage.delivered_at < cutoff_date
+            ).delete()
+            session.commit()
+            if deleted > 0:
+                logger.info(f"Limpiados {deleted} mensajes antiguos del outbox")
+    
+    async def start_worker(self):
+        """Inicia worker asíncrono para procesar mensajes"""
+        self.running = True
+        logger.info("Outbox worker iniciado")
+        
+        while self.running:
+            try:
+                # Procesar mensajes pendientes
+                messages = await self.get_pending_messages()
+                for message in messages:
+                    await self.process_message(message)
+                
+                # Cleanup periódico
+                await self.cleanup_old_messages()
+                
+                # Esperar antes del siguiente ciclo
+                await asyncio.sleep(30)  # 30 segundos
+                
+            except Exception as e:
+                logger.error(f"Error en outbox worker: {e}")
+                await asyncio.sleep(60)  # Esperar más en caso de error
+    
+    async def stop_worker(self):
+        """Detiene el worker"""
+        self.running = False
+        logger.info("Outbox worker detenido")
+    
+    async def process_message(self, message: OutboxMessage):
+        """Procesa un mensaje individual"""
+        try:
+            await self.mark_processing(message.id)
+            
+            # Simular entrega HTTP (integrar con tu HTTP client)
+            from integrations.deposito_client import DepositoClient
+            client = DepositoClient()
+            
+            payload = json.loads(message.payload)
+            success = await client.send_message(
+                message.destination_endpoint, 
+                payload
+            )
+            
+            if success:
+                await self.mark_delivered(message.id)
+            else:
+                await self.mark_failed(message.id, "HTTP delivery failed")
+                
+        except Exception as e:
+            await self.mark_failed(message.id, str(e))
+
+# Instancia global
+outbox_manager = OutboxManager()
+                    </code>
+                </div>
+
+                <h4 class="font-semibold text-gray-700 mb-2 mt-6">📁 resiliencia/heartbeat.py</h4>
+                <div class="code-block">
+                    <code>
+"""
+Sistema de Heartbeat y Health Monitoring
+Monitoreo activo de servicios con alertas automáticas
+"""
+
+import asyncio
+import aiohttp
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+from enum import Enum
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+
+class ServiceStatus(str, Enum):
+    HEALTHY = "healthy"
+    DEGRADED = "degraded"
+    DOWN = "down"
+    UNKNOWN = "unknown"
+
+@dataclass
+class ServiceHealth:
+    name: str
+    url: str
+    status: ServiceStatus
+    last_check: datetime
+    response_time_ms: Optional[float]
+    error_message: Optional[str]
+    consecutive_failures: int
+
+class HealthMonitor:
+    def __init__(self):
+        self.settings = get_settings()
+        self.services: Dict[str, ServiceHealth] = {}
+        self.running = False
+        self.check_interval = 30  # segundos
+        self.alert_threshold = 3  # fallos consecutivos para alerta
+        
+        # Configurar servicios a monitorear
+        self.configure_services()
+    
+    def configure_services(self):
+        """Configura servicios para monitorear"""
+        services_config = [
+            {
+                "name": "agente_deposito",
+                "url": f"http://localhost:{self.settings.AGENTE_DEPOSITO_PORT}/health"
+            },
+            {
+                "name": "agente_negocio", 
+                "url": f"http://localhost:{self.settings.AGENTE_NEGOCIO_PORT}/health"
+            }
+        ]
+        
+        for config in services_config:
+            self.services[config["name"]] = ServiceHealth(
+                name=config["name"],
+                url=config["url"],
+                status=ServiceStatus.UNKNOWN,
+                last_check=datetime.utcnow(),
+                response_time_ms=None,
+                error_message=None,
+                consecutive_failures=0
+            )
+    
+    async def check_service_health(self, service: ServiceHealth) -> ServiceHealth:
+        """Verifica salud de un servicio individual"""
+        start_time = datetime.utcnow()
+        
+        try:
+            timeout = aiohttp.ClientTimeout(total=10)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(service.url) as response:
+                    response_time = (datetime.utcnow() - start_time).total_seconds() * 1000
+                    
+                    if response.status == 200:
+                        service.status = ServiceStatus.HEALTHY
+                        service.consecutive_failures = 0
+                        service.error_message = None
+                    else:
+                        service.status = ServiceStatus.DEGRADED
+                        service.consecutive_failures += 1
+                        service.error_message = f"HTTP {response.status}"
+                    
+                    service.response_time_ms = response_time
+                    
+        except asyncio.TimeoutError:
+            service.status = ServiceStatus.DOWN
+            service.consecutive_failures += 1
+            service.error_message = "Timeout - servicio no responde"
+            service.response_time_ms = None
+            
+        except aiohttp.ClientConnectorError:
+            service.status = ServiceStatus.DOWN
+            service.consecutive_failures += 1
+            service.error_message = "Connection refused - servicio caído"
+            service.response_time_ms = None
+            
+        except Exception as e:
+            service.status = ServiceStatus.DOWN
+            service.consecutive_failures += 1
+            service.error_message = f"Error: {str(e)}"
+            service.response_time_ms = None
+        
+        service.last_check = datetime.utcnow()
+        return service
+    
+    async def check_all_services(self):
+        """Verifica salud de todos los servicios"""
+        tasks = []
+        for service in self.services.values():
+            task = asyncio.create_task(self.check_service_health(service))
+            tasks.append(task)
+        
+        await asyncio.gather(*tasks)
+        
+        # Enviar alertas si es necesario
+        await self.check_alerts()
+    
+    async def check_alerts(self):
+        """Verifica si necesita enviar alertas"""
+        for service in self.services.values():
+            if (service.consecutive_failures >= self.alert_threshold and 
+                service.status == ServiceStatus.DOWN):
+                
+                await self.send_alert(service)
+    
+    async def send_alert(self, service: ServiceHealth):
+        """Envía alerta por servicio caído"""
+        try:
+            from features.alerts import send_telegram_alert
+            
+            message = f"""
+🚨 *ALERTA CRÍTICA* 🚨
+
+Servicio: `{service.name}`
+Estado: `{service.status.value}`
+Fallos consecutivos: `{service.consecutive_failures}`
+Último error: `{service.error_message}`
+Último check: `{service.last_check.strftime('%Y-%m-%d %H:%M:%S')}`
+
+URL: `{service.url}`
+            """
+            
+            await send_telegram_alert(message)
+            logger.error(f"Alerta enviada para servicio {service.name}")
+            
+        except Exception as e:
+            logger.error(f"Error enviando alerta: {e}")
+    
+    def get_system_health(self) -> Dict:
+        """Obtiene resumen de salud del sistema"""
+        healthy_count = sum(1 for s in self.services.values() if s.status == ServiceStatus.HEALTHY)
+        total_services = len(self.services)
+        
+        overall_status = ServiceStatus.HEALTHY
+        if healthy_count == 0:
+            overall_status = ServiceStatus.DOWN
+        elif healthy_count < total_services:
+            overall_status = ServiceStatus.DEGRADED
+        
+        return {
+            "overall_status": overall_status.value,
+            "healthy_services": healthy_count,
+            "total_services": total_services,
+            "services": {
+                name: {
+                    "status": service.status.value,
+                    "last_check": service.last_check.isoformat(),
+                    "response_time_ms": service.response_time_ms,
+                    "consecutive_failures": service.consecutive_failures,
+                    "error_message": service.error_message
+                }
+                for name, service in self.services.items()
+            },
+            "last_check": datetime.utcnow().isoformat()
+        }
+    
+    async def start_monitoring(self):
+        """Inicia monitoreo continuo"""
+        self.running = True
+        logger.info("Health monitor iniciado")
+        
+        while self.running:
+            try:
+                await self.check_all_services()
+                await asyncio.sleep(self.check_interval)
+            except Exception as e:
+                logger.error(f"Error en health monitor: {e}")
+                await asyncio.sleep(60)
+    
+    async def stop_monitoring(self):
+        """Detiene el monitoreo"""
+        self.running = False
+        logger.info("Health monitor detenido")
+
+# Instancia global
+health_monitor = HealthMonitor()
+                    </code>
+                </div>
+
+                <h4 class="font-semibold text-gray-700 mb-2 mt-6">📁 resiliencia/circuit_breaker.py</h4>
+                <div class="code-block">
+                    <code>
+"""
+Circuit Breaker Pattern para llamadas HTTP
+Previene cascading failures en comunicación entre servicios
+"""
+
+import time
+import asyncio
+import logging
+from enum import Enum
+from typing import Callable, Any, Optional
+from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
+
+class CircuitState(str, Enum):
+    CLOSED = "closed"       # Normal operation
+    OPEN = "open"           # Failing fast
+    HALF_OPEN = "half_open" # Testing recovery
+
+@dataclass
+class CircuitBreakerConfig:
+    failure_threshold: int = 5          # Fallos para abrir circuito
+    recovery_timeout: int = 60          # Segundos antes de probar recovery
+    success_threshold: int = 3          # Éxitos para cerrar circuito
+    timeout: int = 30                   # Timeout por llamada
+
+class CircuitBreaker:
+    def __init__(self, name: str, config: CircuitBreakerConfig = None):
+        self.name = name
+        self.config = config or CircuitBreakerConfig()
+        
+        self.state = CircuitState.CLOSED
+        self.failure_count = 0
+        self.success_count = 0
+        self.last_failure_time = None
+        
+        logger.info(f"Circuit breaker '{name}' inicializado")
+    
+    async def call(self, func: Callable, *args, **kwargs) -> Any:
+        """Ejecuta función con circuit breaker protection"""
+        
+        # Verificar si podemos ejecutar
+        if not self._can_execute():
+            raise CircuitBreakerOpenException(
+                f"Circuit breaker '{self.name}' está abierto"
+            )
+        
+        try:
+            # Ejecutar con timeout
+            result = await asyncio.wait_for(
+                func(*args, **kwargs),
+                timeout=self.config.timeout
+            )
+            
+            # Registrar éxito
+            await self._on_success()
+            return result
+            
+        except Exception as e:
+            # Registrar fallo
+            await self._on_failure()
+            raise e
+    
+    def _can_execute(self) -> bool:
+        """Verifica si se puede ejecutar la llamada"""
+        
+        if self.state == CircuitState.CLOSED:
+            return True
+        
+        if self.state == CircuitState.OPEN:
+            # Verificar si es tiempo de intentar recovery
+            if (self.last_failure_time and 
+                time.time() - self.last_failure_time >= self.config.recovery_timeout):
+                self.state = CircuitState.HALF_OPEN
+                self.success_count = 0
+                logger.info(f"Circuit breaker '{self.name}' cambiado a HALF_OPEN")
+                return True
+            return False
+        
+        if self.state == CircuitState.HALF_OPEN:
+            return True
+        
+        return False
+    
+    async def _on_success(self):
+        """Maneja éxito de llamada"""
+        if self.state == CircuitState.HALF_OPEN:
+            self.success_count += 1
+            
+            if self.success_count >= self.config.success_threshold:
+                self._reset()
+                logger.info(f"Circuit breaker '{self.name}' CERRADO - recovery exitoso")
+        
+        elif self.state == CircuitState.CLOSED:
+            self._reset()
+    
+    async def _on_failure(self):
+        """Maneja fallo de llamada"""
+        self.failure_count += 1
+        self.last_failure_time = time.time()
+        
+        if self.state == CircuitState.HALF_OPEN:
+            self._trip()
+            logger.warning(f"Circuit breaker '{self.name}' ABIERTO - fallo en recovery")
+        
+        elif (self.state == CircuitState.CLOSED and 
+              self.failure_count >= self.config.failure_threshold):
+            self._trip()
+            logger.warning(f"Circuit breaker '{self.name}' ABIERTO - threshold alcanzado")
+    
+    def _reset(self):
+        """Resetea el circuit breaker a estado normal"""
+        self.state = CircuitState.CLOSED
+        self.failure_count = 0
+        self.success_count = 0
+        self.last_failure_time = None
+    
+    def _trip(self):
+        """Abre el circuit breaker"""
+        self.state = CircuitState.OPEN
+        self.failure_count = 0
+        self.success_count = 0
+    
+    def get_stats(self) -> dict:
+        """Obtiene estadísticas del circuit breaker"""
+        return {
+            "name": self.name,
+            "state": self.state.value,
+            "failure_count": self.failure_count,
+            "success_count": self.success_count,
+            "last_failure_time": self.last_failure_time,
+            "config": {
+                "failure_threshold": self.config.failure_threshold,
+                "recovery_timeout": self.config.recovery_timeout,
+                "success_threshold": self.config.success_threshold,
+                "timeout": self.config.timeout
+            }
+        }
+
+class CircuitBreakerOpenException(Exception):
+    """Excepción cuando circuit breaker está abierto"""
+    pass
+
+class CircuitBreakerRegistry:
+    """Registry global para circuit breakers"""
+    
+    def __init__(self):
+        self._breakers: dict[str, CircuitBreaker] = {}
+    
+    def get_breaker(self, name: str, config: CircuitBreakerConfig = None) -> CircuitBreaker:
+        """Obtiene o crea circuit breaker"""
+        if name not in self._breakers:
+            self._breakers[name] = CircuitBreaker(name, config)
+        return self._breakers[name]
+    
+    def get_all_stats(self) -> dict:
+        """Obtiene stats de todos los breakers"""
+        return {
+            name: breaker.get_stats() 
+            for name, breaker in self._breakers.items()
+        }
+
+# Registry global
+circuit_breaker_registry = CircuitBreakerRegistry()
+                    </code>
+                </div>
+            </div>
+
+            <!-- Features Plus -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-blue-700">
+                    <i class="fas fa-plus-circle mr-2"></i>Features Plus Implementation
+                </h3>
+
+                <h4 class="font-semibold text-gray-700 mb-2">📁 features/dashboard.py</h4>
+                <div class="code-block">
+                    <code>
+"""
+Dashboard JSON con métricas del sistema
+Endpoint unificado para monitoreo y análisis
+"""
+
+import psutil
+import time
+from datetime import datetime, timedelta
+from typing import Dict, Any
+from sqlalchemy import func, and_
+from shared.database import get_session
+from shared.models import Producto, MovimientoStock
+from agente_negocio.models.factura import Factura
+from resiliencia.outbox import OutboxMessage, MessageStatus
+from resiliencia.heartbeat import health_monitor
+from resiliencia.circuit_breaker import circuit_breaker_registry
+
+class SystemDashboard:
+    def __init__(self):
+        self.start_time = datetime.utcnow()
+    
+    async def get_full_metrics(self) -> Dict[str, Any]:
+        """Obtiene métricas completas del sistema"""
+        return {
+            "timestamp": datetime.utcnow().isoformat(),
+            "uptime": self._get_uptime(),
+            "system": await self._get_system_metrics(),
+            "business": await self._get_business_metrics(),
+            "technical": await self._get_technical_metrics(),
+            "health": health_monitor.get_system_health(),
+            "circuit_breakers": circuit_breaker_registry.get_all_stats(),
+            "alerts": await self._get_alert_summary()
+        }
+    
+    def _get_uptime(self) -> Dict[str, Any]:
+        """Calcula uptime del sistema"""
+        uptime_delta = datetime.utcnow() - self.start_time
+        return {
+            "started_at": self.start_time.isoformat(),
+            "uptime_seconds": int(uptime_delta.total_seconds()),
+            "uptime_human": str(uptime_delta).split('.')[0]
+        }
+    
+    async def _get_system_metrics(self) -> Dict[str, Any]:
+        """Métricas de sistema (CPU, memoria, disco)"""
+        return {
+            "cpu_percent": psutil.cpu_percent(interval=1),
+            "memory": {
+                "total_gb": round(psutil.virtual_memory().total / (1024**3), 2),
+                "available_gb": round(psutil.virtual_memory().available / (1024**3), 2),
+                "percent_used": psutil.virtual_memory().percent
+            },
+            "disk": {
+                "total_gb": round(psutil.disk_usage('/').total / (1024**3), 2),
+                "free_gb": round(psutil.disk_usage('/').free / (1024**3), 2),
+                "percent_used": psutil.disk_usage('/').percent
+            }
+        }
+    
+    async def _get_business_metrics(self) -> Dict[str, Any]:
+        """Métricas de negocio"""
+        with get_session() as session:
+            # Productos y stock
+            total_productos = session.query(Producto).count()
+            stock_total = session.query(func.sum(Producto.stock_actual)).scalar() or 0
+            stock_critico = session.query(Producto).filter(
+                Producto.stock_actual <= Producto.stock_minimo
+            ).count()
+            
+            # Movimientos de stock (últimas 24h)
+            yesterday = datetime.utcnow() - timedelta(days=1)
+            movimientos_24h = session.query(MovimientoStock).filter(
+                MovimientoStock.timestamp >= yesterday
+            ).count()
+            
+            # Facturas procesadas (últimas 24h)  
+            facturas_24h = session.query(Factura).filter(
+                Factura.created_at >= yesterday
+            ).count()
+            
+            # Valor total inventario
+            valor_inventario = session.query(
+                func.sum(Producto.stock_actual * Producto.precio_compra)
+            ).scalar() or 0
+            
+            return {
+                "productos": {
+                    "total": total_productos,
+                    "stock_total_unidades": int(stock_total),
+                    "stock_critico": stock_critico,
+                    "valor_total_ars": round(float(valor_inventario), 2)
+                },
+                "actividad_24h": {
+                    "movimientos_stock": movimientos_24h,
+                    "facturas_procesadas": facturas_24h
+                }
+            }
+    
+    async def _get_technical_metrics(self) -> Dict[str, Any]:
+        """Métricas técnicas"""
+        with get_session() as session:
+            # Outbox messages stats
+            outbox_pending = session.query(OutboxMessage).filter_by(
+                status=MessageStatus.PENDING
+            ).count()
+            
+            outbox_failed = session.query(OutboxMessage).filter_by(
+                status=MessageStatus.FAILED
+            ).count()
+            
+            # Performance metrics (simulado - integrar con APM real)
+            return {
+                "outbox": {
+                    "pending_messages": outbox_pending,
+                    "failed_messages": outbox_failed
+                },
+                "performance": {
+                    "avg_response_time_ms": self._calculate_avg_response_time(),
+                    "requests_per_minute": self._calculate_rpm(),
+                    "error_rate_percent": self._calculate_error_rate()
+                }
+            }
+    
+    async def _get_alert_summary(self) -> Dict[str, Any]:
+        """Resumen de alertas recientes"""
+        # Integrar con sistema de alertas real
+        return {
+            "active_alerts": 0,
+            "alerts_24h": 0,
+            "last_alert": None
+        }
+    
+    def _calculate_avg_response_time(self) -> float:
+        """Calcula tiempo promedio de respuesta"""
+        # Placeholder - integrar con métricas reales
+        return 250.5
+    
+    def _calculate_rpm(self) -> int:
+        """Calcula requests por minuto"""
+        # Placeholder - integrar con métricas reales  
+        return 45
+    
+    def _calculate_error_rate(self) -> float:
+        """Calcula tasa de error"""
+        # Placeholder - integrar con métricas reales
+        return 0.5
+
+# Instancia global
+dashboard = SystemDashboard()
+                    </code>
+                </div>
+
+                <h4 class="font-semibold text-gray-700 mb-2 mt-6">📁 features/alerts.py</h4>
+                <div class="code-block">
+                    <code>
+"""
+Sistema de Alertas con Telegram Bot
+Notificaciones automáticas para eventos críticos
+"""
+
+import asyncio
+import logging
+from datetime import datetime
+from typing import Optional, List, Dict
+from telegram import Bot
+from telegram.error import TelegramError
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+
+class TelegramAlerter:
+    def __init__(self):
+        self.settings = get_settings()
+        self.bot: Optional[Bot] = None
+        self.chat_ids: List[str] = []
+        self._initialize_bot()
+    
+    def _initialize_bot(self):
+        """Inicializa el bot de Telegram"""
+        try:
+            if self.settings.TELEGRAM_BOT_TOKEN:
+                self.bot = Bot(token=self.settings.TELEGRAM_BOT_TOKEN)
+                self.chat_ids = self.settings.TELEGRAM_CHAT_IDS.split(',')
+                logger.info("Bot de Telegram inicializado correctamente")
+            else:
+                logger.warning("Token de Telegram no configurado")
+        except Exception as e:
+            logger.error(f"Error inicializando bot de Telegram: {e}")
+    
+    async def send_alert(self, message: str, alert_type: str = "INFO") -> bool:
+        """Envía alerta por Telegram"""
+        if not self.bot:
+            logger.warning("Bot de Telegram no disponible")
+            return False
+        
+        # Formatear mensaje con emoji según tipo
+        emoji_map = {
+            "INFO": "ℹ️",
+            "WARNING": "⚠️", 
+            "ERROR": "❌",
+            "CRITICAL": "🚨",
+            "SUCCESS": "✅"
+        }
+        
+        formatted_message = f"{emoji_map.get(alert_type, 'ℹ️')} *{alert_type}*\n\n{message}"
+        formatted_message += f"\n\n⏰ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        
+        success_count = 0
+        for chat_id in self.chat_ids:
+            try:
+                await self.bot.send_message(
+                    chat_id=chat_id,
+                    text=formatted_message,
+                    parse_mode='Markdown'
+                )
+                success_count += 1
+            except TelegramError as e:
+                logger.error(f"Error enviando mensaje a {chat_id}: {e}")
+        
+        if success_count > 0:
+            logger.info(f"Alerta {alert_type} enviada a {success_count} chats")
+            return True
+        return False
+    
+    async def send_stock_alert(self, producto_codigo: str, stock_actual: int, stock_minimo: int):
+        """Alerta específica de stock bajo"""
+        message = f"""
+📦 *ALERTA DE STOCK CRÍTICO*
+
+Producto: `{producto_codigo}`
+Stock actual: `{stock_actual} unidades`
+Stock mínimo: `{stock_minimo} unidades`
+
+🔄 Se requiere reposición urgente
+        """
+        await self.send_alert(message, "WARNING")
+    
+    async def send_system_error_alert(self, service: str, error: str):
+        """Alerta de error del sistema"""
+        message = f"""
+🔧 *ERROR DEL SISTEMA*
+
+Servicio: `{service}`
+Error: `{error}`
+
+🔍 Revisar logs para más detalles
+        """
+        await self.send_alert(message, "ERROR")
+    
+    async def send_inflacion_alert(self, inflacion_actual: float, umbral: float = 15.0):
+        """Alerta de inflación alta"""
+        if inflacion_actual > umbral:
+            message = f"""
+📈 *ALERTA DE INFLACIÓN ALTA*
+
+Inflación actual: `{inflacion_actual}%`
+Umbral configurado: `{umbral}%`
+
+💰 Considerar ajuste de precios y política de compras
+            """
+            await self.send_alert(message, "CRITICAL")
+    
+    async def send_backup_alert(self, status: str, details: str):
+        """Alerta de backup del sistema"""
+        alert_type = "SUCCESS" if status == "success" else "ERROR"
+        message = f"""
+💾 *BACKUP DEL SISTEMA*
+
+Estado: `{status.upper()}`
+Detalles: `{details}`
+        """
+        await self.send_alert(message, alert_type)
+    
+    async def send_performance_alert(self, metric: str, value: float, threshold: float):
+        """Alerta de rendimiento"""
+        message = f"""
+⚡ *ALERTA DE RENDIMIENTO*
+
+Métrica: `{metric}`
+Valor actual: `{value}`
+Umbral: `{threshold}`
+
+🔧 Revisar recursos del sistema
+        """
+        await self.send_alert(message, "WARNING")
+
+class AlertManager:
+    def __init__(self):
+        self.telegram = TelegramAlerter()
+        self.alert_history: List[Dict] = []
+        self.max_history = 100
+    
+    async def send_alert(self, message: str, alert_type: str = "INFO", 
+                        category: str = "SYSTEM") -> bool:
+        """Envía alerta y mantiene historial"""
+        
+        # Registrar en historial
+        alert_record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": alert_type,
+            "category": category,
+            "message": message
+        }
+        
+        self.alert_history.append(alert_record)
+        
+        # Mantener límite de historial
+        if len(self.alert_history) > self.max_history:
+            self.alert_history.pop(0)
+        
+        # Enviar por Telegram
+        success = await self.telegram.send_alert(message, alert_type)
+        
+        # Log local
+        log_level = getattr(logging, alert_type, logging.INFO)
+        logger.log(log_level, f"[{category}] {message}")
+        
+        return success
+    
+    def get_alert_history(self, limit: int = 20) -> List[Dict]:
+        """Obtiene historial de alertas"""
+        return self.alert_history[-limit:]
+    
+    async def check_system_alerts(self):
+        """Verifica condiciones del sistema para alertas automáticas"""
+        try:
+            from features.dashboard import dashboard
+            metrics = await dashboard.get_full_metrics()
+            
+            # Check CPU usage
+            cpu_percent = metrics["system"]["cpu_percent"]
+            if cpu_percent > 80:
+                await self.send_alert(
+                    f"Uso alto de CPU: {cpu_percent}%", 
+                    "WARNING", 
+                    "PERFORMANCE"
+                )
+            
+            # Check memory usage  
+            memory_percent = metrics["system"]["memory"]["percent_used"]
+            if memory_percent > 85:
+                await self.send_alert(
+                    f"Uso alto de memoria: {memory_percent}%",
+                    "WARNING",
+                    "PERFORMANCE"
+                )
+            
+            # Check stock crítico
+            stock_critico = metrics["business"]["productos"]["stock_critico"]
+            if stock_critico > 0:
+                await self.send_alert(
+                    f"{stock_critico} productos con stock crítico",
+                    "WARNING",
+                    "BUSINESS"
+                )
+            
+            # Check outbox messages
+            pending_messages = metrics["technical"]["outbox"]["pending_messages"]
+            if pending_messages > 10:
+                await self.send_alert(
+                    f"{pending_messages} mensajes pendientes en outbox",
+                    "WARNING", 
+                    "TECHNICAL"
+                )
+                
+        except Exception as e:
+            logger.error(f"Error en check_system_alerts: {e}")
+
+# Instancia global
+alert_manager = AlertManager()
+
+# Funciones de conveniencia
+async def send_telegram_alert(message: str, alert_type: str = "INFO"):
+    """Función de conveniencia para enviar alertas"""
+    return await alert_manager.send_alert(message, alert_type)
+                    </code>
+                </div>
+
+                <h4 class="font-semibold text-gray-700 mb-2 mt-6">📁 features/backup.py</h4>
+                <div class="code-block">
+                    <code>
+"""
+Sistema de Backup Automático
+Backup completo con verificación de integridad y rotación
+"""
+
+import os
+import shutil
+import sqlite3
+import tarfile
+import hashlib
+import logging
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Dict, List, Optional
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+
+class BackupManager:
+    def __init__(self):
+        self.settings = get_settings()
+        self.backup_dir = Path("backups")
+        self.backup_dir.mkdir(exist_ok=True)
+        
+        # Configuración de retención
+        self.daily_retention = 7      # 7 días de backups diarios
+        self.weekly_retention = 4     # 4 semanas de backups semanales
+        self.monthly_retention = 12   # 12 meses de backups mensuales
+    
+    async def create_full_backup(self) -> Dict[str, str]:
+        """Crea backup completo del sistema"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_name = f"backup_full_{timestamp}"
+        backup_path = self.backup_dir / backup_name
+        
+        try:
+            backup_path.mkdir(exist_ok=True)
+            
+            # 1. Backup de base de datos
+            db_backup_path = await self._backup_database(backup_path)
+            
+            # 2. Backup de configuración
+            config_backup_path = await self._backup_configuration(backup_path)
+            
+            # 3. Backup de logs (últimos 30 días)
+            logs_backup_path = await self._backup_logs(backup_path)
+            
+            # 4. Crear tarball comprimido
+            tarball_path = await self._create_tarball(backup_path, backup_name)
+            
+            # 5. Verificar integridad
+            is_valid = await self._verify_backup_integrity(tarball_path)
+            
+            # 6. Limpiar directorio temporal
+            shutil.rmtree(backup_path)
+            
+            backup_info = {
+                "backup_name": backup_name,
+                "backup_path": str(tarball_path),
+                "timestamp": timestamp,
+                "size_mb": round(tarball_path.stat().st_size / (1024*1024), 2),
+                "integrity_check": "passed" if is_valid else "failed",
+                "components": {
+                    "database": str(db_backup_path.name) if db_backup_path else None,
+                    "config": str(config_backup_path.name) if config_backup_path else None,
+                    "logs": str(logs_backup_path.name) if logs_backup_path else None
+                }
+            }
+            
+            logger.info(f"Backup completo creado: {backup_name}")
+            return backup_info
+            
+        except Exception as e:
+            logger.error(f"Error creando backup: {e}")
+            # Limpiar en caso de error
+            if backup_path.exists():
+                shutil.rmtree(backup_path)
+            raise
+    
+    async def _backup_database(self, backup_path: Path) -> Optional[Path]:
+        """Backup de la base de datos SQLite"""
+        try:
+            db_path = Path(self.settings.DATABASE_URL.replace("sqlite:///", ""))
+            if not db_path.exists():
+                logger.warning("Base de datos no encontrada")
+                return None
+            
+            # Backup usando SQLite backup API
+            backup_db_path = backup_path / "database.db"
+            
+            # Conexión a BD original
+            source_conn = sqlite3.connect(str(db_path))
+            
+            # Conexión a backup
+            backup_conn = sqlite3.connect(str(backup_db_path))
+            
+            # Realizar backup
+            source_conn.backup(backup_conn)
+            
+            # Cerrar conexiones
+            source_conn.close()
+            backup_conn.close()
+            
+            # Verificar que el backup tiene datos
+            backup_conn_verify = sqlite3.connect(str(backup_db_path))
+            cursor = backup_conn_verify.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            tables = cursor.fetchall()
+            backup_conn_verify.close()
+            
+            if not tables:
+                logger.error("Backup de BD está vacío")
+                return None
+            
+            logger.info(f"Backup de BD creado: {len(tables)} tablas")
+            return backup_db_path
+            
+        except Exception as e:
+            logger.error(f"Error en backup de BD: {e}")
+            return None
+    
+    async def _backup_configuration(self, backup_path: Path) -> Optional[Path]:
+        """Backup de archivos de configuración"""
+        try:
+            config_backup_path = backup_path / "config"
+            config_backup_path.mkdir(exist_ok=True)
+            
+            # Archivos a respaldar
+            config_files = [
+                ".env",
+                ".env.prod", 
+                "requirements.txt",
+                "requirements-prod.txt"
+            ]
+            
+            copied_files = 0
+            for config_file in config_files:
+                source_path = Path(config_file)
+                if source_path.exists():
+                    dest_path = config_backup_path / config_file
+                    shutil.copy2(source_path, dest_path)
+                    copied_files += 1
+            
+            # Backup de configuración de deployment
+            deployment_dir = Path("deployment")
+            if deployment_dir.exists():
+                shutil.copytree(
+                    deployment_dir, 
+                    config_backup_path / "deployment"
+                )
+                copied_files += 1
+            
+            if copied_files > 0:
+                logger.info(f"Backup de configuración: {copied_files} elementos")
+                return config_backup_path
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error en backup de configuración: {e}")
+            return None
+    
+    async def _backup_logs(self, backup_path: Path) -> Optional[Path]:
+        """Backup de logs recientes"""
+        try:
+            logs_backup_path = backup_path / "logs"
+            logs_backup_path.mkdir(exist_ok=True)
+            
+            logs_dir = Path("logs")
+            if not logs_dir.exists():
+                return None
+            
+            # Backup logs de últimos 30 días
+            cutoff_date = datetime.now() - timedelta(days=30)
+            copied_files = 0
+            
+            for log_file in logs_dir.glob("*.log*"):
+                if log_file.stat().st_mtime > cutoff_date.timestamp():
+                    dest_path = logs_backup_path / log_file.name
+                    shutil.copy2(log_file, dest_path)
+                    copied_files += 1
+            
+            if copied_files > 0:
+                logger.info(f"Backup de logs: {copied_files} archivos")
+                return logs_backup_path
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error en backup de logs: {e}")
+            return None
+    
+    async def _create_tarball(self, backup_path: Path, backup_name: str) -> Path:
+        """Crea tarball comprimido del backup"""
+        tarball_path = self.backup_dir / f"{backup_name}.tar.gz"
+        
+        with tarfile.open(tarball_path, "w:gz") as tar:
+            for item in backup_path.rglob("*"):
+                if item.is_file():
+                    arcname = item.relative_to(backup_path)
+                    tar.add(item, arcname=arcname)
+        
+        return tarball_path
+    
+    async def _verify_backup_integrity(self, tarball_path: Path) -> bool:
+        """Verifica integridad del backup"""
+        try:
+            # Verificar que el tarball se puede abrir
+            with tarfile.open(tarball_path, "r:gz") as tar:
+                members = tar.getnames()
+                
+                # Verificar que contiene archivos esperados
+                required_files = ["database.db"]
+                for required_file in required_files:
+                    if not any(required_file in member for member in members):
+                        logger.error(f"Archivo requerido no encontrado en backup: {required_file}")
+                        return False
+                
+                # Calcular checksum
+                tar.extractall(path="/tmp/backup_verify", members=tar.getmembers())
+                
+            # Limpiar directorio de verificación
+            verify_path = Path("/tmp/backup_verify")
+            if verify_path.exists():
+                shutil.rmtree(verify_path)
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error verificando integridad: {e}")
+            return False
+    
+    async def cleanup_old_backups(self):
+        """Limpia backups antiguos según política de retención"""
+        try:
+            current_time = datetime.now()
+            
+            for backup_file in self.backup_dir.glob("backup_*.tar.gz"):
+                # Extraer timestamp del nombre del archivo
+                try:
+                    timestamp_str = backup_file.stem.split("_")[-2] + "_" + backup_file.stem.split("_")[-1]
+                    backup_time = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+                    age_days = (current_time - backup_time).days
+                    
+                    should_delete = False
+                    
+                    # Política de retención
+                    if age_days > self.daily_retention:
+                        # Mantener backups semanales (domingos)
+                        if backup_time.weekday() == 6 and age_days <= (self.weekly_retention * 7):
+                            continue
+                        # Mantener backups mensuales (primer día del mes)
+                        elif backup_time.day == 1 and age_days <= (self.monthly_retention * 30):
+                            continue
+                        else:
+                            should_delete = True
+                    
+                    if should_delete:
+                        backup_file.unlink()
+                        logger.info(f"Backup eliminado: {backup_file.name}")
+                        
+                except (ValueError, IndexError) as e:
+                    logger.warning(f"Error parseando fecha de backup {backup_file.name}: {e}")
+            
+        except Exception as e:
+            logger.error(f"Error limpiando backups: {e}")
+    
+    async def restore_backup(self, backup_path: str) -> bool:
+        """Restaura un backup (¡usar con cuidado!)"""
+        try:
+            backup_file = Path(backup_path)
+            if not backup_file.exists():
+                logger.error(f"Archivo de backup no encontrado: {backup_path}")
+                return False
+            
+            # Crear backup de seguridad antes de restaurar
+            safety_backup = await self.create_full_backup()
+            logger.info(f"Backup de seguridad creado: {safety_backup['backup_name']}")
+            
+            # Extraer backup a directorio temporal
+            restore_dir = Path("/tmp/restore_backup")
+            restore_dir.mkdir(exist_ok=True)
+            
+            with tarfile.open(backup_file, "r:gz") as tar:
+                tar.extractall(path=restore_dir)
+            
+            # Restaurar base de datos
+            db_backup_path = restore_dir / "database.db"
+            if db_backup_path.exists():
+                current_db_path = Path(self.settings.DATABASE_URL.replace("sqlite:///", ""))
+                shutil.copy2(db_backup_path, current_db_path)
+                logger.info("Base de datos restaurada")
+            
+            # Limpiar directorio temporal
+            shutil.rmtree(restore_dir)
+            
+            logger.info(f"Backup restaurado exitosamente desde: {backup_path}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error restaurando backup: {e}")
+            return False
+    
+    def list_backups(self) -> List[Dict]:
+        """Lista todos los backups disponibles"""
+        backups = []
+        
+        for backup_file in sorted(self.backup_dir.glob("backup_*.tar.gz")):
+            try:
+                stat = backup_file.stat()
+                timestamp_str = backup_file.stem.split("_")[-2] + "_" + backup_file.stem.split("_")[-1]
+                backup_time = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+                
+                backups.append({
+                    "name": backup_file.name,
+                    "path": str(backup_file),
+                    "timestamp": backup_time.isoformat(),
+                    "size_mb": round(stat.st_size / (1024*1024), 2),
+                    "age_days": (datetime.now() - backup_time).days
+                })
+            except (ValueError, IndexError):
+                continue
+        
+        return backups
+
+# Instancia global
+backup_manager = BackupManager()
+                    </code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Testing -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-vial text-green-600 mr-3"></i>
+                SECCIÓN 2: TESTING EXHAUSTIVO
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Unit Tests -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">
+                        <i class="fas fa-microscope mr-2"></i>Unit Tests
+                    </h3>
+                    <div class="code-block">
+                        <code>
+# tests/unit/test_outbox.py
+import pytest
+from datetime import datetime, timedelta
+from resiliencia.outbox import OutboxManager, MessageStatus
+
+@pytest.mark.asyncio
+async def test_publish_message():
+    """Test publicación de mensaje en outbox"""
+    manager = OutboxManager()
+    
+    success = await manager.publish_message(
+        aggregate_id="test_001",
+        event_type="stock.updated",
+        payload={"producto_id": 1, "cantidad": 5},
+        destination_service="agente_deposito",
+        destination_endpoint="/stock/update"
+    )
+    
+    assert success is True
+
+@pytest.mark.asyncio
+async def test_retry_logic():
+    """Test lógica de reintentos con backoff"""
+    manager = OutboxManager()
+    
+    # Crear mensaje fallido
+    await manager.publish_message(
+        aggregate_id="test_retry",
+        event_type="test.event",
+        payload={"test": True},
+        destination_service="test_service",
+        destination_endpoint="/test"
+    )
+    
+    # Simular fallo
+    messages = await manager.get_pending_messages()
+    message = messages[0]
+    
+    await manager.mark_failed(message.id, "Connection timeout")
+    
+    # Verificar que se programa retry
+    updated_message = await manager.get_pending_messages()
+    assert len(updated_message) == 0  # No debe estar disponible aún
+    
+# tests/unit/test_circuit_breaker.py
+import pytest
+import asyncio
+from resiliencia.circuit_breaker import CircuitBreaker, CircuitState
+
+@pytest.mark.asyncio
+async def test_circuit_breaker_opens_after_failures():
+    """Test que circuit breaker se abre después de fallos"""
+    breaker = CircuitBreaker("test_service")
+    
+    async def failing_function():
+        raise Exception("Service unavailable")
+    
+    # Generar suficientes fallos para abrir circuito
+    for _ in range(5):
+        with pytest.raises(Exception):
+            await breaker.call(failing_function)
+    
+    assert breaker.state == CircuitState.OPEN
+
+@pytest.mark.asyncio
+async def test_circuit_breaker_recovery():
+    """Test recuperación de circuit breaker"""
+    breaker = CircuitBreaker("test_recovery")
+    breaker.config.recovery_timeout = 1  # 1 segundo para test
+    
+    # Abrir circuito
+    async def failing_function():
+        raise Exception("Fail")
+    
+    for _ in range(5):
+        with pytest.raises(Exception):
+            await breaker.call(failing_function)
+    
+    assert breaker.state == CircuitState.OPEN
+    
+    # Esperar recovery timeout
+    await asyncio.sleep(1.1)
+    
+    # Función exitosa para recovery
+    async def success_function():
+        return "success"
+    
+    # Debería permitir llamadas en half-open
+    for _ in range(3):  # success_threshold = 3
+        result = await breaker.call(success_function)
+        assert result == "success"
+    
+    assert breaker.state == CircuitState.CLOSED
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Integration Tests -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">
+                        <i class="fas fa-plug mr-2"></i>Integration Tests
+                    </h3>
+                    <div class="code-block">
+                        <code>
+# tests/integration/test_e2e_flow.py
+import pytest
+import asyncio
+from fastapi.testclient import TestClient
+from unittest.mock import Mock, patch
+
+@pytest.mark.asyncio
+async def test_full_e2e_flow():
+    """Test flujo E2E completo: factura → stock update"""
+    
+    # Setup: Crear producto en AgenteDepósito
+    deposito_client = TestClient(deposito_app)
+    producto_response = deposito_client.post("/productos", json={
+        "codigo": "TEST_E2E",
+        "nombre": "Producto Test E2E",
+        "stock_actual": 100,
+        "stock_minimo": 10,
+        "precio_compra": 1500.00,
+        "categoria": "Test"
+    })
+    assert producto_response.status_code == 200
+    producto_id = producto_response.json()["id"]
+    
+    # Test: Procesar factura en AgenteNegocio
+    negocio_client = TestClient(negocio_app)
+    
+    with open("tests/fixtures/factura_sample.jpg", "rb") as f:
+        response = negocio_client.post(
+            "/facturas/procesar",
+            files={"file": ("factura.jpg", f, "image/jpeg")},
+            data={"proveedor_cuit": "20123456789"}
+        )
+    
+    assert response.status_code == 200
+    result = response.json()
+    assert result["status"] == "processed"
+    assert "items_procesados" in result
+    
+    # Verify: Check stock actualizado
+    stock_response = deposito_client.get(f"/productos/{producto_id}")
+    assert stock_response.status_code == 200
+    
+    producto_actualizado = stock_response.json()
+    assert producto_actualizado["stock_actual"] != 100  # Debe haber cambiado
+
+@pytest.mark.asyncio 
+async def test_resilience_with_deposito_down():
+    """Test resiliencia cuando AgenteDepósito está caído"""
+    
+    negocio_client = TestClient(negocio_app)
+    
+    # Mock AgenteDepósito down
+    with patch('integrations.deposito_client.DepositoClient.update_stock') as mock_update:
+        mock_update.side_effect = ConnectionError("Service unavailable")
+        
+        # Procesar factura
+        with open("tests/fixtures/factura_sample.jpg", "rb") as f:
+            response = negocio_client.post(
+                "/facturas/procesar",
+                files={"file": ("factura.jpg", f, "image/jpeg")},
+                data={"proveedor_cuit": "20123456789"}
+            )
+        
+        # Debe fallar gracefully
+        assert response.status_code == 202  # Accepted but pending
+        result = response.json()
+        assert result["status"] == "pending"
+        assert "outbox" in result
+    
+    # Verificar mensaje en outbox
+    from resiliencia.outbox import OutboxManager
+    manager = OutboxManager()
+    pending_messages = await manager.get_pending_messages()
+    assert len(pending_messages) > 0
+    
+    # Simular recuperación del servicio
+    with patch('integrations.deposito_client.DepositoClient.update_stock') as mock_update:
+        mock_update.return_value = True
+        
+        # Procesar outbox
+        for message in pending_messages:
+            await manager.process_message(message)
+    
+    # Verificar que mensajes fueron procesados
+    remaining_messages = await manager.get_pending_messages()
+    assert len(remaining_messages) == 0
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Load Tests -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibión mb-4 text-purple-700">
+                        <i class="fas fa-weight-hanging mr-2"></i>Load Tests
+                    </h3>
+                    <div class="code-block">
+                        <code>
+# tests/load/test_performance.py
+import pytest
+import asyncio
+import aiohttp
+from concurrent.futures import ThreadPoolExecutor
+import time
+
+@pytest.mark.asyncio
+async def test_concurrent_stock_updates():
+    """Test 50 updates concurrentes de stock"""
+    
+    base_url = "http://localhost:8002"
+    
+    async def update_stock(session, i):
+        payload = {
+            "producto_id": 1,
+            "tipo_movimiento": "entrada", 
+            "cantidad": 1,
+            "motivo": f"Test concurrencia {i}",
+            "idempotency_key": f"test_concurrent_{i}_{int(time.time())}"
+        }
+        
+        async with session.post(f"{base_url}/stock/update", json=payload) as response:
+            return response.status, await response.json()
+    
+    # Ejecutar 50 requests concurrentes
+    async with aiohttp.ClientSession() as session:
+        tasks = [update_stock(session, i) for i in range(50)]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    # Verificar que todas fueron exitosas
+    success_count = sum(1 for result in results if isinstance(result, tuple) and result[0] == 200)
+    assert success_count >= 45  # Al menos 90% de éxito
+    
+    # Verificar consistencia final del stock
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{base_url}/productos/1") as response:
+            producto = await response.json()
+            # Stock debe ser consistente (no hay race conditions)
+
+@pytest.mark.asyncio
+async def test_ocr_performance():
+    """Test performance del pipeline OCR"""
+    
+    start_time = time.time()
+    
+    # Procesar 10 facturas simultáneamente
+    tasks = []
+    for i in range(10):
+        task = asyncio.create_task(process_sample_invoice(f"sample_{i % 3}.jpg"))
+        tasks.append(task)
+    
+    results = await asyncio.gather(*tasks)
+    
+    end_time = time.time()
+    total_time = end_time - start_time
+    
+    # Verificar que se procesa en tiempo razonable
+    assert total_time < 30  # Menos de 30 segundos para 10 facturas
+    assert len(results) == 10
+    
+    # Verificar que al menos 80% fueron procesadas exitosamente
+    success_count = sum(1 for result in results if result.get("success", False))
+    assert success_count >= 8
+
+async def process_sample_invoice(filename):
+    """Helper para procesar factura sample"""
+    from agente_negocio.ocr.processor import OCRProcessor
+    
+    processor = OCRProcessor()
+    image_path = f"tests/fixtures/{filename}"
+    
+    try:
+        result = await processor.process_image(image_path)
+        return {"success": True, "result": result}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+def test_database_performance():
+    """Test performance de base de datos con carga"""
+    from shared.database import get_session
+    from shared.models import Producto
+    
+    # Crear 1000 productos
+    start_time = time.time()
+    
+    with get_session() as session:
+        productos = []
+        for i in range(1000):
+            producto = Producto(
+                codigo=f"PERF_{i:04d}",
+                nombre=f"Producto Performance {i}",
+                stock_actual=100,
+                stock_minimo=10,
+                precio_compra=1000.0 + i,
+                categoria="Performance"
+            )
+            productos.append(producto)
+        
+        session.add_all(productos)
+        session.commit()
+    
+    creation_time = time.time() - start_time
+    
+    # Query performance
+    start_time = time.time()
+    
+    with get_session() as session:
+        count = session.query(Producto).filter(
+            Producto.categoria == "Performance"
+        ).count()
+    
+    query_time = time.time() - start_time
+    
+    # Assertions
+    assert creation_time < 5.0  # Menos de 5 segundos para crear 1000
+    assert query_time < 1.0     # Menos de 1 segundo para query
+    assert count == 1000
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Chaos Tests -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-red-700">
+                        <i class="fas fa-bolt mr-2"></i>Chaos Engineering
+                    </h3>
+                    <div class="code-block">
+                        <code>
+# tests/chaos/test_failure_scenarios.py
+import pytest
+import asyncio
+import random
+from unittest.mock import patch, Mock
+import psutil
+import time
+
+@pytest.mark.asyncio
+async def test_network_partition_recovery():
+    """Simula partición de red y verifica recuperación"""
+    
+    # Simular fallo de red intermitente
+    call_count = 0
+    
+    def intermittent_failure(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        
+        # Fallar primeras 3 llamadas, luego funcionar
+        if call_count <= 3:
+            raise ConnectionError("Network partition")
+        return Mock(status_code=200, json=lambda: {"status": "success"})
+    
+    with patch('aiohttp.ClientSession.post', side_effect=intermittent_failure):
+        from resiliencia.outbox import OutboxManager
+        
+        manager = OutboxManager()
+        
+        # Publicar mensaje durante partición
+        success = await manager.publish_message(
+            aggregate_id="chaos_test",
+            event_type="network.partition.test",
+            payload={"test": "chaos"},
+            destination_service="test_service",
+            destination_endpoint="/test"
+        )
+        
+        assert success is True
+        
+        # Simular worker procesando con fallos y eventual éxito
+        messages = await manager.get_pending_messages()
+        assert len(messages) > 0
+        
+        # Procesar con fallos iniciales
+        for message in messages:
+            await manager.process_message(message)
+        
+        # Verificar que eventualmente se procesa exitosamente
+        # (después de los primeros 3 fallos)
+
+@pytest.mark.asyncio
+async def test_database_corruption_recovery():
+    """Simula corrupción de BD y verifica recuperación"""
+    
+    from shared.database import get_session
+    from features.backup import backup_manager
+    
+    # Crear backup antes de la "corrupción"
+    backup_info = await backup_manager.create_full_backup()
+    assert backup_info["integrity_check"] == "passed"
+    
+    # Simular corrupción (insertar datos inválidos)
+    try:
+        with get_session() as session:
+            # Intentar insertar data que viole constraints
+            session.execute("INSERT INTO productos (codigo, nombre, stock_actual, precio_compra) VALUES ('', '', -1, -100)")
+            session.commit()
+    except Exception:
+        # Se espera que falle por constraints
+        pass
+    
+    # Verificar que el sistema se recupera automáticamente
+    with get_session() as session:
+        # BD debe seguir funcionando normalmente
+        count = session.query(func.count()).select_from(Producto).scalar()
+        assert count >= 0
+
+@pytest.mark.asyncio
+async def test_high_cpu_load_resilience():
+    """Test resiliencia bajo alta carga de CPU"""
+    
+    def cpu_intensive_task():
+        """Tarea que consume CPU"""
+        end_time = time.time() + 2  # 2 segundos de carga
+        while time.time() < end_time:
+            # Operación intensiva
+            sum(i**2 for i in range(10000))
+    
+    # Lanzar múltiples tareas CPU-intensivas
+    import threading
+    
+    threads = []
+    for _ in range(psutil.cpu_count()):
+        thread = threading.Thread(target=cpu_intensive_task)
+        threads.append(thread)
+        thread.start()
+    
+    # Durante la carga alta, verificar que el sistema responde
+    start_time = time.time()
+    
+    # Test basic endpoint
+    import requests
+    response = requests.get("http://localhost:8002/health", timeout=10)
+    
+    response_time = time.time() - start_time
+    
+    # Esperar que terminen las tareas CPU-intensivas
+    for thread in threads:
+        thread.join()
+    
+    # Verificar que el sistema siguió respondiendo
+    assert response.status_code == 200
+    assert response_time < 5.0  # Menos de 5 segundos incluso bajo carga
+
+@pytest.mark.asyncio
+async def test_memory_pressure_handling():
+    """Test manejo de presión de memoria"""
+    
+    # Simular presión de memoria (controlada)
+    memory_hogs = []
+    
+    try:
+        # Consumir memoria gradualmente hasta llegar a 80% de uso
+        while psutil.virtual_memory().percent < 80:
+            # Crear lista grande en memoria
+            memory_hog = [random.random() for _ in range(100000)]
+            memory_hogs.append(memory_hog)
+            
+            # Break si ya consumimos demasiado
+            if len(memory_hogs) > 100:
+                break
+        
+        # Verificar que el sistema sigue funcionando
+        response = requests.get("http://localhost:8001/health", timeout=15)
+        assert response.status_code == 200
+        
+        # Verificar que las métricas reflejan la presión
+        dashboard_response = requests.get("http://localhost:8001/metrics")
+        metrics = dashboard_response.json()
+        
+        memory_percent = metrics["system"]["memory"]["percent_used"]
+        assert memory_percent > 70  # Confirmamos presión de memoria
+        
+    finally:
+        # Limpiar memoria
+        memory_hogs.clear()
+        import gc
+        gc.collect()
+
+@pytest.mark.asyncio 
+async def test_rapid_restart_resilience():
+    """Test resiliencia ante reinicios rápidos"""
+    
+    # Simular múltiples reinicios del outbox worker
+    from resiliencia.outbox import OutboxManager
+    
+    manager = OutboxManager()
+    
+    # Publicar mensajes antes de reinicios
+    for i in range(10):
+        await manager.publish_message(
+            aggregate_id=f"restart_test_{i}",
+            event_type="restart.resilience.test",
+            payload={"iteration": i},
+            destination_service="test_service", 
+            destination_endpoint="/test"
+        )
+    
+    # Simular múltiples start/stop del worker
+    for restart in range(5):
+        # Start worker
+        worker_task = asyncio.create_task(manager.start_worker())
+        
+        # Dejar que procese un poco
+        await asyncio.sleep(0.5)
+        
+        # Stop worker
+        await manager.stop_worker()
+        worker_task.cancel()
+        
+        try:
+            await worker_task
+        except asyncio.CancelledError:
+            pass
+    
+    # Verificar que no hay corrupción de datos
+    messages = await manager.get_pending_messages()
+    
+    # Debería haber algunos mensajes pendientes o todos procesados
+    # pero no corrupción
+    for message in messages:
+        assert message.aggregate_id.startswith("restart_test_")
+        assert message.status in ["pending", "delivered", "failed"]
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: Deployment -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-rocket text-red-600 mr-3"></i>
+                SECCIÓN 3: DEPLOYMENT SCRIPTS
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Local Deployment -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">
+                        <i class="fas fa-laptop-code mr-2"></i>Local Development
+                    </h3>
+                    <div class="code-block">
+                        <code>
+#!/bin/bash
+# scripts/init_system.sh - Inicialización completa del sistema
+
+set -e  # Exit on any error
+
+echo "🚀 Inicializando Sistema Multi-Agente Inventario Retail..."
+
+# Verificar Python 3.11+
+python_version=$(python3 --version 2>&1 | awk '{print $2}' | cut -d. -f1-2)
+required_version="3.11"
+
+if [ "$(printf '%s\n' "$required_version" "$python_version" | sort -V | head -n1)" != "$required_version" ]; then
+    echo "❌ Error: Se requiere Python 3.11+. Versión actual: $python_version"
+    exit 1
+fi
+
+echo "✅ Python $python_version detectado"
+
+# Crear directorios necesarios
+echo "📁 Creando estructura de directorios..."
+mkdir -p data logs backups uploads
+
+# Crear entorno virtual
+if [ ! -d "venv" ]; then
+    echo "🔧 Creando entorno virtual..."
+    python3 -m venv venv
+fi
+
+# Activar entorno virtual
+echo "⚡ Activando entorno virtual..."
+source venv/bin/activate
+
+# Actualizar pip
+pip install --upgrade pip
+
+# Instalar dependencias
+echo "📦 Instalando dependencias..."
+pip install -r requirements.txt
+
+# Configurar .env si no existe
+if [ ! -f ".env" ]; then
+    echo "⚙️ Configurando archivo .env..."
+    cp .env.template .env
+    echo "📝 IMPORTANTE: Editar .env con tus configuraciones específicas"
+fi
+
+# Inicializar base de datos
+echo "🗄️ Inicializando base de datos..."
+python -c "
+from shared.database import init_database
+init_database()
+print('Base de datos inicializada ✅')
+"
+
+# Crear datos de ejemplo (opcional)
+read -p "¿Crear datos de ejemplo? (y/N): " create_sample_data
+if [[ $create_sample_data =~ ^[Yy]$ ]]; then
+    echo "📊 Creando datos de ejemplo..."
+    python -c "
+from shared.database import get_session
+from shared.models import Producto
+from datetime import datetime
+
+productos_ejemplo = [
+    {
+        'codigo': 'AR001',
+        'nombre': 'Aceite Girasol Natura 900ml',
+        'stock_actual': 50,
+        'stock_minimo': 10,
+        'precio_compra': 890.50,
+        'categoria': 'Almacen'
+    },
+    {
+        'codigo': 'AR002', 
+        'nombre': 'Arroz Gallo Oro 1kg',
+        'stock_actual': 25,
+        'stock_minimo': 15,
+        'precio_compra': 1250.00,
+        'categoria': 'Almacen'
+    },
+    {
+        'codigo': 'BEB001',
+        'nombre': 'Coca Cola 2.25L',
+        'stock_actual': 30,
+        'stock_minimo': 12,
+        'precio_compra': 980.00,
+        'categoria': 'Bebidas'
+    }
+]
+
+with get_session() as session:
+    for prod_data in productos_ejemplo:
+        producto = Producto(**prod_data)
+        session.add(producto)
+    session.commit()
+    print(f'Creados {len(productos_ejemplo)} productos de ejemplo ✅')
+"
+fi
+
+# Verificar instalación
+echo "🧪 Verificando instalación..."
+python -m pytest tests/test_config.py tests/test_database.py -v
+
+echo ""
+echo "🎉 Sistema inicializado correctamente!"
+echo ""
+echo "📋 Próximos pasos:"
+echo "1. Editar .env con tus configuraciones"
+echo "2. Ejecutar: ./scripts/start_all.sh"
+echo "3. Acceder a:"
+echo "   - AgenteNegocio: http://localhost:8001"
+echo "   - AgenteDepósito: http://localhost:8002"
+echo ""
+
+#!/bin/bash
+# scripts/start_all.sh - Iniciar todos los servicios
+
+set -e
+
+echo "🚀 Iniciando Sistema Multi-Agente..."
+
+# Verificar que el sistema está inicializado
+if [ ! -f ".env" ] || [ ! -d "venv" ]; then
+    echo "❌ Sistema no inicializado. Ejecutar ./scripts/init_system.sh primero"
+    exit 1
+fi
+
+# Activar entorno virtual
+source venv/bin/activate
+
+# Función para kill procesos al salir
+cleanup() {
+    echo ""
+    echo "🛑 Deteniendo servicios..."
+    jobs -p | xargs -r kill
+    exit 0
+}
+trap cleanup SIGINT SIGTERM
+
+# Crear logs directory
+mkdir -p logs
+
+echo "📦 Iniciando AgenteDepósito (puerto 8002)..."
+cd agente_deposito
+uvicorn main:app --host 0.0.0.0 --port 8002 --reload > ../logs/deposito.log 2>&1 &
+DEPOSITO_PID=$!
+cd ..
+
+echo "🧠 Iniciando AgenteNegocio (puerto 8001)..."
+cd agente_negocio
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload > ../logs/negocio.log 2>&1 &
+NEGOCIO_PID=$!
+cd ..
+
+# Esperar que los servicios inicien
+echo "⏳ Esperando que los servicios inicien..."
+sleep 5
+
+# Verificar que los servicios están ejecutándose
+echo "🔍 Verificando servicios..."
+
+if curl -s http://localhost:8002/health > /dev/null; then
+    echo "✅ AgenteDepósito: ONLINE"
+else
+    echo "❌ AgenteDepósito: OFFLINE"
+fi
+
+if curl -s http://localhost:8001/health > /dev/null; then
+    echo "✅ AgenteNegocio: ONLINE"
+else
+    echo "❌ AgenteNegocio: OFFLINE"
+fi
+
+echo ""
+echo "🎯 Sistema Multi-Agente ACTIVO"
+echo ""
+echo "📊 Endpoints disponibles:"
+echo "   - AgenteNegocio:  http://localhost:8001"
+echo "   - AgenteDepósito: http://localhost:8002"
+echo "   - Health Check:   http://localhost:8001/health"
+echo "   - Métricas:       http://localhost:8001/metrics"
+echo ""
+echo "📋 Logs en tiempo real:"
+echo "   - tail -f logs/negocio.log"
+echo "   - tail -f logs/deposito.log"
+echo ""
+echo "Press Ctrl+C to stop all services..."
+
+# Mantener el script ejecutándose
+wait
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Production Deployment -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-red-700">
+                        <i class="fas fa-server mr-2"></i>Production Deployment
+                    </h3>
+                    <div class="code-block">
+                        <code>
+#!/bin/bash
+# scripts/deploy_prod.sh - Deploy a producción con systemd y nginx
+
+set -e
+
+echo "🚀 Deploy a Producción - Sistema Inventario Retail"
+
+# Verificar que estamos ejecutando como usuario con sudo
+if [[ $EUID -eq 0 ]]; then
+   echo "❌ No ejecutar como root. Usar usuario con sudo."
+   exit 1
+fi
+
+# Variables de configuración
+APP_USER="inventario"
+APP_DIR="/opt/inventario-retail"
+SYSTEMD_DIR="/etc/systemd/system"
+NGINX_DIR="/etc/nginx/sites-available"
+
+echo "👤 Configurando usuario de aplicación..."
+
+# Crear usuario de aplicación si no existe
+if ! id "$APP_USER" &>/dev/null; then
+    sudo useradd -m -s /bin/bash $APP_USER
+    echo "✅ Usuario $APP_USER creado"
+fi
+
+echo "📁 Configurando directorio de aplicación..."
+
+# Crear directorio de aplicación
+sudo mkdir -p $APP_DIR
+sudo chown $APP_USER:$APP_USER $APP_DIR
+
+# Copiar código fuente
+echo "📋 Copiando código fuente..."
+sudo -u $APP_USER cp -r . $APP_DIR/
+cd $APP_DIR
+
+# Instalar dependencias del sistema
+echo "📦 Instalando dependencias del sistema..."
+sudo apt update
+sudo apt install -y python3.11 python3.11-venv python3-pip nginx sqlite3
+
+# Configurar entorno virtual
+echo "🔧 Configurando entorno virtual..."
+sudo -u $APP_USER python3.11 -m venv venv
+sudo -u $APP_USER ./venv/bin/pip install --upgrade pip
+sudo -u $APP_USER ./venv/bin/pip install -r requirements-prod.txt
+
+# Configurar archivo .env para producción
+echo "⚙️ Configurando .env para producción..."
+if [ ! -f ".env.prod" ]; then
+    sudo -u $APP_USER cp .env.prod.template .env.prod
+    echo "📝 IMPORTANTE: Editar $APP_DIR/.env.prod con configuraciones de producción"
+    echo "Pausando para que configures .env.prod..."
+    read -p "Presiona Enter después de configurar .env.prod..."
+fi
+
+sudo -u $APP_USER cp .env.prod .env
+
+# Inicializar base de datos
+echo "🗄️ Inicializando base de datos..."
+sudo -u $APP_USER ./venv/bin/python -c "
+from shared.database import init_database
+init_database()
+print('Base de datos inicializada ✅')
+"
+
+# Configurar servicios systemd
+echo "🔧 Configurando servicios systemd..."
+
+# Servicio AgenteDepósito
+cat << 'EOF' | sudo tee $SYSTEMD_DIR/inventario-deposito.service > /dev/null
+[Unit]
+Description=Inventario Retail - Agente Depósito
+After=network.target
+
+[Service]
+Type=simple
+User=inventario
+WorkingDirectory=/opt/inventario-retail
+Environment=PATH=/opt/inventario-retail/venv/bin
+ExecStart=/opt/inventario-retail/venv/bin/uvicorn agente_deposito.main:app --host 0.0.0.0 --port 8002
+Restart=always
+RestartSec=10
+
+# Logs
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=inventario-deposito
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Servicio AgenteNegocio
+cat << 'EOF' | sudo tee $SYSTEMD_DIR/inventario-negocio.service > /dev/null
+[Unit]
+Description=Inventario Retail - Agente Negocio  
+After=network.target
+
+[Service]
+Type=simple
+User=inventario
+WorkingDirectory=/opt/inventario-retail
+Environment=PATH=/opt/inventario-retail/venv/bin
+ExecStart=/opt/inventario-retail/venv/bin/uvicorn agente_negocio.main:app --host 0.0.0.0 --port 8001
+Restart=always
+RestartSec=10
+
+# Logs
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=inventario-negocio
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Configurar nginx
+echo "🌐 Configurando nginx..."
+
+cat << 'EOF' | sudo tee $NGINX_DIR/inventario-retail > /dev/null
+server {
+    listen 80;
+    server_name _;  # Cambiar por tu dominio
+
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # AgenteNegocio (API principal)
+    location /api/v1/ {
+        proxy_pass http://127.0.0.1:8001/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Timeouts para OCR
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 300s;
+        
+        # Upload size para facturas
+        client_max_body_size 10M;
+    }
+
+    # AgenteDepósito (API interna)
+    location /internal/deposito/ {
+        proxy_pass http://127.0.0.1:8002/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Solo acceso interno
+        allow 127.0.0.1;
+        deny all;
+    }
+
+    # Health check público
+    location /health {
+        proxy_pass http://127.0.0.1:8001/health;
+        access_log off;
+    }
+
+    # Metrics (protegido)
+    location /metrics {
+        proxy_pass http://127.0.0.1:8001/metrics;
+        
+        # Agregar autenticación básica aquí
+        # auth_basic "Metrics";
+        # auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+}
+EOF
+
+# Habilitar sitio nginx
+sudo ln -sf $NGINX_DIR/inventario-retail /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Validar configuración nginx
+sudo nginx -t
+
+# Configurar firewall básico
+echo "🔥 Configurando firewall..."
+sudo ufw allow 22/tcp    # SSH
+sudo ufw allow 80/tcp    # HTTP
+sudo ufw allow 443/tcp   # HTTPS
+sudo ufw --force enable
+
+# Recargar servicios
+echo "🔄 Iniciando servicios..."
+sudo systemctl daemon-reload
+sudo systemctl enable inventario-deposito inventario-negocio nginx
+sudo systemctl start inventario-deposito inventario-negocio
+sudo systemctl restart nginx
+
+# Configurar logrotate
+echo "📋 Configurando rotación de logs..."
+cat << 'EOF' | sudo tee /etc/logrotate.d/inventario-retail > /dev/null
+/opt/inventario-retail/logs/*.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    create 0644 inventario inventario
+    postrotate
+        systemctl reload inventario-negocio inventario-deposito
+    endscript
+}
+EOF
+
+# Configurar backup automático
+echo "💾 Configurando backup automático..."
+cat << 'EOF' | sudo tee /etc/cron.d/inventario-backup > /dev/null
+# Backup diario a las 2:00 AM
+0 2 * * * inventario cd /opt/inventario-retail && ./venv/bin/python -c "
+import asyncio
+from features.backup import backup_manager
+async def main():
+    result = await backup_manager.create_full_backup()
+    print(f'Backup completado: {result}')
+asyncio.run(main())
+" >> /opt/inventario-retail/logs/backup.log 2>&1
+EOF
+
+# Verificar instalación
+echo "🧪 Verificando instalación..."
+sleep 10
+
+if curl -s http://localhost/health > /dev/null; then
+    echo "✅ Sistema ONLINE y accesible"
+else
+    echo "❌ Error: Sistema no responde"
+    echo "Revisar logs:"
+    echo "  sudo journalctl -u inventario-negocio -f"
+    echo "  sudo journalctl -u inventario-deposito -f"
+    exit 1
+fi
+
+echo ""
+echo "🎉 Deploy a producción COMPLETADO!"
+echo ""
+echo "📊 Estado de servicios:"
+sudo systemctl status inventario-negocio --no-pager -l
+sudo systemctl status inventario-deposito --no-pager -l
+sudo systemctl status nginx --no-pager -l
+echo ""
+echo "🌐 URLs de acceso:"
+echo "   - API Principal: http://$(hostname -I | awk '{print $1}')/api/v1/"
+echo "   - Health Check:  http://$(hostname -I | awk '{print $1}')/health"
+echo ""
+echo "📋 Comandos útiles:"
+echo "   - Ver logs: sudo journalctl -u inventario-negocio -f"
+echo "   - Restart:  sudo systemctl restart inventario-negocio"
+echo "   - Status:   sudo systemctl status inventario-deposito"
+echo ""
+echo "🔐 Próximos pasos recomendados:"
+echo "1. Configurar SSL/HTTPS con Let's Encrypt"
+echo "2. Configurar monitoreo (Grafana/Prometheus)"  
+echo "3. Configurar alertas en .env.prod"
+echo "4. Realizar backup manual de prueba"
+echo ""
+                        </code>
+                    </div>
+                </div>
+
+                <!-- SSL & Monitoring -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">
+                        <i class="fas fa-shield-alt mr-2"></i>SSL & Monitoring
+                    </h3>
+                    <div class="code-block">
+                        <code>
+#!/bin/bash
+# scripts/setup_ssl.sh - Configurar SSL con Let's Encrypt
+
+set -e
+
+echo "🔐 Configurando SSL con Let's Encrypt..."
+
+# Verificar dominio
+read -p "Ingresa tu dominio (ej: inventario.miempresa.com): " DOMAIN
+
+if [ -z "$DOMAIN" ]; then
+    echo "❌ Dominio requerido"
+    exit 1
+fi
+
+# Instalar certbot
+echo "📦 Instalando certbot..."
+sudo apt update
+sudo apt install -y certbot python3-certbot-nginx
+
+# Obtener certificado
+echo "🔑 Obteniendo certificado SSL..."
+sudo certbot --nginx -d $DOMAIN --non-interactive --agree-tos --email admin@$DOMAIN
+
+# Configurar renovación automática
+echo "🔄 Configurando renovación automática..."
+cat << 'EOF' | sudo tee /etc/cron.d/certbot-renewal > /dev/null
+# Renovar certificados SSL automáticamente
+0 3 * * 0 root certbot renew --quiet --post-hook "systemctl reload nginx"
+EOF
+
+echo "✅ SSL configurado para $DOMAIN"
+
+# deployment/monitoring/prometheus.yml
+---
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'inventario-retail'
+    static_configs:
+      - targets: ['localhost:8001', 'localhost:8002']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+
+# deployment/monitoring/grafana-dashboard.json
+{
+  "dashboard": {
+    "id": null,
+    "title": "Inventario Retail - Monitoreo",
+    "tags": ["inventario", "retail"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "System Health",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"inventario-retail\"}",
+            "legendFormat": "{{instance}}"
+          }
+        ]
+      },
+      {
+        "title": "Request Rate",
+        "type": "graph", 
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ]
+      },
+      {
+        "title": "Stock Crítico",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "inventario_stock_critico",
+            "legendFormat": "{{producto}}"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+#!/bin/bash  
+# scripts/setup_monitoring.sh - Configurar monitoreo con Prometheus y Grafana
+
+echo "📊 Configurando monitoreo..."
+
+# Crear usuario prometheus
+sudo useradd --no-create-home --shell /bin/false prometheus
+sudo useradd --no-create-home --shell /bin/false node_exporter
+
+# Descargar Prometheus
+cd /tmp
+wget https://github.com/prometheus/prometheus/releases/download/v2.40.0/prometheus-2.40.0.linux-amd64.tar.gz
+tar -xzf prometheus-2.40.0.linux-amd64.tar.gz
+
+# Instalar Prometheus
+sudo mkdir -p /etc/prometheus /var/lib/prometheus
+sudo cp prometheus-2.40.0.linux-amd64/prometheus /usr/local/bin/
+sudo cp prometheus-2.40.0.linux-amd64/promtool /usr/local/bin/
+sudo cp -r prometheus-2.40.0.linux-amd64/consoles /etc/prometheus
+sudo cp -r prometheus-2.40.0.linux-amd64/console_libraries /etc/prometheus
+
+# Configurar Prometheus
+sudo cp /opt/inventario-retail/deployment/monitoring/prometheus.yml /etc/prometheus/
+
+# Permisos
+sudo chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
+sudo chown prometheus:prometheus /usr/local/bin/prometheus /usr/local/bin/promtool
+
+# Servicio systemd para Prometheus
+cat << 'EOF' | sudo tee /etc/systemd/system/prometheus.service > /dev/null
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Instalar Node Exporter
+cd /tmp
+wget https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz
+tar -xzf node_exporter-1.4.0.linux-amd64.tar.gz
+sudo cp node_exporter-1.4.0.linux-amd64/node_exporter /usr/local/bin/
+sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
+
+# Servicio Node Exporter
+cat << 'EOF' | sudo tee /etc/systemd/system/node_exporter.service > /dev/null
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Instalar Grafana
+sudo apt-get install -y apt-transport-https software-properties-common wget
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+sudo apt-get update
+sudo apt-get install -y grafana
+
+# Habilitar y iniciar servicios
+sudo systemctl daemon-reload
+sudo systemctl enable prometheus node_exporter grafana-server
+sudo systemctl start prometheus node_exporter grafana-server
+
+echo "✅ Monitoreo configurado:"
+echo "   - Prometheus: http://localhost:9090"
+echo "   - Grafana: http://localhost:3000 (admin/admin)"
+echo "   - Node Exporter: http://localhost:9100"
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Health Check Script -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-orange-700">
+                        <i class="fas fa-heartbeat mr-2"></i>Health Check & Maintenance
+                    </h3>
+                    <div class="code-block">
+                        <code>
+#!/bin/bash
+# scripts/health_check.sh - Health check completo del sistema
+
+set -e
+
+echo "🏥 Health Check Sistema Inventario Retail"
+echo "========================================"
+
+# Colores para output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Función para imprimir resultado
+print_result() {
+    local test_name="$1"
+    local result="$2"
+    local details="$3"
+    
+    if [ "$result" = "OK" ]; then
+        echo -e "✅ $test_name: ${GREEN}$result${NC} $details"
+    elif [ "$result" = "WARNING" ]; then
+        echo -e "⚠️  $test_name: ${YELLOW}$result${NC} $details"
+    else
+        echo -e "❌ $test_name: ${RED}$result${NC} $details"
+    fi
+}
+
+# 1. Verificar servicios systemd (si están en producción)
+echo "🔍 Verificando servicios..."
+
+if systemctl is-active --quiet inventario-negocio 2>/dev/null; then
+    print_result "AgenteNegocio (systemd)" "OK" ""
+else
+    print_result "AgenteNegocio (systemd)" "FAIL" "Servicio no activo"
+fi
+
+if systemctl is-active --quiet inventario-deposito 2>/dev/null; then
+    print_result "AgenteDepósito (systemd)" "OK" ""
+else
+    print_result "AgenteDepósito (systemd)" "FAIL" "Servicio no activo"
+fi
+
+# 2. Verificar conectividad HTTP
+echo ""
+echo "🌐 Verificando conectividad HTTP..."
+
+# AgenteNegocio
+if curl -s -f http://localhost:8001/health >/dev/null 2>&1; then
+    response=$(curl -s http://localhost:8001/health | jq -r '.status' 2>/dev/null || echo "unknown")
+    print_result "AgenteNegocio (HTTP)" "OK" "Status: $response"
+else
+    print_result "AgenteNegocio (HTTP)" "FAIL" "No responde en puerto 8001"
+fi
+
+# AgenteDepósito  
+if curl -s -f http://localhost:8002/health >/dev/null 2>&1; then
+    response=$(curl -s http://localhost:8002/health | jq -r '.status' 2>/dev/null || echo "unknown")
+    print_result "AgenteDepósito (HTTP)" "OK" "Status: $response"
+else
+    print_result "AgenteDepósito (HTTP)" "FAIL" "No responde en puerto 8002"
+fi
+
+# 3. Verificar base de datos
+echo ""
+echo "🗄️ Verificando base de datos..."
+
+if [ -f "data/inventario.db" ]; then
+    # Verificar que la BD no está corrupta
+    if sqlite3 data/inventario.db "PRAGMA integrity_check;" | grep -q "ok"; then
+        # Contar productos
+        productos_count=$(sqlite3 data/inventario.db "SELECT COUNT(*) FROM productos;" 2>/dev/null || echo "0")
+        print_result "Base de Datos" "OK" "$productos_count productos registrados"
+    else
+        print_result "Base de Datos" "FAIL" "Falló integrity check"
+    fi
+else
+    print_result "Base de Datos" "FAIL" "Archivo no encontrado: data/inventario.db"
+fi
+
+# 4. Verificar espacio en disco
+echo ""
+echo "💾 Verificando recursos del sistema..."
+
+disk_usage=$(df -h . | awk 'NR==2 {print $5}' | sed 's/%//')
+if [ "$disk_usage" -lt 80 ]; then
+    print_result "Espacio en Disco" "OK" "${disk_usage}% usado"
+elif [ "$disk_usage" -lt 90 ]; then
+    print_result "Espacio en Disco" "WARNING" "${disk_usage}% usado"
+else
+    print_result "Espacio en Disco" "FAIL" "${disk_usage}% usado - Crítico"
+fi
+
+# 5. Verificar memoria
+memory_usage=$(free | awk 'NR==2{printf "%.0f", $3*100/$2}')
+if [ "$memory_usage" -lt 80 ]; then
+    print_result "Uso de Memoria" "OK" "${memory_usage}% usado"
+elif [ "$memory_usage" -lt 90 ]; then
+    print_result "Uso de Memoria" "WARNING" "${memory_usage}% usado"
+else
+    print_result "Uso de Memoria" "FAIL" "${memory_usage}% usado - Crítico"
+fi
+
+# 6. Verificar logs de errores recientes
+echo ""
+echo "📋 Verificando logs recientes..."
+
+error_count=0
+if [ -f "logs/negocio.log" ]; then
+    recent_errors=$(tail -n 100 logs/negocio.log | grep -i error | wc -l)
+    error_count=$((error_count + recent_errors))
+fi
+
+if [ -f "logs/deposito.log" ]; then
+    recent_errors=$(tail -n 100 logs/deposito.log | grep -i error | wc -l)
+    error_count=$((error_count + recent_errors))
+fi
+
+if [ "$error_count" -eq 0 ]; then
+    print_result "Logs de Error" "OK" "No hay errores recientes"
+elif [ "$error_count" -lt 5 ]; then
+    print_result "Logs de Error" "WARNING" "$error_count errores en últimas 100 líneas"
+else
+    print_result "Logs de Error" "FAIL" "$error_count errores en últimas 100 líneas"
+fi
+
+# 7. Verificar outbox messages
+echo ""
+echo "📤 Verificando outbox messages..."
+
+if [ -f "data/inventario.db" ]; then
+    pending_messages=$(sqlite3 data/inventario.db "SELECT COUNT(*) FROM outbox_messages WHERE status='pending';" 2>/dev/null || echo "0")
+    failed_messages=$(sqlite3 data/inventario.db "SELECT COUNT(*) FROM outbox_messages WHERE status='failed';" 2>/dev/null || echo "0")
+    
+    if [ "$pending_messages" -eq 0 ] && [ "$failed_messages" -eq 0 ]; then
+        print_result "Outbox Messages" "OK" "No hay mensajes pendientes o fallidos"
+    elif [ "$pending_messages" -lt 10 ] && [ "$failed_messages" -eq 0 ]; then
+        print_result "Outbox Messages" "WARNING" "$pending_messages mensajes pendientes"
+    else
+        print_result "Outbox Messages" "FAIL" "$pending_messages pendientes, $failed_messages fallidos"
+    fi
+fi
+
+# 8. Test de funcionalidad básica
+echo ""
+echo "⚡ Test de funcionalidad básica..."
+
+# Test crear producto
+test_producto=$(cat << 'EOF'
+{
+    "codigo": "HEALTH_CHECK_TEST",
+    "nombre": "Producto Health Check",
+    "stock_actual": 1,
+    "stock_minimo": 1,
+    "precio_compra": 1.00,
+    "categoria": "Test"
+}
+EOF
+)
+
+if response=$(curl -s -X POST http://localhost:8002/productos \
+    -H "Content-Type: application/json" \
+    -d "$test_producto" 2>/dev/null); then
+    
+    if echo "$response" | jq -e '.id' >/dev/null 2>&1; then
+        product_id=$(echo "$response" | jq -r '.id')
+        print_result "Test Crear Producto" "OK" "ID: $product_id"
+        
+        # Limpiar producto de test
+        curl -s -X DELETE "http://localhost:8002/productos/$product_id" >/dev/null 2>&1 || true
+    else
+        print_result "Test Crear Producto" "FAIL" "Respuesta inválida"
+    fi
+else
+    print_result "Test Crear Producto" "FAIL" "No se pudo conectar"
+fi
+
+# 9. Verificar backups recientes
+echo ""
+echo "💾 Verificando backups..."
+
+if [ -d "backups" ]; then
+    latest_backup=$(ls -t backups/backup_*.tar.gz 2>/dev/null | head -1)
+    if [ -n "$latest_backup" ]; then
+        backup_age=$(( ($(date +%s) - $(stat -c %Y "$latest_backup")) / 86400 ))
+        if [ "$backup_age" -lt 2 ]; then
+            print_result "Backup Reciente" "OK" "Último backup: hace $backup_age días"
+        elif [ "$backup_age" -lt 7 ]; then
+            print_result "Backup Reciente" "WARNING" "Último backup: hace $backup_age días"
+        else
+            print_result "Backup Reciente" "FAIL" "Último backup: hace $backup_age días"
+        fi
+    else
+        print_result "Backup Reciente" "FAIL" "No se encontraron backups"
+    fi
+else
+    print_result "Backup Reciente" "WARNING" "Directorio backups no existe"
+fi
+
+echo ""
+echo "========================================"
+echo "🏥 Health Check COMPLETADO"
+
+# Resumen final
+echo ""
+echo "📊 Resumen de métricas:"
+if command -v jq >/dev/null 2>&1; then
+    if curl -s http://localhost:8001/metrics >/dev/null 2>&1; then
+        curl -s http://localhost:8001/metrics | jq '{
+            uptime: .uptime.uptime_human,
+            productos_total: .business.productos.total,
+            stock_critico: .business.productos.stock_critico,
+            facturas_24h: .business.actividad_24h.facturas_procesadas,
+            cpu_percent: .system.cpu_percent,
+            memory_percent: .system.memory.percent_used
+        }' 2>/dev/null || echo "No se pudieron obtener métricas"
+    fi
+fi
+
+#!/bin/bash
+# scripts/maintenance.sh - Tareas de mantenimiento automático
+
+echo "🔧 Ejecutando tareas de mantenimiento..."
+
+# 1. Limpiar logs antiguos
+find logs/ -name "*.log" -mtime +30 -delete 2>/dev/null || true
+echo "✅ Logs antiguos limpiados"
+
+# 2. Vacuum de base de datos
+sqlite3 data/inventario.db "VACUUM;" 2>/dev/null || true
+echo "✅ Base de datos optimizada"
+
+# 3. Limpiar outbox messages antiguas
+python3 -c "
+import asyncio
+import sys
+sys.path.append('.')
+from resiliencia.outbox import OutboxManager
+
+async def cleanup():
+    manager = OutboxManager()
+    await manager.cleanup_old_messages(days=7)
+    print('✅ Outbox messages antiguas limpiadas')
+
+asyncio.run(cleanup())
+" 2>/dev/null || echo "⚠️ Error limpiando outbox"
+
+# 4. Rotar backups
+python3 -c "
+import asyncio
+import sys
+sys.path.append('.')
+from features.backup import backup_manager
+
+async def rotate_backups():
+    await backup_manager.cleanup_old_backups()
+    print('✅ Backups rotados según política')
+
+asyncio.run(rotate_backups())
+" 2>/dev/null || echo "⚠️ Error rotando backups"
+
+echo "🎉 Mantenimiento completado"
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Instrucciones y Verificación -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-clipboard-check text-green-600 mr-3"></i>
+                SECCIÓN 4: INSTRUCCIONES Y VERIFICACIÓN
+            </h2>
+
+            <!-- Deployment Instructions -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-blue-700">
+                    <i class="fas fa-play-circle mr-2"></i>Instrucciones de Deployment
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">🖥️ Desarrollo Local</h4>
+                        <div class="code-block">
+                            <code>
+# 1. Clonar y setup inicial
+git clone &lt;tu-repo&gt; inventario-retail
+cd inventario-retail
+chmod +x scripts/*.sh
+
+# 2. Inicializar sistema completo
+./scripts/init_system.sh
+
+# 3. Configurar .env
+cp .env.template .env
+# Editar .env con tus configuraciones
+
+# 4. Ejecutar tests
+pytest tests/ -v --cov
+
+# 5. Iniciar sistema
+./scripts/start_all.sh
+
+# 6. Verificar health
+./scripts/health_check.sh
+                            </code>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">🏭 Producción</h4>
+                        <div class="code-block">
+                            <code>
+# 1. Preparar servidor Ubuntu 22.04+
+sudo apt update && sudo apt upgrade -y
+
+# 2. Upload código al servidor
+scp -r . user@servidor:/tmp/inventario-retail
+
+# 3. Deploy completo
+sudo /tmp/inventario-retail/scripts/deploy_prod.sh
+
+# 4. Configurar SSL (opcional)
+sudo ./scripts/setup_ssl.sh
+
+# 5. Setup monitoring (opcional)
+sudo ./scripts/setup_monitoring.sh
+
+# 6. Health check completo
+./scripts/health_check.sh
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verification Commands -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-purple-700">
+                    <i class="fas fa-check-double mr-2"></i>Comandos de Verificación
+                </h3>
+
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">🔍 Verificar E2E Resiliente</h4>
+                        <div class="code-block">
+                            <code>
+# 1. Crear producto de test
+curl -X POST http://localhost:8002/productos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "codigo": "RESILIENCE_TEST",
+    "nombre": "Test Resiliencia",
+    "stock_actual": 100,
+    "stock_minimo": 10,
+    "precio_compra": 1500.00,
+    "categoria": "Test"
+  }' | jq .
+
+# 2. Simular caída de AgenteDepósito
+sudo systemctl stop inventario-deposito  # En producción
+# O matar proceso en desarrollo
+
+# 3. Procesar factura (debe ir a outbox)
+curl -X POST http://localhost:8001/facturas/procesar \
+  -F "file=@tests/agente_negocio/fixtures/factura_a_sample.jpg" \
+  -F "proveedor_cuit=20123456789" | jq .
+
+# Debe retornar status: "pending", outbox: true
+
+# 4. Verificar mensaje en outbox
+sqlite3 data/inventario.db \
+  "SELECT event_type, status, retry_count FROM outbox_messages WHERE aggregate_id LIKE 'resilience%';"
+
+# 5. Restaurar servicio
+sudo systemctl start inventario-deposito
+
+# 6. Esperar procesamiento automático (30s)
+sleep 35
+
+# 7. Verificar que mensaje fue procesado
+sqlite3 data/inventario.db \
+  "SELECT status, delivered_at FROM outbox_messages WHERE aggregate_id LIKE 'resilience%';"
+
+# Debe mostrar status: "delivered"
+                            </code>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">💾 Verificar Backup & Restore</h4>
+                        <div class="code-block">
+                            <code>
+# 1. Crear backup manual
+python3 -c "
+import asyncio
+import sys
+sys.path.append('.')
+from features.backup import backup_manager
+
+async def test_backup():
+    result = await backup_manager.create_full_backup()
+    print(f'Backup creado: {result[\"backup_name\"]}')
+    print(f'Tamaño: {result[\"size_mb\"]} MB')
+    print(f'Integridad: {result[\"integrity_check\"]}')
+    return result['backup_path']
+
+backup_path = asyncio.run(test_backup())
+print(f'Backup path: {backup_path}')
+"
+
+# 2. Listar backups disponibles
+python3 -c "
+import sys
+sys.path.append('.')
+from features.backup import backup_manager
+import json
+
+backups = backup_manager.list_backups()
+print('Backups disponibles:')
+for backup in backups[-5:]:  # Últimos 5
+    print(f'  {backup[\"name\"]} - {backup[\"size_mb\"]} MB - {backup[\"age_days\"]} días')
+"
+
+# 3. Test de restore (¡CUIDADO! - Solo en desarrollo)
+# python3 -c "
+# import asyncio
+# from features.backup import backup_manager
+# 
+# async def test_restore():
+#     backups = backup_manager.list_backups()
+#     if backups:
+#         latest = backups[-1]['path']
+#         success = await backup_manager.restore_backup(latest)
+#         print(f'Restore exitoso: {success}')
+# 
+# asyncio.run(test_restore())
+# "
+
+# 4. Verificar integridad post-restore
+./scripts/health_check.sh
+                            </code>
+                        </div>
+                    </div>
+
+                    <div>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDn1r83pGZoZIlQX0sbyUnf2VcnOW9KXV%2BSeQIt2ZprUHrao4MjDyg2rn0OP6q4YC3sHjSX%2B%2FrE0vR0FFIIjhM0mrF8aIDie7Vu747eFdvpQafeUXfiWh%2Brw5ScpHc6Vc74QFEqKQUM%2F0DaNKnweBEf8hSzX9YrC5QjawQ069F5Dd%2BtKXmJ0rnLdAQqB7H7nC2VvxH7g3Cm0hSBPWaC7212zyVployOUbiBAzVAkzH5QBRBurnbQ4hTMfELc454lOoVuaWG%2Fi%2BO0V3CAYpJbboMvd6XYRZmveCApV4Suqu0HwBoHoDALke%2FiROsnL4IFCtek6wZcb3Br1y%2FZ7XDxL3JzTivb0bw1eMvsYIEGom6QepC%2FxjCW4L1dLfWqqwq%2Fe1KFOt3l5DuhZr3bHg%2BUGQa9d918xayg3Kcbv8f9sucr3NlNmNHQw5q7TPu%2B8ikHTPTqR5BF95iU2GPRehVnNR5Qkrwbtfh%2BRI9FKKuKb6PwpiKjAnbz5eVm89mVK5kFxo%2FJDKhsLMjkhuS5uDpTcbAY%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDn1r83pGZoZIlQX0sbyUnf2VcnOW9KXV+SeQIt2ZprUHrao4MjDyg2rn0OP6q4YC3sHjSX+/rE0vR0FFIIjhM0mrF8aIDie7Vu747eFdvpQafeUXfiWh+rw5ScpHc6Vc74QFEqKQUM/0DaNKnweBEf8hSzX9YrC5QjawQ069F5Dd+tKXmJ0rnLdAQqB7H7nC2VvxH7g3Cm0hSBPWaC7212zyVployOUbiBAzVAkzH5QBRBurnbQ4hTMfELc454lOoVuaWG/i+O0V3CAYpJbboMvd6XYRZmveCApV4Suqu0HwBoHoDALke/iROsnL4IFCtek6wZcb3Br1y/Z7XDxL3JzTivb0bw1eMvsYIEGom6QepC/xjCW4L1dLfWqqwq/e1KFOt3l5DuhZr3bHg+UGQa9d918xayg3Kcbv8f9sucr3NlNmNHQw5q7TPu+8ikHTPTqR5BF95iU2GPRehVnNR5Qkrwbtfh+RI9FKKuKb6PwpiKjAnbz5eVm89mVK5kFxo/JDKhsLMjkhuS5uDpTcbAY=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

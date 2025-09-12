@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema Inventario{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'navbar.html' %}
+
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1>🏪 Dashboard Operativo</h1>
+            <div class="last-update">
+                Última actualización: <span id="lastUpdate">Cargando...</span>
+            </div>
+        </div>
+
+        <!-- KPIs Section -->
+        <div class="kpis-section">
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Productos en Stock</h3>
+                    <div class="kpi-value" id="productosStock">{{ data.kpis.productos_stock }}</div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i> +5% vs ayer
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Valor Inventario</h3>
+                    <div class="kpi-value" id="valorInventario">{{ data.kpis.valor_inventario }}</div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i> +2.1% vs ayer
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Disponibilidad</h3>
+                    <div class="kpi-value" id="disponibilidad">{{ data.kpis.disponibilidad }}</div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i> Excelente
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="kpi-content">
+                    <h3>Cobertura Promedio</h3>
+                    <div class="kpi-value" id="coberturaDias">{{ data.kpis.cobertura_dias }} días</div>
+                    <div class="kpi-trend neutral">
+                        <i class="fas fa-minus"></i> Estable
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>📈 Predicciones de Demanda (7 días)</h3>
+                    <div class="chart-controls">
+                        <select id="chartPeriod">
+                            <option value="7">7 días</option>
+                            <option value="15">15 días</option>
+                            <option value="30">30 días</option>
+                        </select>
+                    </div>
+                </div>
+                <canvas id="demandChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>📊 Stock por Categoría</h3>
+                </div>
+                <canvas id="stockChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+            <div class="section-header">
+                <h3>🚨 Alertas Críticas</h3>
+                <span class="badge badge-danger" id="alertsCount">{{ data.alertas_criticas|length }}</span>
+            </div>
+
+            <div class="alerts-container" id="alertsContainer">
+                {% for alerta in data.alertas_criticas %}
+                <div class="alert-item alert-{{ alerta.urgencia }}">
+                    <div class="alert-icon">
+                        {% if alerta.urgencia == 'crítica' %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% elif alerta.urgencia == 'alta' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-title">{{ alerta.producto }}</div>
+                        <div class="alert-message">
+                            Stock: {{ alerta.stock }} unidades - 
+                            {% if alerta.urgencia == 'sobrestocado' %}
+                                Cobertura: {{ alerta.dias_restantes|round(1) }} días
+                            {% else %}
+                                Se agota en {{ alerta.dias_restantes|round(1) }} días
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        {% if alerta.urgencia != 'sobrestocado' %}
+                        <button class="btn btn-sm btn-primary" onclick="quickOrder('{{ alerta.producto }}')">
+                            <i class="fas fa-shopping-cart"></i> Pedir
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-sm btn-secondary" onclick="viewProduct('{{ alerta.producto }}')">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Purchase Recommendations -->
+        <div class="recommendations-section">
+            <div class="section-header">
+                <h3>💡 Recomendaciones de Compra HOY</h3>
+                <button class="btn btn-primary" onclick="generatePurchaseList()">
+                    <i class="fas fa-download"></i> Generar Lista
+                </button>
+            </div>
+
+            <div class="recommendations-container">
+                {% for rec in data.recomendaciones_compra %}
+                <div class="recommendation-item priority-{{ rec.prioridad }}">
+                    <div class="rec-priority">
+                        <span class="priority-badge">{{ rec.prioridad }}</span>
+                    </div>
+                    <div class="rec-content">
+                        <div class="rec-product">{{ rec.producto }}</div>
+                        <div class="rec-details">
+                            Cantidad: <strong>{{ rec.cantidad }} unidades</strong> | 
+                            Costo: <strong>${{ "{:,.0f}".format(rec.costo) }}</strong>
+                        </div>
+                    </div>
+                    <div class="rec-actions">
+                        <button class="btn btn-success btn-sm" onclick="confirmPurchase('{{ rec.producto }}', {{ rec.cantidad }}, {{ rec.costo }})">
+                            <i class="fas fa-check"></i> Confirmar
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmación de compra -->
+<div class="modal" id="purchaseModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirmar Compra</h3>
+            <button class="modal-close" onclick="closePurchaseModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="purchaseModalBody">
+            <!-- Contenido dinámico -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closePurchaseModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="executePurchase()">Confirmar Compra</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

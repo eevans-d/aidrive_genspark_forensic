@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Sistema Inventario{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'navbar.html' %}
+
+    <div class="error-container">
+        <div class="error-content">
+            <i class="fas fa-exclamation-triangle error-icon"></i>
+            <h1>¡Ups! Algo salió mal</h1>
+            <p class="error-message">{{ error }}</p>
+            <div class="error-actions">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Volver al Dashboard
+                </a>
+                <button onclick="window.location.reload()" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Reintentar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

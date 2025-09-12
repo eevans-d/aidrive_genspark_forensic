@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Intelligence Orchestrator v3.1 - Documentación Técnica Completa</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .architecture-card {
+            background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+            border: 1px solid #cbd5e1;
+        }
+        
+        .tier-badge {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            margin: 2rem 0;
+        }
+
+        .api-method {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .get { background: #10b981; color: white; }
+        .post { background: #3b82f6; color: white; }
+        .put { background: #f59e0b; color: white; }
+        .delete { background: #ef4444; color: white; }
+
+        .architecture-diagram {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+
+        .service-box {
+            background: white;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin: 0.5rem;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        .connection-arrow {
+            border-top: 2px solid #6b7280;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .connection-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -6px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #6b7280;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-4">
+                    <i class="fas fa-brain mr-3"></i>
+                    Business Intelligence Orchestrator v3.1
+                </h1>
+                <p class="text-xl opacity-90 mb-6">Documentación Técnica Completa</p>
+                <div class="flex justify-center space-x-4">
+                    <span class="tier-badge">WEB AUTOMÁTICO COMPETITIVO Tier 2.5</span>
+                    <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        Sistema Completo Implementado
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Tabla de Contenidos -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">
+                <i class="fas fa-list text-blue-600 mr-2"></i>
+                Tabla de Contenidos
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <ul class="space-y-2">
+                    <li><a href="#overview" class="text-blue-600 hover:underline">1. Visión General del Sistema</a></li>
+                    <li><a href="#architecture" class="text-blue-600 hover:underline">2. Arquitectura Técnica</a></li>
+                    <li><a href="#installation" class="text-blue-600 hover:underline">3. Guía de Instalación</a></li>
+                    <li><a href="#configuration" class="text-blue-600 hover:underline">4. Configuración del Sistema</a></li>
+                    <li><a href="#web-automatico" class="text-blue-600 hover:underline">5. WEB AUTOMÁTICO COMPETITIVO</a></li>
+                    <li><a href="#agents" class="text-blue-600 hover:underline">6. Agentes Especializados N8N</a></li>
+                </ul>
+                <ul class="space-y-2">
+                    <li><a href="#backend" class="text-blue-600 hover:underline">7. Microservicios Backend</a></li>
+                    <li><a href="#frontend" class="text-blue-600 hover:underline">8. Frontend y Dashboards</a></li>
+                    <li><a href="#api-reference" class="text-blue-600 hover:underline">9. Referencia de APIs</a></li>
+                    <li><a href="#operations" class="text-blue-600 hover:underline">10. Operaciones y Mantenimiento</a></li>
+                    <li><a href="#troubleshooting" class="text-blue-600 hover:underline">11. Troubleshooting</a></li>
+                    <li><a href="#security" class="text-blue-600 hover:underline">12. Seguridad y Mejores Prácticas</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1. Visión General del Sistema -->
+        <section id="overview" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-eye text-blue-600 mr-3"></i>
+                1. Visión General del Sistema
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="metric-card">
+                    <div class="text-3xl font-bold mb-2">28+</div>
+                    <div class="text-sm opacity-90">Componentes Técnicos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-3xl font-bold mb-2">4</div>
+                    <div class="text-sm opacity-90">Agentes IA Especializados</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-3xl font-bold mb-2">7</div>
+                    <div class="text-sm opacity-90">Microservicios Backend</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-3xl font-bold mb-2">8</div>
+                    <div class="text-sm opacity-90">Dashboards Frontend</div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                <h3 class="font-bold text-blue-800 mb-2">Características Principales</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>WEB AUTOMÁTICO COMPETITIVO Tier 2.5</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Inteligencia Competitiva 24/7</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Análisis Predictivo con ML</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Dashboards en Tiempo Real</li>
+                    </ul>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>APIs REST Avanzadas</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Sistema de Caching Inteligente</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Arquitectura Microservicios</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Seguridad Empresarial</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Stack Tecnológico</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">Backend</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Python/FastAPI</li>
+                        <li>• PostgreSQL</li>
+                        <li>• Redis Cluster</li>
+                        <li>• Apache Kafka</li>
+                    </ul>
+                </div>
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">Frontend</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• React 18</li>
+                        <li>• TypeScript</li>
+                        <li>• D3.js/Chart.js</li>
+                        <li>• Tailwind CSS</li>
+                    </ul>
+                </div>
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">Infraestructura</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Docker/Compose</li>
+                        <li>• N8N Workflows</li>
+                        <li>• Grafana/Loki</li>
+                        <li>• Nginx</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 2. Arquitectura Técnica -->
+        <section id="architecture" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-sitemap text-blue-600 mr-3"></i>
+                2. Arquitectura Técnica
+            </h2>
+
+            <div class="architecture-diagram">
+                <h3 class="text-xl font-bold mb-4 text-center">Diagrama de Arquitectura del Sistema</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Capa de Presentación -->
+                    <div class="col-span-4">
+                        <h4 class="font-bold text-center mb-2 text-purple-700">CAPA DE PRESENTACIÓN</h4>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="service-box bg-purple-100 border-purple-500">Executive Dashboard</div>
+                            <div class="service-box bg-purple-100 border-purple-500">Competitive Intel</div>
+                            <div class="service-box bg-purple-100 border-purple-500">Operational</div>
+                            <div class="service-box bg-purple-100 border-purple-500">Customer Experience</div>
+                        </div>
+                    </div>
+
+                    <div class="connection-arrow col-span-4"></div>
+
+                    <!-- Capa de Lógica de Negocio -->
+                    <div class="col-span-4">
+                        <h4 class="font-bold text-center mb-2 text-blue-700">CAPA DE LÓGICA DE NEGOCIO</h4>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="service-box bg-blue-100 border-blue-500">Market Intelligence</div>
+                            <div class="service-box bg-blue-100 border-blue-500">Process Optimization</div>
+                            <div class="service-box bg-blue-100 border-blue-500">Customer Experience</div>
+                            <div class="service-box bg-blue-100 border-blue-500">Solution Architect</div>
+                        </div>
+                    </div>
+
+                    <div class="connection-arrow col-span-4"></div>
+
+                    <!-- Capa de Servicios -->
+                    <div class="col-span-4">
+                        <h4 class="font-bold text-center mb-2 text-green-700">CAPA DE MICROSERVICIOS</h4>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="service-box bg-green-100 border-green-500">Data Analytics</div>
+                            <div class="service-box bg-green-100 border-green-500">Competitive Intel</div>
+                            <div class="service-box bg-green-100 border-green-500">Business Metrics</div>
+                            <div class="service-box bg-green-100 border-green-500">API Gateway</div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mt-2">
+                            <div class="service-box bg-green-100 border-green-500">Caching Layer</div>
+                            <div class="service-box bg-green-100 border-green-500">Admin Dashboard</div>
+                            <div class="service-box bg-green-100 border-green-500">Real-time Processing</div>
+                        </div>
+                    </div>
+
+                    <div class="connection-arrow col-span-4"></div>
+
+                    <!-- Capa de Datos -->
+                    <div class="col-span-4">
+                        <h4 class="font-bold text-center mb-2 text-red-700">CAPA DE DATOS</h4>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="service-box bg-red-100 border-red-500">PostgreSQL</div>
+                            <div class="service-box bg-red-100 border-red-500">Redis Cluster</div>
+                            <div class="service-box bg-red-100 border-red-500">Apache Kafka</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                    <h4 class="font-bold text-yellow-800 mb-2">WEB AUTOMÁTICO COMPETITIVO Tier 2.5</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Scraping inteligente 24/7</li>
+                        <li>• Rotación automática de proxies</li>
+                        <li>• Análisis de sentimientos en tiempo real</li>
+                        <li>• Detección de cambios competitivos</li>
+                        <li>• Sistema de alertas multichannel</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 border-l-4 border-green-500 p-4">
+                    <h4 class="font-bold text-green-800 mb-2">Características Técnicas</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Arquitectura hexagonal</li>
+                        <li>• Event-driven design</li>
+                        <li>• CQRS pattern implementation</li>
+                        <li>• Circuit breaker pattern</li>
+                        <li>• Health checks automáticos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 3. Guía de Instalación -->
+        <section id="installation" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-download text-blue-600 mr-3"></i>
+                3. Guía de Instalación
+            </h2>
+
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <h3 class="font-bold text-red-800 mb-2">Requisitos del Sistema</h3>
+                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                    <ul class="space-y-1">
+                        <li><strong>CPU:</strong> 8+ cores (16 recomendado)</li>
+                        <li><strong>RAM:</strong> 32GB mínimo (64GB recomendado)</li>
+                        <li><strong>Almacenamiento:</strong> 500GB SSD</li>
+                    </ul>
+                    <ul class="space-y-1">
+                        <li><strong>Docker:</strong> 20.10+ y Docker Compose 2.0+</li>
+                        <li><strong>Sistema:</strong> Linux Ubuntu 20.04+ / CentOS 8+</li>
+                        <li><strong>Red:</strong> Conexión estable de alta velocidad</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Pasos de Instalación</h3>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">1. Preparación del Entorno</h4>
+                    <div class="code-block">
+# Actualizar sistema
+sudo apt update && sudo apt upgrade -y
+
+# Instalar Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Instalar Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">2. Clonación del Proyecto</h4>
+                    <div class="code-block">
+# Clonar repositorio
+git clone https://github.com/empresa/bi-orchestrator-v31.git
+cd bi-orchestrator-v31
+
+# Crear directorios necesarios
+mkdir -p data/{postgres,redis,grafana,loki}
+mkdir -p logs/{app,nginx,system}
+mkdir -p backups/{database,configs}
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">3. Configuración de Variables de Entorno</h4>
+                    <div class="code-block">
+# Copiar archivo de configuración
+cp .env.example .env
+
+# Configurar variables principales
+nano .env
+
+# Variables críticas a configurar:
+POSTGRES_PASSWORD=tu_password_seguro
+REDIS_PASSWORD=tu_redis_password
+JWT_SECRET=tu_jwt_secret_key
+N8N_ENCRYPTION_KEY=tu_n8n_encryption_key
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">4. Construcción e Inicialización</h4>
+                    <div class="code-block">
+# Construir imágenes
+docker-compose build --no-cache
+
+# Inicializar base de datos
+docker-compose up -d postgres redis
+sleep 30
+
+# Ejecutar migraciones
+docker-compose exec postgres psql -U bi_user -d bi_orchestrator -f /docker-entrypoint-initdb.d/schema.sql
+docker-compose exec postgres psql -U bi_user -d bi_orchestrator -f /docker-entrypoint-initdb.d/functions.sql
+
+# Iniciar todos los servicios
+docker-compose up -d
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">5. Verificación de la Instalación</h4>
+                    <div class="code-block">
+# Verificar estado de servicios
+./scripts/status.sh
+
+# Verificar logs
+./scripts/logs.sh
+
+# Acceder a las interfaces:
+# - Frontend: http://localhost:3000
+# - N8N: http://localhost:5678
+# - Grafana: http://localhost:3001
+# - Admin API: http://localhost:8000/docs
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 4. Configuración del Sistema -->
+        <section id="configuration" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-cogs text-blue-600 mr-3"></i>
+                4. Configuración del Sistema
+            </h2>
+
+            <div class="space-y-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-blue-800 mb-3">Configuración de Base de Datos</h3>
+                    <div class="code-block">
+# postgresql.conf - Configuraciones optimizadas
+max_connections = 200
+shared_buffers = 8GB
+effective_cache_size = 24GB
+maintenance_work_mem = 2GB
+checkpoint_completion_target = 0.7
+wal_buffers = 16MB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+
+# Pool de conexiones
+pgbouncer_config:
+  pool_mode: transaction
+  default_pool_size: 20
+  max_client_conn: 100
+                    </div>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-green-800 mb-3">Configuración de Redis</h3>
+                    <div class="code-block">
+# redis.conf - Configuración de cluster
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+maxmemory 8gb
+maxmemory-policy allkeys-lru
+
+# TTL por tipo de datos:
+price_data_ttl = 900      # 15 minutos
+sentiment_ttl = 3600      # 1 hora
+job_data_ttl = 21600      # 6 horas
+screenshot_ttl = 86400    # 24 horas
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-yellow-800 mb-3">Configuración de N8N</h3>
+                    <div class="code-block">
+# N8N Environment Variables
+N8N_BASIC_AUTH_ACTIVE=true
+N8N_BASIC_AUTH_USER=admin
+N8N_BASIC_AUTH_PASSWORD=secure_password
+N8N_HOST=0.0.0.0
+N8N_PORT=5678
+N8N_PROTOCOL=http
+WEBHOOK_URL=http://localhost:5678
+N8N_ENCRYPTION_KEY=your_encryption_key
+
+# Configuración de workflows automáticos
+CRON_COMPETITIVE_MONITORING=*/15 * * * *  # Cada 15 minutos
+CRON_DATA_PROCESSING=0 */1 * * *          # Cada hora
+CRON_REPORTS_GENERATION=0 6 * * *         # Diario a las 6 AM
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-purple-800 mb-3">Configuración de Industrias</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold mb-2">Automotriz</h4>
+                            <div class="code-block text-xs">
+industry_config:
+  automotive:
+    competitors:
+      - toyota.com
+      - honda.com
+      - ford.com
+    metrics:
+      - price_monitoring
+      - model_launches
+      - dealer_locations
+    scraping_frequency: 15min
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">Hotelero</h4>
+                            <div class="code-block text-xs">
+industry_config:
+  hospitality:
+    competitors:
+      - marriott.com
+      - hilton.com
+      - booking.com
+    metrics:
+      - room_prices
+      - availability
+      - reviews_sentiment
+    scraping_frequency: 30min
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 5. WEB AUTOMÁTICO COMPETITIVO -->
+        <section id="web-automatico" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-robot text-blue-600 mr-3"></i>
+                5. WEB AUTOMÁTICO COMPETITIVO Tier 2.5
+            </h2>
+
+            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-4 rounded-lg mb-6">
+                <h3 class="font-bold text-xl mb-2">🏆 COMPONENTE ESTRELLA DEL SISTEMA</h3>
+                <p>Sistema de monitoreo competitivo automatizado con capacidades avanzadas de inteligencia artificial</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">Capacidades Técnicas</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-spider text-green-500 mr-2"></i>Scraping Inteligente con Selenium/Playwright</li>
+                        <li><i class="fas fa-shield-alt text-blue-500 mr-2"></i>Rotación Automática de 50+ Proxies</li>
+                        <li><i class="fas fa-brain text-purple-500 mr-2"></i>Análisis de Sentimientos con NLP</li>
+                        <li><i class="fas fa-eye text-orange-500 mr-2"></i>Detección de Cambios Visuales (Computer Vision)</li>
+                        <li><i class="fas fa-bell text-red-500 mr-2"></i>Alertas Multi-channel (Email, Slack, Teams)</li>
+                    </ul>
+                </div>
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">Métricas Monitoreadas</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-tag text-green-500 mr-2"></i>Precios y Promociones</li>
+                        <li><i class="fas fa-star text-yellow-500 mr-2"></i>Reviews y Calificaciones</li>
+                        <li><i class="fas fa-box text-blue-500 mr-2"></i>Inventario y Disponibilidad</li>
+                        <li><i class="fas fa-users text-purple-500 mr-2"></i>Contrataciones (LinkedIn/Indeed)</li>
+                        <li><i class="fas fa-newspaper text-orange-500 mr-2"></i>Noticias y Menciones</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Configuración del Scraper</h3>
+            <div class="code-block">
+# web_automatico_config.py
+SCRAPER_CONFIG = {
+    "user_agents": [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+    ],
+    "proxy_rotation": {
+        "enabled": True,
+        "providers": ["proxymesh", "smartproxy", "brightdata"],
+        "rotation_interval": 300  # 5 minutos
+    },
+    "rate_limiting": {
+        "requests_per_minute": 30,
+        "delay_between_requests": "random(2,5)"
+    },
+    "computer_vision": {
+        "screenshot_comparison": True,
+        "ocr_enabled": True,
+        "change_detection_threshold": 0.85
+    },
+    "nlp_analysis": {
+        "sentiment_analysis": True,
+        "keyword_extraction": True,
+        "language_detection": True,
+        "models": ["bert-base", "roberta", "spacy-lg"]
+    }
+}
+
+# Ejemplo de configuración por competidor
+COMPETITORS = {
+    "competitor_1": {
+        "name": "Toyota México",
+        "url": "https://toyota.com.mx",
+        "selectors": {
+            "prices": ".price-container .amount",
+            "models": ".vehicle-card h3",
+            "promotions": ".promo-banner"
+        },
+        "monitoring_frequency": "*/15 * * * *",  # Cada 15 minutos
+        "alert_threshold": {
+            "price_change": 0.05,  # 5% cambio en precios
+            "new_content": True
+        }
+    }
+}
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Sistema de Alertas</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-red-50 border border-red-200 p-4 rounded-lg">
+                    <h4 class="font-bold text-red-700 mb-2">Alertas Críticas</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Cambios significativos de precios</li>
+                        <li>• Nuevos productos/servicios</li>
+                        <li>• Crisis de reputación</li>
+                        <li>• Movimientos estratégicos</li>
+                    </ul>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                    <h4 class="font-bold text-yellow-700 mb-2">Alertas Importantes</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Cambios en inventario</li>
+                        <li>• Nuevas contrataciones</li>
+                        <li>• Menciones en medios</li>
+                        <li>• Actualizaciones de sitio web</li>
+                    </ul>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                    <h4 class="font-bold text-blue-700 mb-2">Alertas Informativas</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Cambios menores de contenido</li>
+                        <li>• Nuevas reviews</li>
+                        <li>• Actualizaciones de redes sociales</li>
+                        <li>• Reportes de tendencias</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 6. Agentes Especializados N8N -->
+        <section id="agents" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-users-cog text-blue-600 mr-3"></i>
+                6. Agentes Especializados N8N
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-blue-700 mb-3">
+                        <i class="fas fa-chart-line mr-2"></i>Market Intelligence Agent
+                    </h3>
+                    <ul class="text-sm space-y-1">
+                        <li>• Análisis competitivo automatizado</li>
+                        <li>• Integración con WEB AUTOMÁTICO COMPETITIVO</li>
+                        <li>• Identificación de oportunidades de mercado</li>
+                        <li>• Reportes de tendencias industriales</li>
+                        <li>• Alertas de movimientos competitivos</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-green-700 mb-3">
+                        <i class="fas fa-cogs mr-2"></i>Process Optimization Agent
+                    </h3>
+                    <ul class="text-sm space-y-1">
+                        <li>• Análisis de eficiencia operacional</li>
+                        <li>• Cálculos automáticos de ROI</li>
+                        <li>• Identificación de cuellos de botella</li>
+                        <li>• Recomendaciones de mejora</li>
+                        <li>• Benchmarking de procesos</li>
+                    </ul>
+                </div>
+                <div class="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-purple-700 mb-3">
+                        <i class="fas fa-heart mr-2"></i>Customer Experience Agent
+                    </h3>
+                    <ul class="text-sm space-y-1">
+                        <li>• Journey mapping automatizado</li>
+                        <li>• Análisis de touchpoints</li>
+                        <li>• Segmentación de clientes</li>
+                        <li>• Personalización de experiencias</li>
+                        <li>• Métricas de satisfacción</li>
+                    </ul>
+                </div>
+                <div class="bg-orange-50 border border-orange-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-orange-700 mb-3">
+                        <i class="fas fa-drafting-compass mr-2"></i>Solution Architect Agent
+                    </h3>
+                    <ul class="text-sm space-y-1">
+                        <li>• Evaluación de arquitectura técnica</li>
+                        <li>• Análisis de escalabilidad</li>
+                        <li>• Recomendaciones tecnológicas</li>
+                        <li>• Optimización de infraestructura</li>
+                        <li>• Diseño de soluciones integradas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Configuración de Workflows</h3>
+            <div class="code-block">
+# main-orchestrator.json - Configuración principal
+{
+  "name": "Business Context Controller",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 6,
+              "minute": 0
+            }
+          ]
+        }
+      },
+      "name": "Daily Analysis Trigger",
+      "type": "n8n-nodes-base.cron",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.priority}}",
+              "operation": "equal",
+              "value2": "high"
+            }
+          ]
+        }
+      },
+      "name": "Priority Filter",
+      "type": "n8n-nodes-base.if",
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const context = {\n  timestamp: new Date().toISOString(),\n  business_context: items[0].json.context,\n  priority_score: items[0].json.priority,\n  industry: items[0].json.industry\n};\n\nreturn [{ json: context }];"
+      },
+      "name": "Context Processor",
+      "type": "n8n-nodes-base.function",
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Daily Analysis Trigger": {
+      "main": [
+        [
+          {
+            "node": "Priority Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 7. Microservicios Backend -->
+        <section id="backend" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-server text-blue-600 mr-3"></i>
+                7. Microservicios Backend
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">7</div>
+                    <div class="text-sm opacity-90">Microservicios</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">45+</div>
+                    <div class="text-sm opacity-90">Endpoints API</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">99.9%</div>
+                    <div class="text-sm opacity-90">Uptime SLA</div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Arquitectura de Microservicios</h3>
+            <div class="space-y-4">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 class="font-bold text-blue-700 mb-2">Data Analytics Microservice</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <strong>Responsabilidades:</strong>
+                            <ul class="list-disc list-inside mt-1">
+                                <li>Procesamiento de datos en tiempo real</li>
+                                <li>Análisis predictivo con ML</li>
+                                <li>Generación de insights automáticos</li>
+                                <li>Cálculos estadísticos avanzados</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Tecnologías:</strong>
+                            <ul class="list-disc list-inside mt-1">
+                                <li>FastAPI + Pandas + NumPy</li>
+                                <li>Scikit-learn + TensorFlow</li>
+                                <li>Celery + Redis (tasks async)</li>
+                                <li>PostgreSQL + TimescaleDB</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 class="font-bold text-green-700 mb-2">Competitive Intelligence Microservice</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <strong>Responsabilidades:</strong>
+                            <ul class="list-disc list-inside mt-1">
+                                <li>Gestión del WEB AUTOMÁTICO COMPETITIVO</li>
+                                <li>Análisis de sentimientos</li>
+                                <li>Detección de cambios competitivos</li>
+                                <li>Generación de reportes automáticos</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>APIs Principales:</strong>
+                            <ul class="list-disc list-inside mt-1">
+                                <li>POST /api/competitors/monitor</li>
+                                <li>GET /api/competitive-analysis</li>
+                                <li>POST /api/alerts/configure</li>
+                                <li>GET /api/sentiment/trends</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <h4 class="font-bold text-purple-700 mb-2">Business Metrics Microservice</h4>
+                    <div class="code-block text-xs">
+# Ejemplo de estructura de API
+from fastapi import FastAPI, Depends
+from pydantic import BaseModel
+from typing import List, Optional
+import asyncio
+
+app = FastAPI(title="Business Metrics API")
+
+class KPIRequest(BaseModel):
+    metric_type: str
+    time_range: str
+    filters: Optional[dict] = None
+
+class KPIResponse(BaseModel):
+    metric_name: str
+    current_value: float
+    previous_value: float
+    change_percentage: float
+    trend: str
+
+@app.post("/api/kpis/calculate", response_model=List[KPIResponse])
+async def calculate_kpis(request: KPIRequest):
+    # Lógica de cálculo de KPIs
+    return await process_kpi_calculation(request)
+
+@app.get("/api/roi/analysis")
+async def get_roi_analysis(
+    period: str = "monthly",
+    department: Optional[str] = None
+):
+    # Análisis de ROI automático
+    return await generate_roi_report(period, department)
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Configuración de Deployment</h3>
+            <div class="code-block">
+# docker-compose.backend.yml
+version: '3.8'
+services:
+  data-analytics:
+    build: ./backend/data-analytics
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/bi_db
+      - REDIS_URL=redis://redis:6379/0
+      - ML_MODEL_PATH=/app/models
+    volumes:
+      - ./models:/app/models
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  competitive-intelligence:
+    build: ./backend/competitive-intelligence
+    ports:
+      - "8002:8000"
+    environment:
+      - SCRAPER_PROXY_LIST=/app/proxies.txt
+      - SENTIMENT_MODEL=bert-base-multilingual
+    volumes:
+      - ./data/screenshots:/app/screenshots
+      - ./config/proxies.txt:/app/proxies.txt
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 8. Frontend y Dashboards -->
+        <section id="frontend" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-desktop text-blue-600 mr-3"></i>
+                8. Frontend y Dashboards
+            </h2>
+
+            <div class="grid md:grid-cols-4 gap-4 mb-6">
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">8</div>
+                    <div class="text-sm opacity-90">Dashboards</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">25+</div>
+                    <div class="text-sm opacity-90">Componentes React</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">100%</div>
+                    <div class="text-sm opacity-90">Mobile Responsive</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-2xl font-bold mb-2">Real-time</div>
+                    <div class="text-sm opacity-90">WebSockets</div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4">Dashboards Especializados</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">Executive Dashboard</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• KPIs estratégicos en tiempo real</li>
+                        <li>• Análisis competitivo integrado</li>
+                        <li>• Métricas de ROI consolidadas</li>
+                        <li>• Alertas críticas del negocio</li>
+                        <li>• Reportes ejecutivos automáticos</li>
+                    </ul>
+                </div>
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">Competitive Intelligence Dashboard</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Interface del WEB AUTOMÁTICO COMPETITIVO</li>
+                        <li>• Mapas de calor de precios</li>
+                        <li>• Análisis de sentimientos visual</li>
+                        <li>• Timeline de cambios competitivos</li>
+                        <li>• Comparativas de mercado</li>
+                    </ul>
+                </div>
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">Operational Analytics Dashboard</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Métricas de rendimiento operacional</li>
+                        <li>• Análisis de eficiencia de procesos</li>
+                        <li>• KPIs departamentales</li>
+                        <li>• Benchmarking interno</li>
+                        <li>• Indicadores de productividad</li>
+                    </ul>
+                </div>
+                <div class="architecture-card p-4 rounded-lg">
+                    <h4 class="font-bold mb-3">Customer Experience Dashboard</h4>
+                    <ul class="text-sm space-y-1">
+                        <li>• Journey mapping interactivo</li>
+                        <li>• Análisis de touchpoints</li>
+                        <li>• Segmentación de clientes</li>
+                        <li>• Métricas de satisfacción</li>
+                        <li>• Estrategias de personalización</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Tecnologías Frontend</h3>
+            <div class="code-block">
+# package.json - Dependencias principales
+{
+  "name": "bi-orchestrator-frontend",
+  "version": "3.1.0",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.9.0",
+    "next": "^13.4.0",
+    "@mui/material": "^5.13.0",
+    "@mui/x-data-grid": "^6.3.0",
+    "d3": "^7.8.0",
+    "chart.js": "^4.3.0",
+    "react-chartjs-2": "^5.2.0",
+    "socket.io-client": "^4.6.0",
+    "axios": "^1.4.0",
+    "react-query": "^3.39.0",
+    "framer-motion": "^10.12.0",
+    "tailwindcss": "^3.3.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  }
+}
+
+# Configuración de WebSockets para datos en tiempo real
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:8000', {
+  transports: ['websocket']
+});
+
+socket.on('competitive_update', (data) => {
+  updateCompetitiveData(data);
+});
+
+socket.on('kpi_update', (data) => {
+  updateKPIDashboard(data);
+});
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Componentes Especializados</h3>
+            <div class="code-block">
+// CompetitiveHeatMap.tsx - Mapa de calor de precios
+import React from 'react';
+import { HeatMapGrid } from 'react-grid-heatmap';
+
+interface CompetitiveHeatMapProps {
+  data: CompetitiveData[];
+  competitors: string[];
+  products: string[];
+}
+
+export const CompetitiveHeatMap: React.FC<CompetitiveHeatMapProps> = ({
+  data, competitors, products
+}) => {
+  const xLabels = competitors;
+  const yLabels = products;
+  
+  const heatmapData = products.map(product =>
+    competitors.map(competitor => 
+      getPriceChangePercentage(product, competitor, data)
+    )
+  );
+
+  return (
+    <div className="heatmap-container">
+      <HeatMapGrid
+        data={heatmapData}
+        xLabels={xLabels}
+        yLabels={yLabels}
+        cellRender={(x, y, value) => (
+          <div className={`heatmap-cell ${getColorClass(value)}`}>
+            {value ? `${value}%` : 'N/A'}
+          </div>
+        )}
+        cellStyle={(x, y, ratio) => ({
+          background: `rgb(${255 * (1 - ratio)}, ${255 * ratio}, 0)`,
+          fontSize: '11px',
+        })}
+      />
+    </div>
+  );
+};
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 9. Referencia de APIs -->
+        <section id="api-reference" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-code text-blue-600 mr-3"></i>
+                9. Referencia de APIs
+            </h2>
+
+            <div class="space-y-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-blue-700 mb-3">Data Analytics API</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/analytics/kpis</code>
+                            <span class="ml-2 text-sm text-gray-600">Obtener KPIs principales</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method post">POST</span>
+                            <code>/api/analytics/predict</code>
+                            <span class="ml-2 text-sm text-gray-600">Análisis predictivo</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/analytics/trends/{period}</code>
+                            <span class="ml-2 text-sm text-gray-600">Análisis de tendencias</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-green-700 mb-3">Competitive Intelligence API</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/competitive/monitors</code>
+                            <span class="ml-2 text-sm text-gray-600">Lista de monitores activos</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method post">POST</span>
+                            <code>/api/competitive/monitor</code>
+                            <span class="ml-2 text-sm text-gray-600">Crear nuevo monitor</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/competitive/alerts</code>
+                            <span class="ml-2 text-sm text-gray-600">Alertas competitivas</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/competitive/sentiment/{competitor}</code>
+                            <span class="ml-2 text-sm text-gray-600">Análisis de sentimientos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-purple-700 mb-3">Business Metrics API</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/metrics/roi</code>
+                            <span class="ml-2 text-sm text-gray-600">Cálculos de ROI</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method post">POST</span>
+                            <code>/api/metrics/calculate</code>
+                            <span class="ml-2 text-sm text-gray-600">Calcular métricas personalizadas</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="api-method get">GET</span>
+                            <code>/api/metrics/reports/{type}</code>
+                            <span class="ml-2 text-sm text-gray-600">Reportes automáticos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Ejemplos de Uso</h3>
+            <div class="code-block">
+# Ejemplo 1: Obtener análisis competitivo
+curl -X GET "http://localhost:8002/api/competitive/analysis" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json"
+
+# Respuesta:
+{
+  "competitive_analysis": {
+    "timestamp": "2024-01-15T10:30:00Z",
+    "competitors": [
+      {
+        "name": "Competitor A",
+        "price_changes": [
+          {
+            "product": "Product X",
+            "old_price": 99.99,
+            "new_price": 89.99,
+            "change_percentage": -10.0,
+            "detected_at": "2024-01-15T09:15:00Z"
+          }
+        ],
+        "sentiment_score": 0.75,
+        "activity_level": "high"
+      }
+    ],
+    "insights": [
+      {
+        "type": "price_opportunity",
+        "message": "Competitor A reduced prices by 10% - opportunity to adjust pricing strategy",
+        "confidence": 0.92
+      }
+    ]
+  }
+}
+
+# Ejemplo 2: Configurar nuevo monitor competitivo
+curl -X POST "http://localhost:8002/api/competitive/monitor" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "competitor_name": "New Competitor",
+    "url": "https://competitor.com",
+    "monitoring_config": {
+      "frequency": "*/15 * * * *",
+      "selectors": {
+        "prices": ".price-container .amount",
+        "products": ".product-title"
+      },
+      "alerts": {
+        "price_change_threshold": 0.05,
+        "new_product_alert": true
+      }
+    }
+  }'
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 10. Operaciones y Mantenimiento -->
+        <section id="operations" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-tools text-blue-600 mr-3"></i>
+                10. Operaciones y Mantenimiento
+            </h2>
+
+            <h3 class="text-xl font-bold mb-4">Scripts de Administración</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-green-700 mb-2">Scripts Básicos</h4>
+                    <div class="code-block text-xs">
+# start.sh - Iniciar sistema completo
+#!/bin/bash
+echo "🚀 Iniciando BI Orchestrator v3.1..."
+docker-compose up -d
+echo "✅ Sistema iniciado correctamente"
+./scripts/status.sh
+
+# stop.sh - Detener sistema
+#!/bin/bash
+echo "🛑 Deteniendo BI Orchestrator v3.1..."
+docker-compose down
+echo "✅ Sistema detenido"
+
+# restart.sh - Reiniciar sistema
+#!/bin/bash
+./scripts/stop.sh
+sleep 10
+./scripts/start.sh
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-blue-700 mb-2">Monitoreo</h4>
+                    <div class="code-block text-xs">
+# status.sh - Estado del sistema
+#!/bin/bash
+echo "📊 Estado BI Orchestrator v3.1"
+echo "================================="
+docker-compose ps
+echo ""
+echo "🔍 Health Checks:"
+curl -f http://localhost:8000/health
+curl -f http://localhost:3000/api/health
+echo ""
+echo "💾 Uso de recursos:"
+docker stats --no-stream
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Monitoreo y Alertas</h3>
+            <div class="space-y-4">
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                    <h4 class="font-bold text-yellow-800 mb-2">Métricas Críticas a Monitorear</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <ul class="space-y-1">
+                            <li>• CPU y RAM de contenedores</li>
+                            <li>• Espacio en disco de base de datos</li>
+                            <li>• Latencia de APIs (< 200ms)</li>
+                            <li>• Uptime de servicios (> 99.9%)</li>
+                        </ul>
+                        <ul class="space-y-1">
+                            <li>• Rate de scraping exitoso (> 95%)</li>
+                            <li>• Tiempo de respuesta de dashboards</li>
+                            <li>• Errores de N8N workflows</li>
+                            <li>• Conexiones Redis/PostgreSQL</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                    <h4 class="font-bold text-red-800 mb-2">Procedimientos de Emergencia</h4>
+                    <div class="code-block text-xs">
+# emergency-recovery.sh
+#!/bin/bash
+
+echo "🚨 PROCEDIMIENTO DE EMERGENCIA ACTIVADO"
+
+# 1. Backup inmediato de datos críticos
+docker exec postgres pg_dump -U bi_user bi_orchestrator > emergency_backup_$(date +%Y%m%d_%H%M%S).sql
+
+# 2. Reiniciar servicios críticos
+docker-compose restart postgres redis n8n
+
+# 3. Verificar integridad de datos
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "SELECT COUNT(*) FROM competitive_data WHERE DATE(created_at) = CURRENT_DATE;"
+
+# 4. Restaurar WEB AUTOMÁTICO COMPETITIVO si es necesario
+docker-compose restart web-monitor
+
+# 5. Notificar al equipo
+curl -X POST "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK" \
+  -H 'Content-type: application/json' \
+  --data '{"text":"🚨 BI Orchestrator: Procedimiento de emergencia ejecutado"}'
+
+echo "✅ Procedimiento de emergencia completado"
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Mantenimiento Preventivo</h3>
+            <div class="code-block">
+# maintenance.sh - Mantenimiento semanal automatizado
+#!/bin/bash
+
+echo "🔧 Iniciando mantenimiento preventivo..."
+
+# 1. Backup completo
+./scripts/backup.sh
+
+# 2. Limpieza de logs antiguos (> 30 días)
+find ./logs -name "*.log" -mtime +30 -delete
+
+# 3. Limpieza de cache Redis
+docker exec redis redis-cli FLUSHDB
+
+# 4. Optimización de base de datos
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "VACUUM ANALYZE;"
+
+# 5. Actualización de índices
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "REINDEX DATABASE bi_orchestrator;"
+
+# 6. Limpieza de screenshots antiguos (> 7 días)
+find ./data/screenshots -name "*.png" -mtime +7 -delete
+
+# 7. Verificación de integridad del sistema
+./scripts/health-check.sh
+
+# 8. Reinicio de servicios no críticos
+docker-compose restart grafana loki
+
+echo "✅ Mantenimiento preventivo completado"
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 11. Troubleshooting -->
+        <section id="troubleshooting" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-bug text-blue-600 mr-3"></i>
+                11. Troubleshooting
+            </h2>
+
+            <div class="space-y-6">
+                <div class="bg-red-50 border border-red-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-red-700 mb-3">Problemas Comunes del WEB AUTOMÁTICO COMPETITIVO</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-semibold text-red-600">Error: Proxies bloqueados</h4>
+                            <p class="text-sm mb-2">Síntomas: Rate limiting, captchas, IPs bloqueadas</p>
+                            <div class="code-block text-xs">
+# Solución: Rotar proxies y actualizar user agents
+docker exec web-monitor python manage.py rotate_proxies
+docker exec web-monitor python manage.py update_user_agents
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-red-600">Error: Selectores CSS obsoletos</h4>
+                            <p class="text-sm mb-2">Síntomas: Datos no extraídos, elementos no encontrados</p>
+                            <div class="code-block text-xs">
+# Solución: Actualizar selectores automáticamente
+docker exec web-monitor python manage.py update_selectors --competitor=all
+docker logs web-monitor | grep "selector_update"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-blue-700 mb-3">Problemas de Base de Datos</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-semibold text-blue-600">Error: Conexiones agotadas</h4>
+                            <div class="code-block text-xs">
+# Diagnóstico
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "SELECT count(*) FROM pg_stat_activity;"
+
+# Solución: Aumentar max_connections
+docker exec postgres sed -i 's/max_connections = 100/max_connections = 200/' /etc/postgresql/postgresql.conf
+docker-compose restart postgres
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-blue-600">Error: Espacio en disco lleno</h4>
+                            <div class="code-block text-xs">
+# Limpieza de datos antiguos (> 90 días)
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "DELETE FROM competitive_data WHERE created_at < NOW() - INTERVAL '90 days';"
+
+# Vacuum completo
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "VACUUM FULL;"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-green-700 mb-3">Problemas de N8N Workflows</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-semibold text-green-600">Error: Workflows no ejecutándose</h4>
+                            <div class="code-block text-xs">
+# Verificar estado de workflows
+curl http://localhost:5678/api/v1/workflows
+
+# Reiniciar workflow específico
+curl -X POST http://localhost:5678/api/v1/workflows/{WORKFLOW_ID}/activate
+
+# Verificar logs de N8N
+docker logs n8n | tail -100
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                    <h3 class="font-bold text-yellow-700 mb-3">Problemas de Performance</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <h4 class="font-semibold text-yellow-600">Dashboards lentos</h4>
+                            <div class="code-block text-xs">
+# Verificar cache Redis
+docker exec redis redis-cli INFO memory
+
+# Limpiar cache selectivo
+docker exec redis redis-cli FLUSHDB 1  # Cache de dashboards
+
+# Optimizar queries frecuentes
+docker exec postgres psql -U bi_user -d bi_orchestrator -c "EXPLAIN ANALYZE SELECT * FROM competitive_data ORDER BY created_at DESC LIMIT 100;"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-4 mt-6">Logs y Diagnóstico</h3>
+            <div class="code-block">
+# logs.sh - Script para revisar logs del sistema
+#!/bin/bash
+
+echo "📋 LOGS DEL SISTEMA BI ORCHESTRATOR v3.1"
+echo "========================================"
+
+echo "🔍 Logs de WEB AUTOMÁTICO COMPETITIVO:"
+docker logs web-monitor --tail=50
+
+echo ""
+echo "🔍 Logs de Base de Datos:"
+docker logs postgres --tail=30
+
+echo ""
+echo "🔍 Logs de N8N:"
+docker logs n8n --tail=30
+
+echo ""
+echo "🔍 Logs de APIs:"
+docker logs data-analytics --tail=20
+docker logs competitive-intelligence --tail=20
+
+echo ""
+echo "🔍 Errores críticos recientes:"
+docker logs $(docker ps -q) 2>&1 | grep -i "error\|critical\|failed" | tail -10
+
+echo ""
+echo "✅ Revisión de logs completada"
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 12. Seguridad y Mejores Prácticas -->
+        <section id="security" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                <i class="fas fa-shield-alt text-blue-600 mr-3"></i>
+                12. Seguridad y Mejores Prácticas
+            </h2>
+
+            <div class="space-y-6">
+                <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                    <h3 class="font-bold text-red-800 mb-3">Configuración de Seguridad</h3>
+                    <div class="space-y-2 text-sm">
+                        <div><strong>Autenticación:</strong> JWT con refresh tokens, sesiones de 8 horas</div>
+                        <div><strong>Autorización:</strong> RBAC con roles: Admin, Analyst, Viewer</div>
+                        <div><strong>Encriptación:</strong> TLS 1.3 para todas las comunicaciones</div>
+                        <div><strong>Rate Limiting:</strong> 100 requests/min por usuario</div>
+                        <div><strong>Firewall:</strong> Solo puertos necesarios expuestos</div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+                    <h3 class="font-bold text-blue-800 mb-3">Backup y Recuperación</h3>
+                    <div class="code-block text-xs">
+# backup.sh - Backup automático diario
+#!/bin/bash
+
+BACKUP_DIR="/backups/$(date +%Y%m%d)"
+mkdir -p $BACKUP_DIR
+
+# Backup de PostgreSQL
+docker exec postgres pg_dump -U bi_user bi_orchestrator | gzip > $BACKUP_DIR/postgres_backup.sql.gz
+
+# Backup de configuraciones
+cp -r ./config $BACKUP_DIR/
+cp -r ./n8n-workflows $BACKUP_DIR/
+
+# Backup de Redis (dump)
+docker exec redis redis-cli BGSAVE
+docker cp redis:/data/dump.rdb $BACKUP_DIR/
+
+# Subir a S3 (opcional)
+aws s3 sync $BACKUP_DIR s3://bi-orchestrator-backups/$(date +%Y%m%d)/
+
+echo "✅ Backup completado: $BACKUP_DIR"
+                    </div>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-500 p-4">
+                    <h3 class="font-bold text-green-800 mb-3">Mejores Prácticas Operacionales</h3>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <ul class="space-y-1">
+                            <li>• Actualizar dependencias mensualmente</li>
+                            <li>• Monitoreo 24/7 con alertas automáticas</li>
+                            <li>• Backups diarios automáticos</li>
+                            <li>• Logs centralizados con rotación</li>
+                        </ul>
+                        <ul class="space-y-1">
+                            <li>• Testing de recuperación trimestral</li>
+                            <li>• Documentación actualizada</li>
+                            <li>• Capacitación del equipo técnico</li>
+                            <li>• Auditorías de seguridad semestrales</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4">
+                    <h3 class="font-bold text-purple-800 mb-3">Checklist de Producción</h3>
+                    <div class="space-y-1 text-sm">
+                        <div><input type="checkbox" class="mr-2">Variables de entorno configuradas</div>
+                        <div><input type="checkbox" class="mr-2">Certificados SSL instalados</div>
+                        <div><input type="checkbox" class="mr-2">Firewall configurado</div>
+                        <div><input type="checkbox" class="mr-2">Monitoreo activado</div>
+                        <div><input type="checkbox" class="mr-2">Backups programados</div>
+                        <div><input type="checkbox" class="mr-2">Logs configurados</div>
+                        <div><input type="checkbox" class="mr-2">Alertas configuradas</div>
+                        <div><input type="checkbox" class="mr-2">Documentación actualizada</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-8 mt-12 rounded-xl">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold mb-4">
+                    <i class="fas fa-brain mr-2"></i>
+                    Business Intelligence Orchestrator v3.1
+                </h3>
+                <p class="text-gray-300 mb-4">Sistema completo de inteligencia de negocios con WEB AUTOMÁTICO COMPETITIVO Tier 2.5</p>
+                <div class="flex justify-center space-x-6 text-sm">
+                    <span><i class="fas fa-check text-green-400 mr-1"></i>28+ Componentes Implementados</span>
+                    <span><i class="fas fa-check text-green-400 mr-1"></i>4 Prompts Completados</span>
+                    <span><i class="fas fa-check text-green-400 mr-1"></i>100% Especificaciones Técnicas</span>
+                </div>
+                <div class="mt-4 text-xs text-gray-400">
+                    Documentación Técnica Completa - Versión 3.1.0 - Actualizada: Enero 2024
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDleKBjX9FKw0sOqytKBh65LXK9qq83e7Opw07bIhQYFNzFjrnHjbHZjFmQ49QXaBQKIxtDg4gHS1y10VIUcORlC8URXjNqfam5WMzRO%2F6eyjgVYo3fCVmnK8DvOaEVHVCj2cdN3S7l2TISSusNe%2FYswet7UrLD76MxgM77hJCRKYpVrbAPgPDu%2BNNlNhZNxXKSVaSjwxsXbh8sMHu5JDAlwqhMUtc3vkki1VJ9QVyQCXafz8vKHT%2FAeVI4Kz3c7zqZmJg6klOQrs5oC6QY%2FsRFGsZ%2BYBs%2FcAKeUtGUtjXg0rxW3ZDzsZi5JTyrM158nwPi7%2BlxreEwUh%2BFqI%2BOzFl3tHgbcQ8iW8ndMALLOCGP5DE70GUUxHUDPg0wr2f6KK7K6IRFfKj0R7oAsZ6wbxhzVOVo8DT5JnPahxTU8mNX6%2FqbS9qj3dO8jf20tVZtmrWVl6Ylr%2B76QVKuK%2FjQOoZ5118vhvIHYQDR0pgI0r402iswxzpoBPs%2FTolLNFoihjJgZZNxM20hQZq0bVC8R6Kn8%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDleKBjX9FKw0sOqytKBh65LXK9qq83e7Opw07bIhQYFNzFjrnHjbHZjFmQ49QXaBQKIxtDg4gHS1y10VIUcORlC8URXjNqfam5WMzRO/6eyjgVYo3fCVmnK8DvOaEVHVCj2cdN3S7l2TISSusNe/Yswet7UrLD76MxgM77hJCRKYpVrbAPgPDu+NNlNhZNxXKSVaSjwxsXbh8sMHu5JDAlwqhMUtc3vkki1VJ9QVyQCXafz8vKHT/AeVI4Kz3c7zqZmJg6klOQrs5oC6QY/sRFGsZ+YBs/cAKeUtGUtjXg0rxW3ZDzsZi5JTyrM158nwPi7+lxreEwUh+FqI+OzFl3tHgbcQ8iW8ndMALLOCGP5DE70GUUxHUDPg0wr2f6KK7K6IRFfKj0R7oAsZ6wbxhzVOVo8DT5JnPahxTU8mNX6/qbS9qj3dO8jf20tVZtmrWVl6Ylr+76QVKuK/jQOoZ5118vhvIHYQDR0pgI0r402iswxzpoBPs/TolLNFoihjJgZZNxM20hQZq0bVC8R6Kn8=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

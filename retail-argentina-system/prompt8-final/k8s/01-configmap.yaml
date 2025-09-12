@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: retail-config
+  namespace: retail-argentina
+data:
+  # Database Configuration
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "retail_argentina"
+  POSTGRES_USER: "retail_user"
+
+  # Redis Configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+
+  # Service Configuration
+  DEPOSITO_URL: "http://agente-deposito-service:8000"
+  NEGOCIO_URL: "http://agente-negocio-service:8000"
+  ML_URL: "http://ml-service:8000"
+
+  # Argentina Specific
+  DEFAULT_TIMEZONE: "America/Argentina/Buenos_Aires"
+  DEFAULT_CURRENCY: "ARS"
+  TAX_RATE_IVA: "0.21"
+  INFLATION_RATE_MONTHLY: "0.045"
+
+  # Feature Flags
+  ENABLE_ML_PREDICTIONS: "true"
+  ENABLE_AFIP_INTEGRATION: "true"
+  ENABLE_METRICS_COLLECTION: "true"
+
+  # Logging
+  LOG_LEVEL: "INFO"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: retail-secrets
+  namespace: retail-argentina
+type: Opaque
+data:
+  # Base64 encoded secrets (replace with actual values)
+  POSTGRES_PASSWORD: cG9zdGdyZXNfcGFzc3dvcmQ=  # postgres_password
+  REDIS_PASSWORD: cmVkaXNfcGFzc3dvcmQ=  # redis_password
+  JWT_SECRET_KEY: and0X3NlY3JldF9rZXk=  # jwt_secret_key
+  AFIP_CUIT: MjAxMjM0NTY3ODk=  # 20123456789

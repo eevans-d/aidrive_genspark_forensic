@@ -1,0 +1,24 @@
+# Dashboard Web Sistema Inventario Retail Argentino
+# Core Flask
+Flask==2.3.3
+Flask-SocketIO==5.3.6
+
+# Database
+psycopg2-binary==2.9.7
+SQLAlchemy==2.0.21
+
+# Cache
+redis==5.0.0
+hiredis==2.2.3
+
+# File handling
+Pillow==10.0.1
+Werkzeug==2.3.7
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Development
+gunicorn==21.2.0
+python-dotenv==1.0.0

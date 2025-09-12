@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Productos - Sistema Inventario{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'navbar.html' %}
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-boxes"></i> Gestión de Productos</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="showAddProductModal()">
+                    <i class="fas fa-plus"></i> Nuevo Producto
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="search-box">
+                <input type="text" id="productSearch" class="form-control" 
+                       placeholder="Buscar productos por nombre, código o categoría...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="filter-controls">
+                <select id="categoryFilter" class="form-control">
+                    <option value="">Todas las Categorías</option>
+                    <option value="bebidas">Bebidas</option>
+                    <option value="alimentos">Alimentos</option>
+                    <option value="limpieza">Limpieza</option>
+                    <option value="lacteos">Lácteos</option>
+                </select>
+
+                <select id="statusFilter" class="form-control">
+                    <option value="">Todos los Estados</option>
+                    <option value="crítico">Stock Crítico</option>
+                    <option value="bajo">Stock Bajo</option>
+                    <option value="normal">Stock Normal</option>
+                    <option value="sobrestocado">Sobrestocado</option>
+                </select>
+
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Limpiar
+                </button>
+            </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="products-table-container">
+            <div class="table-header">
+                <h3>Lista de Productos</h3>
+                <div class="table-actions">
+                    <button class="btn btn-success" onclick="exportProducts()">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="products-table" id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th>Predicción 7d</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Datos cargados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <div class="pagination-info">
+                    Mostrando <span id="showingInfo">1-10 de 50</span> productos
+                </div>
+                <div class="pagination">
+                    <button class="btn btn-sm btn-secondary" onclick="previousPage()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-numbers" id="pageNumbers">
+                        <!-- Números de página -->
+                    </span>
+                    <button class="btn btn-sm btn-secondary" onclick="nextPage()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add/Edit Product -->
+<div class="modal" id="productModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="productModalTitle">Agregar Producto</h3>
+            <button class="modal-close" onclick="closeProductModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="productForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="productCode">Código</label>
+                        <input type="text" id="productCode" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Nombre</label>
+                        <input type="text" id="productName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Categoría</label>
+                        <select id="productCategory" class="form-control" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="bebidas">Bebidas</option>
+                            <option value="alimentos">Alimentos</option>
+                            <option value="limpieza">Limpieza</option>
+                            <option value="lacteos">Lácteos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stock Inicial</label>
+                        <input type="number" id="productStock" class="form-control" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Precio</label>
+                        <input type="number" id="productPrice" class="form-control" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productMinStock">Stock Mínimo</label>
+                        <input type="number" id="productMinStock" class="form-control" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Descripción</label>
+                    <textarea id="productDescription" class="form-control" rows="3"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeProductModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveProduct()">Guardar</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/productos.js') }}"></script>
+{% endblock %}

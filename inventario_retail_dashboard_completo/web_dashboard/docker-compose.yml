@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: inventario_retail
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - inventario_network
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - inventario_network
+
+  # Dashboard Web
+  web_dashboard:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+      - FLASK_ENV=development
+    volumes:
+      - ./uploads:/app/uploads
+      - ./static:/app/static
+      - ./templates:/app/templates
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario_network
+
+  # Agente Depósito (API Productos)
+  agente_deposito:
+    build: ../agente_deposito
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario_network
+
+  # Agente Negocio (OCR + Pricing)
+  agente_negocio:
+    build: ../agente_negocio
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario_network
+
+  # ML Predictor
+  ml_predictor:
+    build: ../ml_advanced
+    ports:
+      - "8002:8002"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  inventario_network:
+    driver: bridge

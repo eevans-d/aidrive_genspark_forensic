@@ -1,0 +1,16 @@
+[Unit]
+Description=AgenteDepósito FastAPI  
+After=network.target
+
+[Service]
+Type=simple
+User=inventario
+Group=inventario
+WorkingDirectory=/opt/inventario-retail
+Environment="PATH=/opt/inventario-retail/venv/bin"
+ExecStart=/opt/inventario-retail/venv/bin/uvicorn agente_deposito.main:app --host 0.0.0.0 --port 8002
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

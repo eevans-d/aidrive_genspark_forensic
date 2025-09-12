@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservicios Backend - FastAPI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-block { font-family: 'JetBrains Mono', monospace; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .service-card { transition: all 0.3s ease; }
+        .service-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+        .syntax-highlight { background: #1a1a1a; color: #f8f8f2; }
+        .keyword { color: #66d9ef; }
+        .string { color: #a6e22e; }
+        .comment { color: #75715e; }
+        .function { color: #fd971f; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="gradient-bg text-white py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold mb-4">
+                    <i class="fas fa-server mr-3"></i>
+                    Microservicios Backend - FastAPI
+                </h1>
+                <p class="text-xl opacity-90">Business Intelligence Orchestrator v3.1</p>
+                <div class="mt-4 inline-flex items-center bg-white bg-opacity-20 rounded-full px-6 py-2">
+                    <i class="fas fa-code mr-2"></i>
+                    <span class="font-semibold">7 Microservicios Especializados</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Overview -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="service-card bg-white rounded-lg p-6 shadow-lg">
+                <div class="text-blue-600 text-3xl mb-4"><i class="fas fa-chart-line"></i></div>
+                <h3 class="font-bold text-lg mb-2">Data Analytics</h3>
+                <p class="text-gray-600 text-sm">ML y análisis predictivo</p>
+            </div>
+            <div class="service-card bg-white rounded-lg p-6 shadow-lg">
+                <div class="text-red-600 text-3xl mb-4"><i class="fas fa-search"></i></div>
+                <h3 class="font-bold text-lg mb-2">Competitive Intelligence</h3>
+                <p class="text-gray-600 text-sm">WEB AUTOMÁTICO integrado</p>
+            </div>
+            <div class="service-card bg-white rounded-lg p-6 shadow-lg">
+                <div class="text-green-600 text-3xl mb-4"><i class="fas fa-tachometer-alt"></i></div>
+                <h3 class="font-bold text-lg mb-2">Business Metrics</h3>
+                <p class="text-gray-600 text-sm">KPIs y ROI automático</p>
+            </div>
+            <div class="service-card bg-white rounded-lg p-6 shadow-lg">
+                <div class="text-purple-600 text-3xl mb-4"><i class="fas fa-shield-alt"></i></div>
+                <h3 class="font-bold text-lg mb-2">API Gateway</h3>
+                <p class="text-gray-600 text-sm">Seguridad y routing</p>
+            </div>
+        </div>
+
+        <!-- Microservice 1: Data Analytics -->
+        <div class="bg-white rounded-lg shadow-lg mb-8">
+            <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-chart-line mr-3"></i>
+                    Data Analytics Microservice
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📁 Estructura de Archivos</h3>
+                    <div class="bg-gray-100 p-4 rounded code-block text-sm">
+backend/data-analytics/
+├── main.py                 # FastAPI application
+├── models/
+│   ├── __init__.py
+│   ├── analytics.py        # Pydantic models
+│   └── predictions.py      # ML models
+├── services/
+│   ├── __init__.py
+│   ├── data_processor.py   # Data processing
+│   ├── ml_engine.py        # Machine Learning
+│   └── cache_service.py    # Cache management
+├── routers/
+│   ├── __init__.py
+│   ├── analytics.py        # Analytics endpoints
+│   └── predictions.py      # Prediction endpoints
+├── utils/
+│   ├── __init__.py
+│   ├── database.py         # DB connections
+│   └── helpers.py          # Utility functions
+├── Dockerfile
+├── requirements.txt
+└── config.py               # Configuration
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🚀 main.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">from</span> <span class="string">fastapi</span> <span class="keyword">import</span> FastAPI, HTTPException, Depends
+<span class="keyword">from</span> <span class="string">fastapi.middleware.cors</span> <span class="keyword">import</span> CORSMiddleware
+<span class="keyword">from</span> <span class="string">fastapi.security</span> <span class="keyword">import</span> HTTPBearer, HTTPAuthorizationCredentials
+<span class="keyword">from</span> <span class="string">contextlib</span> <span class="keyword">import</span> asynccontextmanager
+<span class="keyword">import</span> asyncio
+<span class="keyword">import</span> uvicorn
+
+<span class="keyword">from</span> routers <span class="keyword">import</span> analytics, predictions
+<span class="keyword">from</span> services.ml_engine <span class="keyword">import</span> MLEngine
+<span class="keyword">from</span> utils.database <span class="keyword">import</span> init_db
+<span class="keyword">from</span> config <span class="keyword">import</span> settings
+
+security = HTTPBearer()
+
+<span class="comment"># Global ML Engine instance</span>
+ml_engine = None
+
+<span class="function">@asynccontextmanager</span>
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">lifespan</span>(app: FastAPI):
+    <span class="comment"># Startup</span>
+    <span class="keyword">global</span> ml_engine
+    
+    <span class="comment"># Initialize database</span>
+    <span class="keyword">await</span> init_db()
+    
+    <span class="comment"># Initialize ML Engine</span>
+    ml_engine = MLEngine()
+    <span class="keyword">await</span> ml_engine.initialize()
+    
+    <span class="comment"># Start background tasks</span>
+    asyncio.create_task(ml_engine.start_training_scheduler())
+    
+    <span class="keyword">yield</span>
+    
+    <span class="comment"># Shutdown</span>
+    <span class="keyword">if</span> ml_engine:
+        <span class="keyword">await</span> ml_engine.cleanup()
+
+app = FastAPI(
+    title=<span class="string">"Data Analytics Microservice"</span>,
+    description=<span class="string">"Advanced analytics and ML predictions for BI Orchestrator"</span>,
+    version=<span class="string">"3.1.0"</span>,
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[<span class="string">"*"</span>],
+    allow_credentials=True,
+    allow_methods=[<span class="string">"*"</span>],
+    allow_headers=[<span class="string">"*"</span>],
+)
+
+<span class="comment"># Include routers</span>
+app.include_router(analytics.router, prefix=<span class="string">"/api/v1/analytics"</span>, tags=[<span class="string">"analytics"</span>])
+app.include_router(predictions.router, prefix=<span class="string">"/api/v1/predictions"</span>, tags=[<span class="string">"predictions"</span>])
+
+<span class="function">@app.get</span>(<span class="string">"/"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">root</span>():
+    <span class="keyword">return</span> {
+        <span class="string">"service"</span>: <span class="string">"Data Analytics Microservice"</span>,
+        <span class="string">"version"</span>: <span class="string">"3.1.0"</span>,
+        <span class="string">"status"</span>: <span class="string">"healthy"</span>,
+        <span class="string">"ml_engine_status"</span>: <span class="string">"ready"</span> <span class="keyword">if</span> ml_engine <span class="keyword">and</span> ml_engine.is_ready <span class="keyword">else</span> <span class="string">"initializing"</span>
+    }
+
+<span class="function">@app.get</span>(<span class="string">"/health"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">health_check</span>():
+    <span class="keyword">return</span> {<span class="string">"status"</span>: <span class="string">"healthy"</span>, <span class="string">"timestamp"</span>: datetime.now().isoformat()}
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    uvicorn.run(app, host=<span class="string">"0.0.0.0"</span>, port=8001)</code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📊 models/analytics.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">from</span> <span class="string">pydantic</span> <span class="keyword">import</span> BaseModel, Field, validator
+<span class="keyword">from</span> <span class="string">typing</span> <span class="keyword">import</span> List, Dict, Any, Optional
+<span class="keyword">from</span> <span class="string">datetime</span> <span class="keyword">import</span> datetime, date
+<span class="keyword">from</span> <span class="string">enum</span> <span class="keyword">import</span> Enum
+
+<span class="keyword">class</span> <span class="function">MetricType</span>(str, Enum):
+    REVENUE = <span class="string">"revenue"</span>
+    CONVERSION = <span class="string">"conversion"</span>
+    ENGAGEMENT = <span class="string">"engagement"</span>
+    PERFORMANCE = <span class="string">"performance"</span>
+    COMPETITIVE = <span class="string">"competitive"</span>
+
+<span class="keyword">class</span> <span class="function">TimeRange</span>(BaseModel):
+    start_date: date
+    end_date: date
+    
+    <span class="function">@validator</span>(<span class="string">'end_date'</span>)
+    <span class="keyword">def</span> <span class="function">validate_date_range</span>(cls, v, values):
+        <span class="keyword">if</span> <span class="string">'start_date'</span> <span class="keyword">in</span> values <span class="keyword">and</span> v < values[<span class="string">'start_date'</span>]:
+            <span class="keyword">raise</span> ValueError(<span class="string">'end_date must be after start_date'</span>)
+        <span class="keyword">return</span> v
+
+<span class="keyword">class</span> <span class="function">AnalyticsRequest</span>(BaseModel):
+    metric_type: MetricType
+    time_range: TimeRange
+    filters: Optional[Dict[str, Any]] = None
+    aggregation: Optional[str] = <span class="string">"daily"</span>  <span class="comment"># daily, weekly, monthly</span>
+    include_predictions: Optional[bool] = False
+    
+    <span class="keyword">class</span> <span class="function">Config</span>:
+        schema_extra = {
+            <span class="string">"example"</span>: {
+                <span class="string">"metric_type"</span>: <span class="string">"revenue"</span>,
+                <span class="string">"time_range"</span>: {
+                    <span class="string">"start_date"</span>: <span class="string">"2024-01-01"</span>,
+                    <span class="string">"end_date"</span>: <span class="string">"2024-01-31"</span>
+                },
+                <span class="string">"aggregation"</span>: <span class="string">"daily"</span>,
+                <span class="string">"include_predictions"</span>: True
+            }
+        }
+
+<span class="keyword">class</span> <span class="function">DataPoint</span>(BaseModel):
+    timestamp: datetime
+    value: float
+    metadata: Optional[Dict[str, Any]] = None
+
+<span class="keyword">class</span> <span class="function">AnalyticsResponse</span>(BaseModel):
+    metric_type: MetricType
+    data_points: List[DataPoint]
+    summary: Dict[str, Any]
+    predictions: Optional[List[DataPoint]] = None
+    generated_at: datetime = Field(default_factory=datetime.now)
+    
+    <span class="keyword">class</span> <span class="function">Config</span>:
+        schema_extra = {
+            <span class="string">"example"</span>: {
+                <span class="string">"metric_type"</span>: <span class="string">"revenue"</span>,
+                <span class="string">"data_points"</span>: [
+                    {
+                        <span class="string">"timestamp"</span>: <span class="string">"2024-01-01T00:00:00"</span>,
+                        <span class="string">"value"</span>: 15000.50,
+                        <span class="string">"metadata"</span>: {<span class="string">"source"</span>: <span class="string">"sales_system"</span>}
+                    }
+                ],
+                <span class="string">"summary"</span>: {
+                    <span class="string">"total"</span>: 465000.50,
+                    <span class="string">"average"</span>: 15000.02,
+                    <span class="string">"growth_rate"</span>: 12.5
+                }
+            }
+        }
+
+<span class="keyword">class</span> <span class="function">CompetitiveAnalysisRequest</span>(BaseModel):
+    competitors: List[str]
+    metrics: List[str] = [<span class="string">"pricing"</span>, <span class="string">"features"</span>, <span class="string">"sentiment"</span>]
+    time_range: TimeRange
+    deep_analysis: Optional[bool] = True
+
+<span class="keyword">class</span> <span class="function">CompetitorInsight</span>(BaseModel):
+    competitor: str
+    metric: str
+    current_value: Any
+    trend: str  <span class="comment"># "increasing", "decreasing", "stable"</span>
+    change_percentage: Optional[float] = None
+    last_updated: datetime</code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🔗 routers/analytics.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">from</span> <span class="string">fastapi</span> <span class="keyword">import</span> APIRouter, HTTPException, Depends, BackgroundTasks
+<span class="keyword">from</span> <span class="string">typing</span> <span class="keyword">import</span> List
+<span class="keyword">import</span> asyncio
+
+<span class="keyword">from</span> models.analytics <span class="keyword">import</span> (
+    AnalyticsRequest, AnalyticsResponse, CompetitiveAnalysisRequest, 
+    CompetitorInsight, MetricType
+)
+<span class="keyword">from</span> services.data_processor <span class="keyword">import</span> DataProcessor
+<span class="keyword">from</span> services.cache_service <span class="keyword">import</span> CacheService
+<span class="keyword">from</span> utils.helpers <span class="keyword">import</span> get_current_user
+
+router = APIRouter()
+data_processor = DataProcessor()
+cache_service = CacheService()
+
+<span class="function">@router.post</span>(<span class="string">"/analyze"</span>, response_model=AnalyticsResponse)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">analyze_metrics</span>(
+    request: AnalyticsRequest,
+    background_tasks: BackgroundTasks,
+    current_user = Depends(get_current_user)
+):
+    <span class="string">"""
+    Analyze business metrics with optional ML predictions
+    """</span>
+    <span class="keyword">try</span>:
+        <span class="comment"># Check cache first</span>
+        cache_key = f<span class="string">"analytics:{request.metric_type}:{request.time_range.start_date}:{request.time_range.end_date}"</span>
+        cached_result = <span class="keyword">await</span> cache_service.get(cache_key)
+        
+        <span class="keyword">if</span> cached_result <span class="keyword">and</span> <span class="keyword">not</span> request.include_predictions:
+            <span class="keyword">return</span> AnalyticsResponse(**cached_result)
+        
+        <span class="comment"># Process data</span>
+        result = <span class="keyword">await</span> data_processor.analyze_metrics(request)
+        
+        <span class="comment"># Cache result for 15 minutes</span>
+        background_tasks.add_task(
+            cache_service.set, 
+            cache_key, 
+            result.dict(), 
+            ttl=900
+        )
+        
+        <span class="keyword">return</span> result
+        
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+        <span class="keyword">raise</span> HTTPException(status_code=500, detail=f<span class="string">"Analysis failed: {str(e)}"</span>)
+
+<span class="function">@router.post</span>(<span class="string">"/competitive-analysis"</span>, response_model=List[CompetitorInsight])
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">competitive_analysis</span>(
+    request: CompetitiveAnalysisRequest,
+    current_user = Depends(get_current_user)
+):
+    <span class="string">"""
+    Perform competitive analysis using WEB AUTOMÁTICO COMPETITIVO data
+    """</span>
+    <span class="keyword">try</span>:
+        insights = <span class="keyword">await</span> data_processor.analyze_competitors(request)
+        <span class="keyword">return</span> insights
+        
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+        <span class="keyword">raise</span> HTTPException(status_code=500, detail=f<span class="string">"Competitive analysis failed: {str(e)}"</span>)
+
+<span class="function">@router.get</span>(<span class="string">"/metrics/available"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">get_available_metrics</span>(current_user = Depends(get_current_user)):
+    <span class="string">"""
+    Get list of available metrics for analysis
+    """</span>
+    <span class="keyword">return</span> {
+        <span class="string">"metrics"</span>: [metric.value <span class="keyword">for</span> metric <span class="keyword">in</span> MetricType],
+        <span class="string">"aggregations"</span>: [<span class="string">"hourly"</span>, <span class="string">"daily"</span>, <span class="string">"weekly"</span>, <span class="string">"monthly"</span>],
+        <span class="string">"supported_formats"</span>: [<span class="string">"json"</span>, <span class="string">"csv"</span>, <span class="string">"excel"</span>]
+    }
+
+<span class="function">@router.get</span>(<span class="string">"/realtime/{metric_type}"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">get_realtime_metrics</span>(
+    metric_type: MetricType,
+    current_user = Depends(get_current_user)
+):
+    <span class="string">"""
+    Get real-time metrics data
+    """</span>
+    <span class="keyword">try</span>:
+        realtime_data = <span class="keyword">await</span> data_processor.get_realtime_data(metric_type)
+        <span class="keyword">return</span> realtime_data
+        
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+        <span class="keyword">raise</span> HTTPException(status_code=500, detail=f<span class="string">"Realtime data fetch failed: {str(e)}"</span>)</code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🐳 Dockerfile</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">FROM</span> python:3.11-slim
+
+<span class="keyword">WORKDIR</span> /app
+
+<span class="comment"># Install system dependencies</span>
+<span class="keyword">RUN</span> apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+<span class="comment"># Copy requirements and install Python dependencies</span>
+<span class="keyword">COPY</span> requirements.txt .
+<span class="keyword">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="comment"># Copy application code</span>
+<span class="keyword">COPY</span> . .
+
+<span class="comment"># Create non-root user</span>
+<span class="keyword">RUN</span> useradd -m appuser && chown -R appuser:appuser /app
+<span class="keyword">USER</span> appuser
+
+<span class="comment"># Expose port</span>
+<span class="keyword">EXPOSE</span> 8001
+
+<span class="comment"># Health check</span>
+<span class="keyword">HEALTHCHECK</span> --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+<span class="comment"># Run application</span>
+<span class="keyword">CMD</span> [<span class="string">"uvicorn"</span>, <span class="string">"main:app"</span>, <span class="string">"--host"</span>, <span class="string">"0.0.0.0"</span>, <span class="string">"--port"</span>, <span class="string">"8001"</span>]</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Microservice 2: Competitive Intelligence -->
+        <div class="bg-white rounded-lg shadow-lg mb-8">
+            <div class="bg-red-600 text-white px-6 py-4 rounded-t-lg">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-search mr-3"></i>
+                    Competitive Intelligence Microservice
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🚀 main.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">from</span> <span class="string">fastapi</span> <span class="keyword">import</span> FastAPI, HTTPException, Depends, WebSocket
+<span class="keyword">from</span> <span class="string">fastapi.middleware.cors</span> <span class="keyword">import</span> CORSMiddleware
+<span class="keyword">import</span> asyncio
+<span class="keyword">import</span> json
+
+<span class="keyword">from</span> routers <span class="keyword">import</span> competitive, monitoring, alerts
+<span class="keyword">from</span> services.web_scraper <span class="keyword">import</span> WebAutomaticoCompetitivo
+<span class="keyword">from</span> services.sentiment_analyzer <span class="keyword">import</span> SentimentAnalyzer
+<span class="keyword">from</span> utils.websocket_manager <span class="keyword">import</span> WebSocketManager
+
+app = FastAPI(
+    title=<span class="string">"Competitive Intelligence Microservice"</span>,
+    description=<span class="string">"WEB AUTOMÁTICO COMPETITIVO - Advanced competitive monitoring"</span>,
+    version=<span class="string">"3.1.0"</span>
+)
+
+app.add_middleware(CORSMiddleware, allow_origins=[<span class="string">"*"</span>], allow_credentials=True, allow_methods=[<span class="string">"*"</span>], allow_headers=[<span class="string">"*"</span>])
+
+<span class="comment"># Global instances</span>
+web_automatico = WebAutomaticoCompetitivo()
+sentiment_analyzer = SentimentAnalyzer()
+websocket_manager = WebSocketManager()
+
+<span class="comment"># Include routers</span>
+app.include_router(competitive.router, prefix=<span class="string">"/api/v1/competitive"</span>, tags=[<span class="string">"competitive"</span>])
+app.include_router(monitoring.router, prefix=<span class="string">"/api/v1/monitoring"</span>, tags=[<span class="string">"monitoring"</span>])
+app.include_router(alerts.router, prefix=<span class="string">"/api/v1/alerts"</span>, tags=[<span class="string">"alerts"</span>])
+
+<span class="function">@app.on_event</span>(<span class="string">"startup"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">startup_event</span>():
+    <span class="comment"># Initialize WEB AUTOMÁTICO COMPETITIVO</span>
+    <span class="keyword">await</span> web_automatico.initialize()
+    
+    <span class="comment"># Start competitive monitoring</span>
+    asyncio.create_task(web_automatico.start_monitoring())
+    
+    <span class="comment"># Start sentiment analysis background task</span>
+    asyncio.create_task(sentiment_analyzer.start_analysis_scheduler())
+
+<span class="function">@app.websocket</span>(<span class="string">"/ws/competitive-updates"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">websocket_endpoint</span>(websocket: WebSocket):
+    <span class="keyword">await</span> websocket_manager.connect(websocket)
+    <span class="keyword">try</span>:
+        <span class="keyword">while</span> True:
+            <span class="comment"># Send real-time competitive updates</span>
+            data = <span class="keyword">await</span> web_automatico.get_latest_updates()
+            <span class="keyword">await</span> websocket_manager.send_personal_message(json.dumps(data), websocket)
+            <span class="keyword">await</span> asyncio.sleep(30)  <span class="comment"># Update every 30 seconds</span>
+    <span class="keyword">except</span> Exception:
+        websocket_manager.disconnect(websocket)</code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🕷️ services/web_scraper.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">import</span> asyncio
+<span class="keyword">import</span> aiohttp
+<span class="keyword">from</span> <span class="string">bs4</span> <span class="keyword">import</span> BeautifulSoup
+<span class="keyword">from</span> <span class="string">selenium</span> <span class="keyword">import</span> webdriver
+<span class="keyword">from</span> <span class="string">selenium.webdriver.chrome.options</span> <span class="keyword">import</span> Options
+<span class="keyword">import</span> json
+<span class="keyword">import</span> random
+<span class="keyword">from</span> <span class="string">datetime</span> <span class="keyword">import</span> datetime
+
+<span class="keyword">class</span> <span class="function">WebAutomaticoCompetitivo</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.proxies = []
+        self.user_agents = []
+        self.monitoring_active = False
+        self.competitors = []
+        self.scraping_intervals = {
+            <span class="string">'pricing'</span>: 900,      <span class="comment"># 15 minutes</span>
+            <span class="string">'content'</span>: 3600,     <span class="comment"># 1 hour</span>
+            <span class="string">'features'</span>: 21600,   <span class="comment"># 6 hours</span>
+            <span class="string">'screenshots'</span>: 86400 <span class="comment"># 24 hours</span>
+        }
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">initialize</span>(self):
+        <span class="string">"""Initialize scraper with proxies and user agents"""</span>
+        <span class="keyword">await</span> self.load_proxies()
+        <span class="keyword">await</span> self.load_user_agents()
+        <span class="keyword">await</span> self.load_competitors()
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">load_proxies</span>(self):
+        <span class="string">"""Load and validate proxy list"""</span>
+        self.proxies = [
+            <span class="string">'http://proxy1.example.com:8080'</span>,
+            <span class="string">'http://proxy2.example.com:8080'</span>,
+            <span class="string">'http://proxy3.example.com:8080'</span>
+        ]
+        <span class="comment"># Validate proxies</span>
+        valid_proxies = []
+        <span class="keyword">for</span> proxy <span class="keyword">in</span> self.proxies:
+            <span class="keyword">if</span> <span class="keyword">await</span> self.validate_proxy(proxy):
+                valid_proxies.append(proxy)
+        self.proxies = valid_proxies
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">validate_proxy</span>(self, proxy):
+        <span class="string">"""Validate proxy connectivity"""</span>
+        <span class="keyword">try</span>:
+            <span class="keyword">async</span> <span class="keyword">with</span> aiohttp.ClientSession() <span class="keyword">as</span> session:
+                <span class="keyword">async</span> <span class="keyword">with</span> session.get(<span class="string">'http://httpbin.org/ip'</span>, proxy=proxy, timeout=10) <span class="keyword">as</span> response:
+                    <span class="keyword">return</span> response.status == 200
+        <span class="keyword">except</span>:
+            <span class="keyword">return</span> False
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">scrape_competitor_pricing</span>(self, competitor_url, selectors):
+        <span class="string">"""Scrape competitor pricing information"""</span>
+        proxy = random.choice(self.proxies) <span class="keyword">if</span> self.proxies <span class="keyword">else</span> None
+        user_agent = random.choice(self.user_agents)
+        
+        <span class="keyword">try</span>:
+            <span class="comment"># Chrome options for headless browsing</span>
+            chrome_options = Options()
+            chrome_options.add_argument(<span class="string">'--headless'</span>)
+            chrome_options.add_argument(<span class="string">'--no-sandbox'</span>)
+            chrome_options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)
+            chrome_options.add_argument(f<span class="string">'--user-agent={user_agent}'</span>)
+            
+            <span class="keyword">if</span> proxy:
+                chrome_options.add_argument(f<span class="string">'--proxy-server={proxy}'</span>)
+            
+            driver = webdriver.Chrome(options=chrome_options)
+            driver.get(competitor_url)
+            
+            <span class="comment"># Wait for page load</span>
+            <span class="keyword">await</span> asyncio.sleep(3)
+            
+            pricing_data = {}
+            <span class="keyword">for</span> product, selector <span class="keyword">in</span> selectors.items():
+                <span class="keyword">try</span>:
+                    element = driver.find_element(<span class="string">"css selector"</span>, selector)
+                    price_text = element.text
+                    <span class="comment"># Extract numeric price</span>
+                    price = self.extract_price(price_text)
+                    pricing_data[product] = {
+                        <span class="string">'price'</span>: price,
+                        <span class="string">'raw_text'</span>: price_text,
+                        <span class="string">'timestamp'</span>: datetime.now().isoformat()
+                    }
+                <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+                    pricing_data[product] = {<span class="string">'error'</span>: str(e)}
+            
+            driver.quit()
+            <span class="keyword">return</span> pricing_data
+            
+        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+            <span class="keyword">return</span> {<span class="string">'error'</span>: f<span class="string">'Scraping failed: {str(e)}'</span>}
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">start_monitoring</span>(self):
+        <span class="string">"""Start 24/7 competitive monitoring"""</span>
+        self.monitoring_active = True
+        
+        <span class="comment"># Create monitoring tasks for different intervals</span>
+        tasks = [
+            asyncio.create_task(self.monitor_pricing()),
+            asyncio.create_task(self.monitor_content()),
+            asyncio.create_task(self.monitor_features()),
+            asyncio.create_task(self.monitor_screenshots())
+        ]
+        
+        <span class="keyword">await</span> asyncio.gather(*tasks)
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">monitor_pricing</span>(self):
+        <span class="string">"""Monitor competitor pricing every 15 minutes"""</span>
+        <span class="keyword">while</span> self.monitoring_active:
+            <span class="keyword">for</span> competitor <span class="keyword">in</span> self.competitors:
+                <span class="keyword">try</span>:
+                    pricing_data = <span class="keyword">await</span> self.scrape_competitor_pricing(
+                        competitor[<span class="string">'url'</span>], 
+                        competitor[<span class="string">'pricing_selectors'</span>]
+                    )
+                    
+                    <span class="comment"># Store data and check for changes</span>
+                    <span class="keyword">await</span> self.store_competitive_data(<span class="string">'pricing'</span>, competitor[<span class="string">'name'</span>], pricing_data)
+                    <span class="keyword">await</span> self.check_price_changes(competitor[<span class="string">'name'</span>], pricing_data)
+                    
+                <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+                    print(f<span class="string">"Pricing monitoring error for {competitor['name']}: {str(e)}"</span>)
+            
+            <span class="keyword">await</span> asyncio.sleep(self.scraping_intervals[<span class="string">'pricing'</span>])</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Microservice 3: Business Metrics -->
+        <div class="bg-white rounded-lg shadow-lg mb-8">
+            <div class="bg-green-600 text-white px-6 py-4 rounded-t-lg">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Business Metrics Microservice
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🚀 main.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">from</span> <span class="string">fastapi</span> <span class="keyword">import</span> FastAPI, HTTPException, Depends, BackgroundTasks
+<span class="keyword">from</span> <span class="string">fastapi.middleware.cors</span> <span class="keyword">import</span> CORSMiddleware
+<span class="keyword">import</span> asyncio
+
+<span class="keyword">from</span> routers <span class="keyword">import</span> kpis, roi, reports
+<span class="keyword">from</span> services.kpi_calculator <span class="keyword">import</span> KPICalculator
+<span class="keyword">from</span> services.roi_analyzer <span class="keyword">import</span> ROIAnalyzer
+<span class="keyword">from</span> services.report_generator <span class="keyword">import</span> ReportGenerator
+
+app = FastAPI(
+    title=<span class="string">"Business Metrics Microservice"</span>,
+    description=<span class="string">"Automated KPI calculation and ROI analysis"</span>,
+    version=<span class="string">"3.1.0"</span>
+)
+
+app.add_middleware(CORSMiddleware, allow_origins=[<span class="string">"*"</span>], allow_credentials=True, allow_methods=[<span class="string">"*"</span>], allow_headers=[<span class="string">"*"</span>])
+
+<span class="comment"># Global services</span>
+kpi_calculator = KPICalculator()
+roi_analyzer = ROIAnalyzer()
+report_generator = ReportGenerator()
+
+app.include_router(kpis.router, prefix=<span class="string">"/api/v1/kpis"</span>, tags=[<span class="string">"kpis"</span>])
+app.include_router(roi.router, prefix=<span class="string">"/api/v1/roi"</span>, tags=[<span class="string">"roi"</span>])
+app.include_router(reports.router, prefix=<span class="string">"/api/v1/reports"</span>, tags=[<span class="string">"reports"</span>])
+
+<span class="function">@app.on_event</span>(<span class="string">"startup"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">startup_event</span>():
+    <span class="comment"># Start KPI calculation scheduler</span>
+    asyncio.create_task(kpi_calculator.start_scheduler())
+    
+    <span class="comment"># Start ROI analysis scheduler</span>
+    asyncio.create_task(roi_analyzer.start_scheduler())
+    
+    <span class="comment"># Start report generation scheduler</span>
+    asyncio.create_task(report_generator.start_scheduler())</code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📊 services/kpi_calculator.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">import</span> asyncio
+<span class="keyword">import</span> asyncpg
+<span class="keyword">from</span> <span class="string">datetime</span> <span class="keyword">import</span> datetime, timedelta
+<span class="keyword">from</span> <span class="string">typing</span> <span class="keyword">import</span> Dict, List, Any
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="keyword">class</span> <span class="function">KPICalculator</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.db_pool = None
+        self.kpi_definitions = {
+            <span class="string">'revenue_growth'</span>: self.calculate_revenue_growth,
+            <span class="string">'customer_acquisition_cost'</span>: self.calculate_cac,
+            <span class="string">'customer_lifetime_value'</span>: self.calculate_clv,
+            <span class="string">'churn_rate'</span>: self.calculate_churn_rate,
+            <span class="string">'net_promoter_score'</span>: self.calculate_nps,
+            <span class="string">'conversion_rate'</span>: self.calculate_conversion_rate,
+            <span class="string">'average_order_value'</span>: self.calculate_aov,
+            <span class="string">'monthly_recurring_revenue'</span>: self.calculate_mrr
+        }
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">initialize_db</span>(self):
+        <span class="string">"""Initialize database connection pool"""</span>
+        self.db_pool = <span class="keyword">await</span> asyncpg.create_pool(
+            host=<span class="string">"postgres"</span>,
+            database=<span class="string">"bi_orchestrator"</span>,
+            user=<span class="string">"postgres"</span>,
+            password=<span class="string">"postgres123"</span>,
+            min_size=5,
+            max_size=20
+        )
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">calculate_revenue_growth</span>(self, period_days: int = 30) -> Dict[str, Any]:
+        <span class="string">"""Calculate revenue growth rate"""</span>
+        <span class="keyword">async</span> <span class="keyword">with</span> self.db_pool.acquire() <span class="keyword">as</span> conn:
+            <span class="comment"># Current period revenue</span>
+            current_start = datetime.now() - timedelta(days=period_days)
+            current_revenue = <span class="keyword">await</span> conn.fetchval(
+                <span class="string">"""
+                SELECT COALESCE(SUM(amount), 0) 
+                FROM revenue_data 
+                WHERE created_at >= $1
+                """</span>,
+                current_start
+            )
+            
+            <span class="comment"># Previous period revenue</span>
+            previous_start = current_start - timedelta(days=period_days)
+            previous_revenue = <span class="keyword">await</span> conn.fetchval(
+                <span class="string">"""
+                SELECT COALESCE(SUM(amount), 0) 
+                FROM revenue_data 
+                WHERE created_at >= $1 AND created_at < $2
+                """</span>,
+                previous_start, current_start
+            )
+            
+            <span class="comment"># Calculate growth rate</span>
+            growth_rate = 0
+            <span class="keyword">if</span> previous_revenue > 0:
+                growth_rate = ((current_revenue - previous_revenue) / previous_revenue) * 100
+            
+            <span class="keyword">return</span> {
+                <span class="string">'kpi_name'</span>: <span class="string">'revenue_growth'</span>,
+                <span class="string">'value'</span>: growth_rate,
+                <span class="string">'current_revenue'</span>: float(current_revenue),
+                <span class="string">'previous_revenue'</span>: float(previous_revenue),
+                <span class="string">'period_days'</span>: period_days,
+                <span class="string">'calculated_at'</span>: datetime.now().isoformat()
+            }
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">calculate_cac</span>(self, period_days: int = 30) -> Dict[str, Any]:
+        <span class="string">"""Calculate Customer Acquisition Cost"""</span>
+        <span class="keyword">async</span> <span class="keyword">with</span> self.db_pool.acquire() <span class="keyword">as</span> conn:
+            start_date = datetime.now() - timedelta(days=period_days)
+            
+            <span class="comment"># Total marketing spend</span>
+            marketing_spend = <span class="keyword">await</span> conn.fetchval(
+                <span class="string">"""
+                SELECT COALESCE(SUM(amount), 0) 
+                FROM marketing_expenses 
+                WHERE created_at >= $1
+                """</span>,
+                start_date
+            )
+            
+            <span class="comment"># New customers acquired</span>
+            new_customers = <span class="keyword">await</span> conn.fetchval(
+                <span class="string">"""
+                SELECT COUNT(*) 
+                FROM customers 
+                WHERE created_at >= $1
+                """</span>,
+                start_date
+            )
+            
+            cac = 0
+            <span class="keyword">if</span> new_customers > 0:
+                cac = marketing_spend / new_customers
+            
+            <span class="keyword">return</span> {
+                <span class="string">'kpi_name'</span>: <span class="string">'customer_acquisition_cost'</span>,
+                <span class="string">'value'</span>: float(cac),
+                <span class="string">'marketing_spend'</span>: float(marketing_spend),
+                <span class="string">'new_customers'</span>: new_customers,
+                <span class="string">'period_days'</span>: period_days,
+                <span class="string">'calculated_at'</span>: datetime.now().isoformat()
+            }
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">calculate_all_kpis</span>(self) -> List[Dict[str, Any]]:
+        <span class="string">"""Calculate all defined KPIs"""</span>
+        results = []
+        
+        <span class="keyword">for</span> kpi_name, calculator_func <span class="keyword">in</span> self.kpi_definitions.items():
+            <span class="keyword">try</span>:
+                result = <span class="keyword">await</span> calculator_func()
+                results.append(result)
+            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+                results.append({
+                    <span class="string">'kpi_name'</span>: kpi_name,
+                    <span class="string">'error'</span>: str(e),
+                    <span class="string">'calculated_at'</span>: datetime.now().isoformat()
+                })
+        
+        <span class="keyword">return</span> results
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">start_scheduler</span>(self):
+        <span class="string">"""Start KPI calculation scheduler"""</span>
+        <span class="keyword">await</span> self.initialize_db()
+        
+        <span class="keyword">while</span> True:
+            <span class="keyword">try</span>:
+                <span class="comment"># Calculate all KPIs</span>
+                kpis = <span class="keyword">await</span> self.calculate_all_kpis()
+                
+                <span class="comment"># Store results in database</span>
+                <span class="keyword">await</span> self.store_kpi_results(kpis)
+                
+                <span class="comment"># Check for KPI alerts</span>
+                <span class="keyword">await</span> self.check_kpi_alerts(kpis)
+                
+            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+                print(f<span class="string">"KPI calculation error: {str(e)}"</span>)
+            
+            <span class="comment"># Wait for next calculation cycle (15 minutes)</span>
+            <span class="keyword">await</span> asyncio.sleep(900)</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Microservice 4: API Gateway -->
+        <div class="bg-white rounded-lg shadow-lg mb-8">
+            <div class="bg-purple-600 text-white px-6 py-4 rounded-t-lg">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-shield-alt mr-3"></i>
+                    API Gateway & Security Layer
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🚀 main.py</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">from</span> <span class="string">fastapi</span> <span class="keyword">import</span> FastAPI, Request, HTTPException, Depends
+<span class="keyword">from</span> <span class="string">fastapi.middleware.cors</span> <span class="keyword">import</span> CORSMiddleware
+<span class="keyword">from</span> <span class="string">fastapi.security</span> <span class="keyword">import</span> HTTPBearer, HTTPAuthorizationCredentials
+<span class="keyword">from</span> <span class="string">fastapi.responses</span> <span class="keyword">import</span> JSONResponse
+<span class="keyword">import</span> httpx
+<span class="keyword">import</span> asyncio
+<span class="keyword">import</span> time
+<span class="keyword">from</span> <span class="string">collections</span> <span class="keyword">import</span> defaultdict
+
+<span class="keyword">from</span> middleware.rate_limiter <span class="keyword">import</span> RateLimiter
+<span class="keyword">from</span> middleware.auth_middleware <span class="keyword">import</span> AuthMiddleware
+<span class="keyword">from</span> middleware.logging_middleware <span class="keyword">import</span> LoggingMiddleware
+<span class="keyword">from</span> services.jwt_service <span class="keyword">import</span> JWTService
+<span class="keyword">from</span> services.service_discovery <span class="keyword">import</span> ServiceDiscovery
+
+app = FastAPI(
+    title=<span class="string">"BI Orchestrator API Gateway"</span>,
+    description=<span class="string">"Centralized API Gateway with security and routing"</span>,
+    version=<span class="string">"3.1.0"</span>
+)
+
+<span class="comment"># Security</span>
+security = HTTPBearer()
+jwt_service = JWTService()
+rate_limiter = RateLimiter()
+service_discovery = ServiceDiscovery()
+
+<span class="comment"># Service endpoints mapping</span>
+SERVICE_ROUTES = {
+    <span class="string">"/api/v1/analytics"</span>: <span class="string">"http://data-analytics:8001"</span>,
+    <span class="string">"/api/v1/competitive"</span>: <span class="string">"http://competitive-intelligence:8002"</span>,
+    <span class="string">"/api/v1/kpis"</span>: <span class="string">"http://business-metrics:8003"</span>,
+    <span class="string">"/api/v1/admin"</span>: <span class="string">"http://admin-dashboard:8005"</span>,
+    <span class="string">"/api/v1/realtime"</span>: <span class="string">"http://realtime-processing:8006"</span>
+}
+
+<span class="comment"># Middleware</span>
+app.add_middleware(CORSMiddleware, allow_origins=[<span class="string">"*"</span>], allow_credentials=True, allow_methods=[<span class="string">"*"</span>], allow_headers=[<span class="string">"*"</span>])
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(AuthMiddleware)
+
+<span class="function">@app.middleware</span>(<span class="string">"http"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">gateway_middleware</span>(request: Request, call_next):
+    <span class="comment"># Rate limiting</span>
+    client_ip = request.client.host
+    <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">await</span> rate_limiter.is_allowed(client_ip):
+        <span class="keyword">return</span> JSONResponse(
+            status_code=429,
+            content={<span class="string">"detail"</span>: <span class="string">"Rate limit exceeded"</span>}
+        )
+    
+    <span class="comment"># Process request</span>
+    start_time = time.time()
+    response = <span class="keyword">await</span> call_next(request)
+    process_time = time.time() - start_time
+    
+    <span class="comment"># Add performance headers</span>
+    response.headers[<span class="string">"X-Process-Time"</span>] = str(process_time)
+    response.headers[<span class="string">"X-Gateway-Version"</span>] = <span class="string">"3.1.0"</span>
+    
+    <span class="keyword">return</span> response
+
+<span class="function">@app.api_route</span>(<span class="string">"/{path:path}"</span>, methods=[<span class="string">"GET"</span>, <span class="string">"POST"</span>, <span class="string">"PUT"</span>, <span class="string">"DELETE"</span>, <span class="string">"PATCH"</span>])
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">gateway_router</span>(request: Request, path: str):
+    <span class="string">"""Main gateway routing function"""</span>
+    
+    <span class="comment"># Find matching service</span>
+    target_service = None
+    <span class="keyword">for</span> route_prefix, service_url <span class="keyword">in</span> SERVICE_ROUTES.items():
+        <span class="keyword">if</span> f<span class="string">"/{path}"</span>.startswith(route_prefix):
+            target_service = service_url
+            <span class="keyword">break</span>
+    
+    <span class="keyword">if</span> <span class="keyword">not</span> target_service:
+        <span class="keyword">raise</span> HTTPException(status_code=404, detail=<span class="string">"Service not found"</span>)
+    
+    <span class="comment"># Check service health</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">await</span> service_discovery.is_service_healthy(target_service):
+        <span class="keyword">raise</span> HTTPException(status_code=503, detail=<span class="string">"Service unavailable"</span>)
+    
+    <span class="comment"># Forward request</span>
+    <span class="keyword">async</span> <span class="keyword">with</span> httpx.AsyncClient() <span class="keyword">as</span> client:
+        <span class="keyword">try</span>:
+            <span class="comment"># Prepare request</span>
+            url = f<span class="string">"{target_service}/{path}"</span>
+            headers = dict(request.headers)
+            headers.pop(<span class="string">"host"</span>, None)  <span class="comment"># Remove host header</span>
+            
+            <span class="comment"># Get request body if present</span>
+            body = <span class="keyword">await</span> request.body() <span class="keyword">if</span> request.method <span class="keyword">in</span> [<span class="string">"POST"</span>, <span class="string">"PUT"</span>, <span class="string">"PATCH"</span>] <span class="keyword">else</span> None
+            
+            <span class="comment"># Forward request</span>
+            response = <span class="keyword">await</span> client.request(
+                method=request.method,
+                url=url,
+                headers=headers,
+                params=request.query_params,
+                content=body,
+                timeout=30.0
+            )
+            
+            <span class="comment"># Return response</span>
+            <span class="keyword">return</span> JSONResponse(
+                status_code=response.status_code,
+                content=response.json() <span class="keyword">if</span> response.headers.get(<span class="string">"content-type"</span>, <span class="string">""</span>).startswith(<span class="string">"application/json"</span>) <span class="keyword">else</span> response.text,
+                headers=dict(response.headers)
+            )
+            
+        <span class="keyword">except</span> httpx.TimeoutException:
+            <span class="keyword">raise</span> HTTPException(status_code=504, detail=<span class="string">"Gateway timeout"</span>)
+        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+            <span class="keyword">raise</span> HTTPException(status_code=502, detail=f<span class="string">"Bad gateway: {str(e)}"</span>)
+
+<span class="function">@app.post</span>(<span class="string">"/auth/login"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">login</span>(credentials: dict):
+    <span class="string">"""Authenticate user and return JWT token"""</span>
+    <span class="comment"># Validate credentials (implement your auth logic)</span>
+    <span class="keyword">if</span> <span class="keyword">await</span> jwt_service.validate_credentials(credentials):
+        token = <span class="keyword">await</span> jwt_service.create_token(credentials[<span class="string">"username"</span>])
+        <span class="keyword">return</span> {<span class="string">"access_token"</span>: token, <span class="string">"token_type"</span>: <span class="string">"bearer"</span>}
+    <span class="keyword">else</span>:
+        <span class="keyword">raise</span> HTTPException(status_code=401, detail=<span class="string">"Invalid credentials"</span>)
+
+<span class="function">@app.get</span>(<span class="string">"/health"</span>)
+<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">health_check</span>():
+    <span class="string">"""Gateway health check"""</span>
+    services_health = {}
+    
+    <span class="keyword">for</span> service_name, service_url <span class="keyword">in</span> SERVICE_ROUTES.items():
+        services_health[service_name] = <span class="keyword">await</span> service_discovery.is_service_healthy(service_url)
+    
+    <span class="keyword">return</span> {
+        <span class="string">"gateway_status"</span>: <span class="string">"healthy"</span>,
+        <span class="string">"services"</span>: services_health,
+        <span class="string">"timestamp"</span>: time.time()
+    }</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Frontend Components Structure -->
+        <div class="bg-white rounded-lg shadow-lg mb-8">
+            <div class="bg-indigo-600 text-white px-6 py-4 rounded-t-lg">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-desktop mr-3"></i>
+                    Frontend Components Structure
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📁 Frontend Directory Structure</h3>
+                    <div class="bg-gray-100 p-4 rounded code-block text-sm">
+frontend/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── manifest.json
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Header.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── LoadingSpinner.jsx
+│   │   ├── charts/
+│   │   │   ├── LineChart.jsx
+│   │   │   ├── BarChart.jsx
+│   │   │   ├── PieChart.jsx
+│   │   │   └── HeatMap.jsx
+│   │   └── mobile/
+│   │       ├── MobileNav.jsx
+│   │       ├── TouchCard.jsx
+│   │       └── SwipeGestures.jsx
+│   ├── dashboards/
+│   │   ├── executive/
+│   │   │   ├── ExecutiveDashboard.jsx
+│   │   │   ├── KPIOverview.jsx
+│   │   │   └── StrategicMetrics.jsx
+│   │   ├── competitive/
+│   │   │   ├── CompetitiveDashboard.jsx
+│   │   │   ├── PriceComparison.jsx
+│   │   │   └── SentimentAnalysis.jsx
+│   │   ├── operational/
+│   │   │   ├── OperationalDashboard.jsx
+│   │   │   ├── ProcessMetrics.jsx
+│   │   │   └── EfficiencyAnalysis.jsx
+│   │   ├── customer/
+│   │   │   ├── CustomerDashboard.jsx
+│   │   │   ├── JourneyMapping.jsx
+│   │   │   └── BehaviorAnalysis.jsx
+│   │   └── admin/
+│   │       ├── AdminDashboard.jsx
+│   │       ├── SystemMetrics.jsx
+│   │       └── UserManagement.jsx
+│   ├── lib/
+│   │   ├── api.js
+│   │   ├── websocket.js
+│   │   ├── auth.js
+│   │   └── utils.js
+│   ├── hooks/
+│   │   ├── useRealTimeData.js
+│   │   ├── useWebSocket.js
+│   │   └── useAuth.js
+│   ├── styles/
+│   │   ├── globals.css
+│   │   ├── dashboard.css
+│   │   └── mobile.css
+│   ├── App.jsx
+│   └── index.js
+├── package.json
+├── webpack.config.js
+├── Dockerfile
+└── nginx.conf
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">⚛️ App.jsx - Main Application</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">import</span> React, { useState, useEffect } <span class="keyword">from</span> <span class="string">'react'</span>;
+<span class="keyword">import</span> { BrowserRouter <span class="keyword">as</span> Router, Routes, Route, Navigate } <span class="keyword">from</span> <span class="string">'react-router-dom'</span>;
+<span class="keyword">import</span> { ThemeProvider, createTheme } <span class="keyword">from</span> <span class="string">'@mui/material/styles'</span>;
+<span class="keyword">import</span> { CssBaseline, Box, useMediaQuery } <span class="keyword">from</span> <span class="string">'@mui/material'</span>;
+
+<span class="comment">// Components</span>
+<span class="keyword">import</span> Header <span class="keyword">from</span> <span class="string">'./components/common/Header'</span>;
+<span class="keyword">import</span> Sidebar <span class="keyword">from</span> <span class="string">'./components/common/Sidebar'</span>;
+<span class="keyword">import</span> MobileNav <span class="keyword">from</span> <span class="string">'./components/mobile/MobileNav'</span>;
+
+<span class="comment">// Dashboards</span>
+<span class="keyword">import</span> ExecutiveDashboard <span class="keyword">from</span> <span class="string">'./dashboards/executive/ExecutiveDashboard'</span>;
+<span class="keyword">import</span> CompetitiveDashboard <span class="keyword">from</span> <span class="string">'./dashboards/competitive/CompetitiveDashboard'</span>;
+<span class="keyword">import</span> OperationalDashboard <span class="keyword">from</span> <span class="string">'./dashboards/operational/OperationalDashboard'</span>;
+<span class="keyword">import</span> CustomerDashboard <span class="keyword">from</span> <span class="string">'./dashboards/customer/CustomerDashboard'</span>;
+<span class="keyword">import</span> AdminDashboard <span class="keyword">from</span> <span class="string">'./dashboards/admin/AdminDashboard'</span>;
+
+<span class="comment">// Hooks</span>
+<span class="keyword">import</span> { useAuth } <span class="keyword">from</span> <span class="string">'./hooks/useAuth'</span>;
+<span class="keyword">import</span> { useWebSocket } <span class="keyword">from</span> <span class="string">'./hooks/useWebSocket'</span>;
+
+<span class="comment">// Styles</span>
+<span class="keyword">import</span> <span class="string">'./styles/globals.css'</span>;
+
+<span class="keyword">const</span> theme = createTheme({
+  palette: {
+    mode: <span class="string">'light'</span>,
+    primary: {
+      main: <span class="string">'#1976d2'</span>,
+    },
+    secondary: {
+      main: <span class="string">'#dc004e'</span>,
+    },
+    background: {
+      default: <span class="string">'#f5f5f5'</span>,
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          fontFamily: <span class="string">'Inter, sans-serif'</span>,
+        },
+      },
+    },
+  },
+});
+
+<span class="keyword">function</span> <span class="function">App</span>() {
+  <span class="keyword">const</span> { user, isAuthenticated, login, logout } = useAuth();
+  <span class="keyword">const</span> { connected, sendMessage } = useWebSocket(<span class="string">'ws://localhost:8000/ws'</span>);
+  <span class="keyword">const</span> [sidebarOpen, setSidebarOpen] = useState(<span class="keyword">true</span>);
+  <span class="keyword">const</span> isMobile = useMediaQuery(theme.breakpoints.down(<span class="string">'md'</span>));
+
+  useEffect(() => {
+    <span class="keyword">if</span> (isMobile) {
+      setSidebarOpen(<span class="keyword">false</span>);
+    }
+  }, [isMobile]);
+
+  <span class="keyword">if</span> (!isAuthenticated) {
+    <span class="keyword">return</span> (
+      &lt;ThemeProvider theme={theme}&gt;
+        &lt;CssBaseline /&gt;
+        &lt;LoginPage onLogin={login} /&gt;
+      &lt;/ThemeProvider&gt;
+    );
+  }
+
+  <span class="keyword">return</span> (
+    &lt;ThemeProvider theme={theme}&gt;
+      &lt;CssBaseline /&gt;
+      &lt;Router&gt;
+        &lt;Box sx={{ display: <span class="string">'flex'</span>, minHeight: <span class="string">'100vh'</span> }}&gt;
+          {isMobile ? (
+            &lt;MobileNav /&gt;
+          ) : (
+            &lt;Sidebar 
+              open={sidebarOpen} 
+              onClose={() =&gt; setSidebarOpen(<span class="keyword">false</span>)} 
+            /&gt;
+          )}
+          
+          &lt;Box sx={{ flexGrow: 1, display: <span class="string">'flex'</span>, flexDirection: <span class="string">'column'</span> }}&gt;
+            &lt;Header 
+              onMenuClick={() =&gt; setSidebarOpen(!sidebarOpen)}
+              user={user}
+              onLogout={logout}
+              wsConnected={connected}
+            /&gt;
+            
+            &lt;Box component=<span class="string">"main"</span> sx={{ flexGrow: 1, p: 3, mt: 8 }}&gt;
+              &lt;Routes&gt;
+                &lt;Route path=<span class="string">"/"</span> element={&lt;Navigate to=<span class="string">"/executive"</span> replace /&gt;} /&gt;
+                &lt;Route path=<span class="string">"/executive"</span> element={&lt;ExecutiveDashboard /&gt;} /&gt;
+                &lt;Route path=<span class="string">"/competitive"</span> element={&lt;CompetitiveDashboard /&gt;} /&gt;
+                &lt;Route path=<span class="string">"/operational"</span> element={&lt;OperationalDashboard /&gt;} /&gt;
+                &lt;Route path=<span class="string">"/customer"</span> element={&lt;CustomerDashboard /&gt;} /&gt;
+                &lt;Route path=<span class="string">"/admin"</span> element={&lt;AdminDashboard /&gt;} /&gt;
+              &lt;/Routes&gt;
+            &lt;/Box&gt;
+          &lt;/Box&gt;
+        &lt;/Box&gt;
+      &lt;/Router&gt;
+    &lt;/ThemeProvider&gt;
+  );
+}
+
+<span class="keyword">export</span> <span class="keyword">default</span> App;</code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📊 ExecutiveDashboard.jsx - Strategic Overview</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="keyword">import</span> React, { useState, useEffect } <span class="keyword">from</span> <span class="string">'react'</span>;
+<span class="keyword">import</span> {
+  Grid, Paper, Typography, Card, CardContent, Box,
+  Select, MenuItem, FormControl, InputLabel, Button
+} <span class="keyword">from</span> <span class="string">'@mui/material'</span>;
+<span class="keyword">import</span> { 
+  TrendingUp, AttachMoney, People, Assessment,
+  CompareArrows, ShowChart, Timeline, Speed
+} <span class="keyword">from</span> <span class="string">'@mui/icons-material'</span>;
+
+<span class="comment">// Custom components</span>
+<span class="keyword">import</span> KPICard <span class="keyword">from</span> <span class="string">'../components/charts/KPICard'</span>;
+<span class="keyword">import</span> LineChart <span class="keyword">from</span> <span class="string">'../components/charts/LineChart'</span>;
+<span class="keyword">import</span> BarChart <span class="keyword">from</span> <span class="string">'../components/charts/BarChart'</span>;
+<span class="keyword">import</span> HeatMap <span class="keyword">from</span> <span class="string">'../components/charts/HeatMap'</span>;
+
+<span class="comment">// Hooks</span>
+<span class="keyword">import</span> { useRealTimeData } <span class="keyword">from</span> <span class="string">'../hooks/useRealTimeData'</span>;
+<span class="keyword">import</span> { api } <span class="keyword">from</span> <span class="string">'../lib/api'</span>;
+
+<span class="keyword">const</span> <span class="function">ExecutiveDashboard</span> = () =&gt; {
+  <span class="keyword">const</span> [timeRange, setTimeRange] = useState(<span class="string">'30d'</span>);
+  <span class="keyword">const</span> [kpiData, setKpiData] = useState([]);
+  <span class="keyword">const</span> [revenueData, setRevenueData] = useState([]);
+  <span class="keyword">const</span> [competitiveData, setCompetitiveData] = useState([]);
+  <span class="keyword">const</span> [loading, setLoading] = useState(<span class="keyword">true</span>);
+
+  <span class="comment">// Real-time data hook</span>
+  <span class="keyword">const</span> { data: realtimeMetrics } = useRealTimeData(<span class="string">'/api/v1/analytics/realtime/revenue'</span>);
+
+  useEffect(() =&gt; {
+    fetchDashboardData();
+  }, [timeRange]);
+
+  <span class="keyword">const</span> <span class="function">fetchDashboardData</span> = <span class="keyword">async</span> () =&gt; {
+    setLoading(<span class="keyword">true</span>);
+    <span class="keyword">try</span> {
+      <span class="keyword">const</span> [kpis, revenue, competitive] = <span class="keyword">await</span> Promise.all([
+        api.get(<span class="string">`/api/v1/kpis/dashboard?range=${timeRange}`</span>),
+        api.get(<span class="string">`/api/v1/analytics/revenue?range=${timeRange}`</span>),
+        api.get(<span class="string">`/api/v1/competitive/summary?range=${timeRange}`</span>)
+      ]);
+
+      setKpiData(kpis.data);
+      setRevenueData(revenue.data);
+      setCompetitiveData(competitive.data);
+    } <span class="keyword">catch</span> (error) {
+      console.error(<span class="string">'Error fetching dashboard data:'</span>, error);
+    } <span class="keyword">finally</span> {
+      setLoading(<span class="keyword">false</span>);
+    }
+  };
+
+  <span class="keyword">const</span> <span class="function">handleExportReport</span> = <span class="keyword">async</span> () =&gt; {
+    <span class="keyword">try</span> {
+      <span class="keyword">const</span> response = <span class="keyword">await</span> api.post(<span class="string">'/api/v1/reports/executive'</span>, {
+        timeRange,
+        includeCharts: <span class="keyword">true</span>,
+        format: <span class="string">'pdf'</span>
+      });
+      
+      <span class="comment">// Download PDF report</span>
+      <span class="keyword">const</span> blob = <span class="keyword">new</span> Blob([response.data], { type: <span class="string">'application/pdf'</span> });
+      <span class="keyword">const</span> url = window.URL.createObjectURL(blob);
+      <span class="keyword">const</span> a = document.createElement(<span class="string">'a'</span>);
+      a.href = url;
+      a.download = <span class="string">`executive-report-${<span class="keyword">new</span> Date().toISOString().split(<span class="string">'T'</span>)[0]}.pdf`</span>;
+      a.click();
+    } <span class="keyword">catch</span> (error) {
+      console.error(<span class="string">'Error exporting report:'</span>, error);
+    }
+  };
+
+  <span class="keyword">return</span> (
+    &lt;Box sx={{ flexGrow: 1, p: 3 }}&gt;
+      {<span class="comment">/* Header */</span>}
+      &lt;Box sx={{ mb: 4, display: <span class="string">'flex'</span>, justifyContent: <span class="string">'space-between'</span>, alignItems: <span class="string">'center'</span> }}&gt;
+        &lt;Typography variant=<span class="string">"h4"</span> component=<span class="string">"h1"</span> gutterBottom&gt;
+          📊 Executive Dashboard
+        &lt;/Typography&gt;
+        
+        &lt;Box sx={{ display: <span class="string">'flex'</span>, gap: 2 }}&gt;
+          &lt;FormControl size=<span class="string">"small"</span> sx={{ minWidth: 120 }}&gt;
+            &lt;InputLabel&gt;Time Range&lt;/InputLabel&gt;
+            &lt;Select 
+              value={timeRange} 
+              onChange={(e) =&gt; setTimeRange(e.target.value)}
+            &gt;
+              &lt;MenuItem value=<span class="string">"7d"</span>&gt;Last 7 days&lt;/MenuItem&gt;
+              &lt;MenuItem value=<span class="string">"30d"</span>&gt;Last 30 days&lt;/MenuItem&gt;
+              &lt;MenuItem value=<span class="string">"90d"</span>&gt;Last 90 days&lt;/MenuItem&gt;
+              &lt;MenuItem value=<span class="string">"1y"</span>&gt;Last year&lt;/MenuItem&gt;
+            &lt;/Select&gt;
+          &lt;/FormControl&gt;
+          
+          &lt;Button 
+            variant=<span class="string">"contained"</span> 
+            onClick={handleExportReport}
+            startIcon={&lt;Assessment /&gt;}
+          &gt;
+            Export Report
+          &lt;/Button&gt;
+        &lt;/Box&gt;
+      &lt;/Box&gt;
+
+      {<span class="comment">/* KPI Cards */</span>}
+      &lt;Grid container spacing={3} sx={{ mb: 4 }}&gt;
+        &lt;Grid item xs={12} sm={6} md={3}&gt;
+          &lt;KPICard
+            title=<span class="string">"Revenue"</span>
+            value={realtimeMetrics?.revenue || <span class="string">'$0'</span>}
+            change={<span class="string">"+12.5%"</span>}
+            icon={&lt;AttachMoney /&gt;}
+            color=<span class="string">"success"</span>
+          /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12} sm={6} md={3}&gt;
+          &lt;KPICard
+            title=<span class="string">"Customers"</span>
+            value={<span class="string">"1,234"</span>}
+            change={<span class="string">"+8.2%"</span>}
+            icon={&lt;People /&gt;}
+            color=<span class="string">"info"</span>
+          /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12} sm={6} md={3}&gt;
+          &lt;KPICard
+            title=<span class="string">"Conversion Rate"</span>
+            value={<span class="string">"4.8%"</span>}
+            change={<span class="string">"+0.3%"</span>}
+            icon={&lt;TrendingUp /&gt;}
+            color=<span class="string">"warning"</span>
+          /&gt;
+        &lt;/Grid&gt;
+        &lt;Grid item xs={12} sm={6} md={3}&gt;
+          &lt;KPICard
+            title=<span class="string">"Performance Score"</span>}
+            value={<span class="string">"94/100"</span>}
+            change={<span class="string">"+2"</span>}
+            icon={&lt;Speed /&gt;}
+            color=<span class="string">"success"</span>
+          /&gt;
+        &lt;/Grid&gt;
+      &lt;/Grid&gt;
+
+      {<span class="comment">/* Charts */</span>}
+      &lt;Grid container spacing={3}&gt;
+        &lt;Grid item xs={12} md={8}&gt;
+          &lt;Paper sx={{ p: 3, height: 400 }}&gt;
+            &lt;Typography variant=<span class="string">"h6"</span> gutterBottom&gt;
+              Revenue Trend
+            &lt;/Typography&gt;
+            &lt;LineChart 
+              data={revenueData}
+              height={320}
+              showPredictions={<span class="keyword">true</span>}
+            /&gt;
+          &lt;/Paper&gt;
+        &lt;/Grid&gt;
+        
+        &lt;Grid item xs={12} md={4}&gt;
+          &lt;Paper sx={{ p: 3, height: 400 }}&gt;
+            &lt;Typography variant=<span class="string">"h6"</span> gutterBottom&gt;
+              Competitive Position
+            &lt;/Typography&gt;
+            &lt;BarChart 
+              data={competitiveData}
+              height={320}
+              horizontal={<span class="keyword">true</span>}
+            /&gt;
+          &lt;/Paper&gt;
+        &lt;/Grid&gt;
+      &lt;/Grid&gt;
+    &lt;/Box&gt;
+  );
+};
+
+<span class="keyword">export</span> <span class="keyword">default</span> ExecutiveDashboard;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Scripts -->
+        <div class="bg-white rounded-lg shadow-lg mb-8">
+            <div class="bg-gray-800 text-white px-6 py-4 rounded-t-lg">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-rocket mr-3"></i>
+                    Deployment Scripts & Configuration
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">🚀 start.sh - Sistema de Inicio</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code><span class="comment">#!/bin/bash</span>
+
+<span class="comment"># Business Intelligence Orchestrator v3.1 - Start Script</span>
+<span class="comment"># Author: BI Team</span>
+<span class="comment"># Version: 3.1.0</span>
+
+set -e
+
+echo <span class="string">"🚀 Starting Business Intelligence Orchestrator v3.1"</span>
+echo <span class="string">"=================================================="</span>
+
+<span class="comment"># Check if Docker is running</span>
+<span class="keyword">if</span> ! docker info > /dev/null 2>&1; <span class="keyword">then</span>
+    echo <span class="string">"❌ Docker is not running. Please start Docker first."</span>
+    exit 1
+<span class="keyword">fi</span>
+
+<span class="comment"># Create necessary directories</span>
+mkdir -p data/postgres
+mkdir -p data/redis
+mkdir -p logs
+mkdir -p backups
+
+<span class="comment"># Set permissions</span>
+chmod 755 data/postgres
+chmod 755 data/redis
+chmod 755 logs
+
+echo <span class="string">"📁 Created directory structure"</span>
+
+<span class="comment"># Build custom images</span>
+echo <span class="string">"🔨 Building custom Docker images..."</span>
+docker-compose build --parallel
+
+<span class="comment"># Start infrastructure services first</span>
+echo <span class="string">"🗄️ Starting infrastructure services..."</span>
+docker-compose up -d postgres redis
+
+<span class="comment"># Wait for database to be ready</span>
+echo <span class="string">"⏳ Waiting for PostgreSQL to be ready..."</span>
+<span class="keyword">while</span> ! docker-compose exec -T postgres pg_isready -U postgres; <span class="keyword">do</span>
+    sleep 2
+<span class="keyword">done</span>
+
+<span class="comment"># Initialize database</span>
+echo <span class="string">"📊 Initializing database schema..."</span>
+docker-compose exec -T postgres psql -U postgres -d bi_orchestrator -f /docker-entrypoint-initdb.d/schema.sql
+docker-compose exec -T postgres psql -U postgres -d bi_orchestrator -f /docker-entrypoint-initdb.d/functions.sql
+
+<span class="comment"># Start monitoring services</span>
+echo <span class="string">"📈 Starting monitoring services..."</span>
+docker-compose up -d grafana loki prometheus
+
+<span class="comment"># Start N8N workflow engine</span>
+echo <span class="string">"🤖 Starting N8N workflow engine..."</span>
+docker-compose up -d n8n
+
+<span class="comment"># Start backend microservices</span>
+echo <span class="string">"🔧 Starting backend microservices..."</span>
+docker-compose up -d api-gateway data-analytics competitive-intelligence business-metrics admin-dashboard realtime-processing
+
+<span class="comment"># Start WEB AUTOMÁTICO COMPETITIVO</span>
+echo <span class="string">"🕷️ Starting WEB AUTOMÁTICO COMPETITIVO..."</span>
+docker-compose up -d web-monitor
+
+<span class="comment"># Start frontend</span>
+echo <span class="string">"🎨 Starting frontend application..."</span>
+docker-compose up -d frontend nginx
+
+<span class="comment"># Start caching layer</span>
+echo <span class="string">"⚡ Starting caching services..."</span>
+docker-compose up -d cache-warmer
+
+echo <span class="string">""</span>
+echo <span class="string">"✅ Business Intelligence Orchestrator v3.1 started successfully!"</span>
+echo <span class="string">""</span>
+echo <span class="string">"🌐 Access URLs:"</span>
+echo <span class="string">"   Main Application: http://localhost:3000"</span>
+echo <span class="string">"   API Gateway:     http://localhost:8000"</span>
+echo <span class="string">"   N8N Workflows:   http://localhost:5678"</span>
+echo <span class="string">"   Grafana:         http://localhost:3001"</span>
+echo <span class="string">"   Admin Panel:     http://localhost:3000/admin"</span>
+echo <span class="string">""</span>
+echo <span class="string">"📋 Run './status.sh' to check system status"</span>
+echo <span class="string">"📋 Run './logs.sh' to view system logs"</span>
+echo <span class="string">"📋 Run './stop.sh' to stop all services"</span>
+echo <span class="string">""</span></code></pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">📦 package.json - Frontend Dependencies</h3>
+                    <pre class="syntax-highlight p-4 rounded text-sm overflow-x-auto"><code>{
+  <span class="string">"name"</span>: <span class="string">"bi-orchestrator-frontend"</span>,
+  <span class="string">"version"</span>: <span class="string">"3.1.0"</span>,
+  <span class="string">"description"</span>: <span class="string">"Business Intelligence Orchestrator Frontend"</span>,
+  <span class="string">"private"</span>: <span class="keyword">true</span>,
+  <span class="string">"dependencies"</span>: {
+    <span class="string">"@emotion/react"</span>: <span class="string">"^11.11.1"</span>,
+    <span class="string">"@emotion/styled"</span>: <span class="string">"^11.11.0"</span>,
+    <span class="string">"@mui/icons-material"</span>: <span class="string">"^5.14.19"</span>,
+    <span class="string">"@mui/material"</span>: <span class="string">"^5.14.20"</span>,
+    <span class="string">"@mui/x-charts"</span>: <span class="string">"^6.18.1"</span>,
+    <span class="string">"@mui/x-data-grid"</span>: <span class="string">"^6.18.1"</span>,
+    <span class="string">"axios"</span>: <span class="string">"^1.6.2"</span>,
+    <span class="string">"chart.js"</span>: <span class="string">"^4.4.0"</span>,
+    <span class="string">"chartjs-adapter-date-fns"</span>: <span class="string">"^3.0.0"</span>,
+    <span class="string">"d3"</span>: <span class="string">"^7.8.5"</span>,
+    <span class="string">"date-fns"</span>: <span class="string">"^2.30.0"</span>,
+    <span class="string">"framer-motion"</span>: <span class="string">"^10.16.16"</span>,
+    <span class="string">"lodash"</span>: <span class="string">"^4.17.21"</span>,
+    <span class="string">"react"</span>: <span class="string">"^18.2.0"</span>,
+    <span class="string">"react-chartjs-2"</span>: <span class="string">"^5.2.0"</span>,
+    <span class="string">"react-dom"</span>: <span class="string">"^18.2.0"</span>,
+    <span class="string">"react-query"</span>: <span class="string">"^3.39.3"</span>,
+    <span class="string">"react-router-dom"</span>: <span class="string">"^6.18.0"</span>,
+    <span class="string">"react-spring"</span>: <span class="string">"^9.7.3"</span>,
+    <span class="string">"recharts"</span>: <span class="string">"^2.8.0"</span>,
+    <span class="string">"socket.io-client"</span>: <span class="string">"^4.7.4"</span>,
+    <span class="string">"zustand"</span>: <span class="string">"^4.4.7"</span>
+  },
+  <span class="string">"devDependencies"</span>: {
+    <span class="string">"@testing-library/jest-dom"</span>: <span class="string">"^5.17.0"</span>,
+    <span class="string">"@testing-library/react"</span>: <span class="string">"^13.4.0"</span>,
+    <span class="string">"@testing-library/user-event"</span>: <span class="string">"^13.5.0"</span>,
+    <span class="string">"@types/d3"</span>: <span class="string">"^7.4.3"</span>,
+    <span class="string">"@types/lodash"</span>: <span class="string">"^4.14.202"</span>,
+    <span class="string">"@types/react"</span>: <span class="string">"^18.2.37"</span>,
+    <span class="string">"@types/react-dom"</span>: <span class="string">"^18.2.15"</span>,
+    <span class="string">"@vitejs/plugin-react"</span>: <span class="string">"^4.1.1"</span>,
+    <span class="string">"eslint"</span>: <span class="string">"^8.53.0"</span>,
+    <span class="string">"eslint-plugin-react"</span>: <span class="string">"^7.33.2"</span>,
+    <span class="string">"typescript"</span>: <span class="string">"^5.2.2"</span>,
+    <span class="string">"vite"</span>: <span class="string">"^4.5.0"</span>,
+    <span class="string">"vite-plugin-pwa"</span>: <span class="string">"^0.17.4"</span>
+  },
+  <span class="string">"scripts"</span>: {
+    <span class="string">"dev"</span>: <span class="string">"vite"</span>,
+    <span class="string">"build"</span>: <span class="string">"vite build"</span>,
+    <span class="string">"lint"</span>: <span class="string">"eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0"</span>,
+    <span class="string">"preview"</span>: <span class="string">"vite preview"</span>,
+    <span class="string">"test"</span>: <span class="string">"jest"</span>,
+    <span class="string">"test:coverage"</span>: <span class="string">"jest --coverage"</span>,
+    <span class="string">"build:docker"</span>: <span class="string">"docker build -t bi-orchestrator-frontend ."</span>
+  },
+  <span class="string">"browserslist"</span>: {
+    <span class="string">"production"</span>: [
+      <span class="string">">0.2%"</span>,
+      <span class="string">"not dead"</span>,
+      <span class="string">"not op_mini all"</span>
+    ],
+    <span class="string">"development"</span>: [
+      <span class="string">"last 1 chrome version"</span>,
+      <span class="string">"last 1 firefox version"</span>,
+      <span class="string">"last 1 safari version"</span>
+    ]
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-800 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-xl font-bold mb-4">🎯 Business Intelligence Orchestrator v3.1</h3>
+            <p class="text-gray-300 mb-4">Estructura Completa de Proyecto - Código Fuente Real</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                <div>
+                    <h4 class="font-semibold mb-2">📁 Infraestructura</h4>
+                    <p class="text-sm text-gray-400">Docker, PostgreSQL, Redis, N8N</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">🔧 Backend</h4>
+                    <p class="text-sm text-gray-400">FastAPI, Microservicios, APIs REST</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">🎨 Frontend</h4>
+                    <p class="text-sm text-gray-400">React, Material-UI, D3.js, Chart.js</p>
+                </div>
+            </div>
+            <div class="mt-8 text-sm text-gray-500">
+                ✅ Proyecto Completo | ✅ Código Implementable | ✅ Documentación Técnica
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDs7%2FJKnme51813jfqkfi%2BxuT4H%2Fcb72DjnBa2HVBd1SVPB1rKY2VE2kdOvsW2WcXZPT2rOGtFCfHfX1e%2Fsc0uSHDXMeg%2FxJKCbr0pYGlb1j5%2BhETSUp6LDTU6eNbnqWZkwN6VZOzLBWUzuLK62JKVArNcfgvfVc9Agm6JQSqiCgAlqzY48kxYaF7PqOqRaMl6kyD0jrDGPRUzF7OZ927JQJBwurVSSLDUXnMEY3y%2F94zN8nAsn%2FNrZOiSySipJ6b59q9xkhdaUOH32SuwyD3hB7kJfiy3QQYKXyc9mEGZP1Ov%2FZV9xCUiRwxp%2BA6CxroMLUJ0yY0f3ToEEEGLqKkjDGL3h%2F3qWsYb%2FbD7Fc197ORJXseH5D%2F%2FZ3bg2kcbZ70%2FVHuRSaEfbYGEd5xtfmL8cls6jsXRxGhCms7h5A1MuusBCO4VZWhVChNvR%2FXNjCwLO7EF5N%2Fnv3qP2eJCKp%2BzyXTYx4SAhYh1clW2PlqcoOb1LjSZiYMzC7q5G8K4vj9Uq0znBF9Sqs8LKB5%2FUy50zU%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDs7/JKnme51813jfqkfi+xuT4H/cb72DjnBa2HVBd1SVPB1rKY2VE2kdOvsW2WcXZPT2rOGtFCfHfX1e/sc0uSHDXMeg/xJKCbr0pYGlb1j5+hETSUp6LDTU6eNbnqWZkwN6VZOzLBWUzuLK62JKVArNcfgvfVc9Agm6JQSqiCgAlqzY48kxYaF7PqOqRaMl6kyD0jrDGPRUzF7OZ927JQJBwurVSSLDUXnMEY3y/94zN8nAsn/NrZOiSySipJ6b59q9xkhdaUOH32SuwyD3hB7kJfiy3QQYKXyc9mEGZP1Ov/ZV9xCUiRwxp+A6CxroMLUJ0yY0f3ToEEEGLqKkjDGL3h/3qWsYb/bD7Fc197ORJXseH5D//Z3bg2kcbZ70/VHuRSaEfbYGEd5xtfmL8cls6jsXRxGhCms7h5A1MuusBCO4VZWhVChNvR/XNjCwLO7EF5N/nv3qP2eJCKp+zyXTYx4SAhYh1clW2PlqcoOb1LjSZiYMzC7q5G8K4vj9Uq0znBF9Sqs8LKB5/Uy50zU=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

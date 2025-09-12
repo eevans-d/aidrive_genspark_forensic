@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>docker-compose.yml - Orquestación Completa</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+        .syntax-highlight { background: #1e1e1e; color: #d4d4d4; }
+        .yaml-key { color: #9cdcfe; }
+        .yaml-value { color: #ce9178; }
+        .yaml-comment { color: #6a9955; font-style: italic; }
+        .yaml-service { color: #4fc1ff; font-weight: bold; }
+        .yaml-port { color: #b5cea8; }
+        .yaml-env { color: #dcdcaa; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-600 p-3 rounded-lg">
+                        <i class="fab fa-docker text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">docker-compose.yml</h1>
+                        <p class="text-gray-600">Business Intelligence Orchestrator v3.1 - Orquestación Completa</p>
+                    </div>
+                </div>
+                <div class="bg-green-100 px-4 py-2 rounded-lg">
+                    <span class="text-green-800 font-semibold">✅ ARCHIVO PRINCIPAL</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg text-center">
+                    <i class="fas fa-database text-blue-600 text-2xl mb-2"></i>
+                    <p class="font-semibold text-blue-800">12 Servicios</p>
+                    <p class="text-sm text-blue-600">Infraestructura Completa</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-center">
+                    <i class="fas fa-network-wired text-green-600 text-2xl mb-2"></i>
+                    <p class="font-semibold text-green-800">3 Redes</p>
+                    <p class="text-sm text-green-600">Segmentación Avanzada</p>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg text-center">
+                    <i class="fas fa-hdd text-yellow-600 text-2xl mb-2"></i>
+                    <p class="font-semibold text-yellow-800">8 Volúmenes</p>
+                    <p class="text-sm text-yellow-600">Persistencia de Datos</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg text-center">
+                    <i class="fas fa-robot text-purple-600 text-2xl mb-2"></i>
+                    <p class="font-semibold text-purple-800">WEB AUTOMÁTICO</p>
+                    <p class="text-sm text-purple-600">Tier 2.5 Integrado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Docker Compose Content -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gray-800 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fab fa-docker text-blue-400 text-xl"></i>
+                    <span class="text-white font-semibold">docker-compose.yml</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="bg-green-600 px-2 py-1 rounded text-xs text-white">YAML</span>
+                    <span class="bg-blue-600 px-2 py-1 rounded text-xs text-white">v3.8</span>
+                </div>
+            </div>
+            
+            <div class="syntax-highlight p-6 code-font text-sm overflow-x-auto">
+<pre class="whitespace-pre-wrap">
+<span class="yaml-comment"># ================================================================</span>
+<span class="yaml-comment"># BUSINESS INTELLIGENCE ORCHESTRATOR v3.1</span>
+<span class="yaml-comment"># Docker Compose - Orquestación Completa de Servicios</span>
+<span class="yaml-comment"># ================================================================</span>
+
+<span class="yaml-key">version:</span> <span class="yaml-value">'3.8'</span>
+
+<span class="yaml-key">services:</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># BASE DE DATOS PRINCIPAL</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">postgres:</span>
+    <span class="yaml-key">image:</span> <span class="yaml-value">postgres:15-alpine</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_postgres</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">POSTGRES_DB:</span> <span class="yaml-value">bi_orchestrator</span>
+      <span class="yaml-env">POSTGRES_USER:</span> <span class="yaml-value">bi_admin</span>
+      <span class="yaml-env">POSTGRES_PASSWORD:</span> <span class="yaml-value">BI_Secure_2024!</span>
+      <span class="yaml-env">POSTGRES_INITDB_ARGS:</span> <span class="yaml-value">--encoding=UTF-8 --lc-collate=C --lc-ctype=C</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">postgres_data:/var/lib/postgresql/data</span>
+      - <span class="yaml-value">./supabase/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql</span>
+      - <span class="yaml-value">./supabase/functions.sql:/docker-entrypoint-initdb.d/02-functions.sql</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"5432:5432"</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+    <span class="yaml-key">healthcheck:</span>
+      <span class="yaml-key">test:</span> <span class="yaml-value">["CMD-SHELL", "pg_isready -U bi_admin -d bi_orchestrator"]</span>
+      <span class="yaml-key">interval:</span> <span class="yaml-value">30s</span>
+      <span class="yaml-key">timeout:</span> <span class="yaml-value">10s</span>
+      <span class="yaml-key">retries:</span> <span class="yaml-value">5</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># REDIS CLUSTER PARA CACHING</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">redis-master:</span>
+    <span class="yaml-key">image:</span> <span class="yaml-value">redis:7-alpine</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_redis_master</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">command:</span> <span class="yaml-value">redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">redis_master_data:/data</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"6379:6379"</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+
+  <span class="yaml-service">redis-slave:</span>
+    <span class="yaml-key">image:</span> <span class="yaml-value">redis:7-alpine</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_redis_slave</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">command:</span> <span class="yaml-value">redis-server --slaveof redis-master 6379 --appendonly yes</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">redis_slave_data:/data</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">redis-master</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># N8N WORKFLOW AUTOMATION</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">n8n:</span>
+    <span class="yaml-key">image:</span> <span class="yaml-value">n8nio/n8n:latest</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_n8n</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">DB_TYPE:</span> <span class="yaml-value">postgresdb</span>
+      <span class="yaml-env">DB_POSTGRESDB_HOST:</span> <span class="yaml-value">postgres</span>
+      <span class="yaml-env">DB_POSTGRESDB_PORT:</span> <span class="yaml-value">5432</span>
+      <span class="yaml-env">DB_POSTGRESDB_DATABASE:</span> <span class="yaml-value">n8n</span>
+      <span class="yaml-env">DB_POSTGRESDB_USER:</span> <span class="yaml-value">bi_admin</span>
+      <span class="yaml-env">DB_POSTGRESDB_PASSWORD:</span> <span class="yaml-value">BI_Secure_2024!</span>
+      <span class="yaml-env">N8N_BASIC_AUTH_ACTIVE:</span> <span class="yaml-value">true</span>
+      <span class="yaml-env">N8N_BASIC_AUTH_USER:</span> <span class="yaml-value">admin</span>
+      <span class="yaml-env">N8N_BASIC_AUTH_PASSWORD:</span> <span class="yaml-value">BI_N8N_2024!</span>
+      <span class="yaml-env">WEBHOOK_URL:</span> <span class="yaml-value">http://localhost:5678</span>
+      <span class="yaml-env">N8N_METRICS:</span> <span class="yaml-value">true</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">n8n_data:/home/node/.n8n</span>
+      - <span class="yaml-value">./n8n-workflows:/home/node/.n8n/workflows</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"5678:5678"</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">postgres</span>
+      - <span class="yaml-value">redis-master</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+      - <span class="yaml-value">bi_frontend</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># WEB AUTOMÁTICO COMPETITIVO TIER 2.5</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">web-competitive-monitor:</span>
+    <span class="yaml-key">build:</span>
+      <span class="yaml-key">context:</span> <span class="yaml-value">.</span>
+      <span class="yaml-key">dockerfile:</span> <span class="yaml-value">Dockerfile.web-monitor</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_web_monitor</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">POSTGRES_HOST:</span> <span class="yaml-value">postgres</span>
+      <span class="yaml-env">POSTGRES_DB:</span> <span class="yaml-value">bi_orchestrator</span>
+      <span class="yaml-env">POSTGRES_USER:</span> <span class="yaml-value">bi_admin</span>
+      <span class="yaml-env">POSTGRES_PASSWORD:</span> <span class="yaml-value">BI_Secure_2024!</span>
+      <span class="yaml-env">REDIS_HOST:</span> <span class="yaml-value">redis-master</span>
+      <span class="yaml-env">REDIS_PORT:</span> <span class="yaml-value">6379</span>
+      <span class="yaml-env">PROXY_ROTATION:</span> <span class="yaml-value">true</span>
+      <span class="yaml-env">MONITORING_INTERVAL:</span> <span class="yaml-value">900</span>
+      <span class="yaml-env">ALERT_WEBHOOKS:</span> <span class="yaml-value">http://n8n:5678/webhook/competitive-alert</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">./proxy-management:/app/proxies</span>
+      - <span class="yaml-value">competitive_data:/app/data</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">postgres</span>
+      - <span class="yaml-value">redis-master</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+      - <span class="yaml-value">bi_external</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># MICROSERVICIOS BACKEND</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">api-gateway:</span>
+    <span class="yaml-key">build:</span>
+      <span class="yaml-key">context:</span> <span class="yaml-value">./backend/api-gateway</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_api_gateway</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">REDIS_URL:</span> <span class="yaml-value">redis://redis-master:6379</span>
+      <span class="yaml-env">JWT_SECRET:</span> <span class="yaml-value">BI_JWT_Secret_Key_2024_Ultra_Secure!</span>
+      <span class="yaml-env">RATE_LIMIT_REQUESTS:</span> <span class="yaml-value">1000</span>
+      <span class="yaml-env">RATE_LIMIT_WINDOW:</span> <span class="yaml-value">3600</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"8000:8000"</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">redis-master</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+      - <span class="yaml-value">bi_frontend</span>
+
+  <span class="yaml-service">data-analytics:</span>
+    <span class="yaml-key">build:</span>
+      <span class="yaml-key">context:</span> <span class="yaml-value">./backend/data-analytics</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_data_analytics</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">POSTGRES_URL:</span> <span class="yaml-value">postgresql://bi_admin:BI_Secure_2024!@postgres:5432/bi_orchestrator</span>
+      <span class="yaml-env">REDIS_URL:</span> <span class="yaml-value">redis://redis-master:6379</span>
+      <span class="yaml-env">ML_MODEL_PATH:</span> <span class="yaml-value">/app/models</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">ml_models:/app/models</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">postgres</span>
+      - <span class="yaml-value">redis-master</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+
+  <span class="yaml-service">competitive-intelligence:</span>
+    <span class="yaml-key">build:</span>
+      <span class="yaml-key">context:</span> <span class="yaml-value">./backend/competitive-intelligence</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_competitive_intel</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">POSTGRES_URL:</span> <span class="yaml-value">postgresql://bi_admin:BI_Secure_2024!@postgres:5432/bi_orchestrator</span>
+      <span class="yaml-env">REDIS_URL:</span> <span class="yaml-value">redis://redis-master:6379</span>
+      <span class="yaml-env">SENTIMENT_API_KEY:</span> <span class="yaml-value">your_sentiment_api_key</span>
+      <span class="yaml-env">WEB_MONITOR_URL:</span> <span class="yaml-value">http://web-competitive-monitor:8080</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">postgres</span>
+      - <span class="yaml-value">web-competitive-monitor</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+
+  <span class="yaml-service">business-metrics:</span>
+    <span class="yaml-key">build:</span>
+      <span class="yaml-key">context:</span> <span class="yaml-value">./backend/business-metrics</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_business_metrics</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">POSTGRES_URL:</span> <span class="yaml-value">postgresql://bi_admin:BI_Secure_2024!@postgres:5432/bi_orchestrator</span>
+      <span class="yaml-env">REDIS_URL:</span> <span class="yaml-value">redis://redis-master:6379</span>
+      <span class="yaml-env">REPORTS_SCHEDULE:</span> <span class="yaml-value">0 8 * * *</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">postgres</span>
+      - <span class="yaml-value">redis-master</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># MONITOREO Y VISUALIZACIÓN</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">grafana:</span>
+    <span class="yaml-key">image:</span> <span class="yaml-value">grafana/grafana:latest</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_grafana</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">GF_SECURITY_ADMIN_PASSWORD:</span> <span class="yaml-value">BI_Grafana_2024!</span>
+      <span class="yaml-env">GF_DATABASE_TYPE:</span> <span class="yaml-value">postgres</span>
+      <span class="yaml-env">GF_DATABASE_HOST:</span> <span class="yaml-value">postgres:5432</span>
+      <span class="yaml-env">GF_DATABASE_NAME:</span> <span class="yaml-value">grafana</span>
+      <span class="yaml-env">GF_DATABASE_USER:</span> <span class="yaml-value">bi_admin</span>
+      <span class="yaml-env">GF_DATABASE_PASSWORD:</span> <span class="yaml-value">BI_Secure_2024!</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">grafana_data:/var/lib/grafana</span>
+      - <span class="yaml-value">./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards</span>
+      - <span class="yaml-value">./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"3000:3000"</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">postgres</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+      - <span class="yaml-value">bi_frontend</span>
+
+  <span class="yaml-service">loki:</span>
+    <span class="yaml-key">image:</span> <span class="yaml-value">grafana/loki:latest</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_loki</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">command:</span> <span class="yaml-value">-config.file=/etc/loki/local-config.yaml</span>
+    <span class="yaml-key">volumes:</span>
+      - <span class="yaml-value">loki_data:/loki</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"3100:3100"</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_backend</span>
+
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-comment"># FRONTEND APLICACIÓN</span>
+  <span class="yaml-comment"># ================================</span>
+  <span class="yaml-service">frontend:</span>
+    <span class="yaml-key">build:</span>
+      <span class="yaml-key">context:</span> <span class="yaml-value">./frontend</span>
+      <span class="yaml-key">dockerfile:</span> <span class="yaml-value">Dockerfile.prod</span>
+    <span class="yaml-key">container_name:</span> <span class="yaml-value">bi_frontend</span>
+    <span class="yaml-key">restart:</span> <span class="yaml-value">unless-stopped</span>
+    <span class="yaml-key">environment:</span>
+      <span class="yaml-env">REACT_APP_API_URL:</span> <span class="yaml-value">http://localhost:8000</span>
+      <span class="yaml-env">REACT_APP_WS_URL:</span> <span class="yaml-value">ws://localhost:8001</span>
+      <span class="yaml-env">REACT_APP_N8N_URL:</span> <span class="yaml-value">http://localhost:5678</span>
+    <span class="yaml-key">ports:</span>
+      - <span class="yaml-port">"3001:80"</span>
+    <span class="yaml-key">depends_on:</span>
+      - <span class="yaml-value">api-gateway</span>
+    <span class="yaml-key">networks:</span>
+      - <span class="yaml-value">bi_frontend</span>
+
+<span class="yaml-comment"># ================================</span>
+<span class="yaml-comment"># CONFIGURACIÓN DE REDES</span>
+<span class="yaml-comment"># ================================</span>
+<span class="yaml-key">networks:</span>
+  <span class="yaml-service">bi_backend:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">bridge</span>
+    <span class="yaml-key">internal:</span> <span class="yaml-value">true</span>
+  <span class="yaml-service">bi_frontend:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">bridge</span>
+  <span class="yaml-service">bi_external:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">bridge</span>
+
+<span class="yaml-comment"># ================================</span>
+<span class="yaml-comment"># VOLÚMENES PERSISTENTES</span>
+<span class="yaml-comment"># ================================</span>
+<span class="yaml-key">volumes:</span>
+  <span class="yaml-service">postgres_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">redis_master_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">redis_slave_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">n8n_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">competitive_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">ml_models:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">grafana_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+  <span class="yaml-service">loki_data:</span>
+    <span class="yaml-key">driver:</span> <span class="yaml-value">local</span>
+
+<span class="yaml-comment"># ================================================================</span>
+<span class="yaml-comment"># COMANDOS DE DESPLIEGUE:</span>
+<span class="yaml-comment"># docker-compose up -d --build</span>
+<span class="yaml-comment"># docker-compose logs -f</span>
+<span class="yaml-comment"># docker-compose down</span>
+<span class="yaml-comment"># ================================================================</span>
+</pre>
+            </div>
+        </div>
+
+        <!-- Servicios Overview -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">Base de Datos</h3>
+                    <i class="fas fa-database text-blue-600"></i>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• PostgreSQL 15 Alpine</li>
+                    <li>• Schema + Functions SQL</li>
+                    <li>• Health checks integrados</li>
+                    <li>• Puerto: 5432</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">Cache & Performance</h3>
+                    <i class="fas fa-memory text-red-600"></i>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Redis Master/Slave</li>
+                    <li>• 2GB MaxMemory</li>
+                    <li>• LRU Policy</li>
+                    <li>• Puerto: 6379</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">Workflow Automation</h3>
+                    <i class="fas fa-robot text-green-600"></i>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• N8N Latest</li>
+                    <li>• PostgreSQL Backend</li>
+                    <li>• Basic Auth Enabled</li>
+                    <li>• Puerto: 5678</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">WEB AUTOMÁTICO</h3>
+                    <i class="fas fa-spider text-purple-600"></i>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Tier 2.5 Custom Build</li>
+                    <li>• Proxy Rotation</li>
+                    <li>• 15min Intervals</li>
+                    <li>• Webhook Alerts</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">Microservicios</h3>
+                    <i class="fas fa-microchip text-yellow-600"></i>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• API Gateway: 8000</li>
+                    <li>• Data Analytics</li>
+                    <li>• Competitive Intelligence</li>
+                    <li>• Business Metrics</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-900">Monitoreo</h3>
+                    <i class="fas fa-chart-line text-orange-600"></i>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li>• Grafana: Puerto 3000</li>
+                    <li>• Loki Logs: Puerto 3100</li>
+                    <li>• Dashboards Provisioned</li>
+                    <li>• Frontend: Puerto 3001</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 bg-gray-800 rounded-lg p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold mb-2">Business Intelligence Orchestrator v3.1</h3>
+                    <p class="text-gray-300">Docker Compose - Orquestación Completa de Servicios</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-green-400 font-semibold">✅ ARCHIVO PRINCIPAL LISTO</p>
+                    <p class="text-gray-300 text-sm">12 Servicios • 3 Redes • 8 Volúmenes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDgyvKf%2Bv3mqJ3sC4hYn5p%2FMrKXG57QZYAaN8ioxtqLZrPiF4vKemeT%2Bzgh%2BfesA1RJiSW7PNwnoRdcCyhvUgh82y%2BOr%2F79cjrzFELmKAgJnmi5dinBIL55jvkmM2emarO4HGzWjlA18FO0ZcrvnLqfB%2BZ%2FWcOAtj8Jv3OTGI%2FWIl9pv0FuAUuJzrVGmT69Ff7dqZYFue8VeQUGsRbOpyTPS%2F386MfkMALML3PSIoW0%2F%2BFnL8ROpi4hOJz3H%2FrSFBhPe7w1y6w3gd26%2FJJfvlIeAfAmZTrBnSH9mtR7yqoe%2FiaB5i%2BhP5sp9MuuTYkLyZvLvNMFt26Ynm0mXoq9%2BOSTIl5u1giAWgFxRBYrB2T5R47aFJ%2BEuiBk3L3i4lwhGj%2BhzEkDD2sXDas2G%2FOeWqm6kagocPu2FZX1K5w8o3c4apZs2Hv4z33oNdSShtHZRWJowTotvleleA4zDLmP3eVerBJz073f85k28zCbec6l3kqq1pT90PJdYNRM9Q2lZ7ug%3D%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDgyvKf+v3mqJ3sC4hYn5p/MrKXG57QZYAaN8ioxtqLZrPiF4vKemeT+zgh+fesA1RJiSW7PNwnoRdcCyhvUgh82y+Or/79cjrzFELmKAgJnmi5dinBIL55jvkmM2emarO4HGzWjlA18FO0ZcrvnLqfB+Z/WcOAtj8Jv3OTGI/WIl9pv0FuAUuJzrVGmT69Ff7dqZYFue8VeQUGsRbOpyTPS/386MfkMALML3PSIoW0/+FnL8ROpi4hOJz3H/rSFBhPe7w1y6w3gd26/JJfvlIeAfAmZTrBnSH9mtR7yqoe/iaB5i+hP5sp9MuuTYkLyZvLvNMFt26Ynm0mXoq9+OSTIl5u1giAWgFxRBYrB2T5R47aFJ+EuiBk3L3i4lwhGj+hzEkDD2sXDas2G/OeWqm6kagocPu2FZX1K5w8o3c4apZs2Hv4z33oNdSShtHZRWJowTotvleleA4zDLmP3eVerBJz073f85k28zCbec6l3kqq1pT90PJdYNRM9Q2lZ7ug==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

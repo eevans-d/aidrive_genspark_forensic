@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Multi-Agente Inventario Retail Argentino - Setup MVP</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 12px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .bash-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 12px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin: 24px 0 16px 0;
+            border-radius: 8px;
+        }
+        .subsection-header {
+            background-color: #4a5568;
+            color: white;
+            padding: 12px 16px;
+            margin: 16px 0 8px 0;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        body {
+            line-height: 1.6;
+        }
+        .highlight-box {
+            background-color: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div class="max-w-6xl mx-auto p-6">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-lg mb-8 text-center">
+            <h1 class="text-4xl font-bold mb-4">
+                <i class="fas fa-boxes mr-3"></i>
+                Sistema Multi-Agente Inventario Retail Argentino
+            </h1>
+            <p class="text-xl">MVP Completo - Setup Base con FastAPI + SQLite WAL</p>
+            <div class="mt-4 text-sm">
+                <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full mr-2">Python 3.11</span>
+                <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full mr-2">FastAPI</span>
+                <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full mr-2">SQLite WAL</span>
+                <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full">Vibe Coding</span>
+            </div>
+        </div>
+
+        <!-- Sección 1: Código -->
+        <div class="section-header">
+            <h2 class="text-2xl font-bold">
+                <i class="fas fa-code mr-3"></i>
+                Sección 1: Código Completo del Proyecto
+            </h2>
+        </div>
+
+        <div class="subsection-header">
+            <i class="fas fa-folder-tree mr-2"></i>Estructura del Proyecto
+        </div>
+        
+        <div class="code-block">inventario-retail-mvp/
+├── shared/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── database.py
+│   ├── models.py
+│   └── utils.py
+├── agente_negocio/
+│   ├── __init__.py
+│   └── main.py
+├── agente_deposito/
+│   ├── __init__.py
+│   └── main.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_config.py
+│   ├── test_database.py
+│   └── test_models.py
+├── scripts/
+│   └── init_project.sh
+├── .env.template
+├── .gitignore
+├── requirements.txt
+└── README.md</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-play mr-2"></i>Script de Inicialización
+        </div>
+        
+        <p class="mb-3 text-gray-700"><strong>scripts/init_project.sh</strong></p>
+        <div class="bash-block">#!/bin/bash
+
+set -e  # Exit on any error
+
+echo "🚀 Inicializando Proyecto Inventario Retail Argentino MVP"
+
+# Crear directorios
+echo "📁 Creando estructura de directorios..."
+mkdir -p shared agente_negocio agente_deposito tests scripts data
+
+# Crear __init__.py files
+touch shared/__init__.py
+touch agente_negocio/__init__.py
+touch agente_deposito/__init__.py
+touch tests/__init__.py
+
+# Copiar .env template si no existe
+if [ ! -f .env ]; then
+    echo "📄 Creando archivo .env desde template..."
+    cp .env.template .env
+    echo "⚠️  IMPORTANTE: Edita .env con tus valores específicos"
+fi
+
+# Crear virtual environment
+echo "🐍 Creando virtual environment..."
+python3.11 -m venv venv
+source venv/bin/activate
+
+# Instalar dependencias
+echo "📦 Instalando dependencias..."
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Inicializar base de datos
+echo "🗄️  Inicializando base de datos..."
+python -c "
+from shared.database import init_database
+init_database()
+print('✅ Base de datos inicializada correctamente')
+"
+
+# Crear directorios adicionales
+mkdir -p data/backups
+mkdir -p data/uploads
+
+echo "🎉 ¡Setup completo!"
+echo "📋 Próximos pasos:"
+echo "   1. source venv/bin/activate"
+echo "   2. Editar .env con tus configuraciones"
+echo "   3. python -m pytest tests/ para verificar setup"
+echo "   4. Continuar con desarrollo de AgenteDepósito"</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-cog mr-2"></i>Configuración Compartida
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>.env.template</strong></p>
+        <div class="code-block"># Base de Datos
+DATABASE_URL=sqlite:///./data/inventario.db
+DATABASE_WAL_MODE=true
+
+# Seguridad
+JWT_SECRET=tu_jwt_secret_super_seguro_aqui_cambiar_en_produccion
+JWT_ALGORITHM=HS256
+JWT_EXPIRE_MINUTES=1440
+
+# Configuración Argentina
+INFLACION_MENSUAL=4.5
+TEMPORADA=verano
+MONEDA=ARS
+
+# Puertos de Servicios  
+AGENTE_NEGOCIO_PORT=8001
+AGENTE_DEPOSITO_PORT=8002
+
+# URLs de Servicios
+AGENTE_NEGOCIO_URL=http://localhost:8001
+AGENTE_DEPOSITO_URL=http://localhost:8002
+
+# OCR Configuración
+OCR_CACHE_HOURS=24
+OCR_LANGUAGE=es
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=data/app.log
+
+# Features Plus (para futuras iteraciones)
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+BACKUP_RETENTION_DAYS=7</div>
+
+        <p class="mb-3 text-gray-700"><strong>shared/config.py</strong></p>
+        <div class="code-block">"""
+Configuración compartida del sistema multi-agente
+Usa Pydantic Settings para carga automática desde .env
+"""
+
+from pydantic import BaseSettings, validator
+from typing import Optional
+import os
+from pathlib import Path
+
+class Settings(BaseSettings):
+    """Configuración global del sistema"""
+    
+    # Base de datos
+    database_url: str = "sqlite:///./data/inventario.db"
+    database_wal_mode: bool = True
+    
+    # Seguridad
+    jwt_secret: str
+    jwt_algorithm: str = "HS256" 
+    jwt_expire_minutes: int = 1440
+    
+    # Configuración Argentina
+    inflacion_mensual: float = 4.5
+    temporada: str = "verano"
+    moneda: str = "ARS"
+    
+    # Puertos servicios
+    agente_negocio_port: int = 8001
+    agente_deposito_port: int = 8002
+    
+    # URLs servicios
+    agente_negocio_url: str = "http://localhost:8001"
+    agente_deposito_url: str = "http://localhost:8002"
+    
+    # OCR
+    ocr_cache_hours: int = 24
+    ocr_language: str = "es"
+    
+    # Logging
+    log_level: str = "INFO"
+    log_file: str = "data/app.log"
+    
+    # Features Plus
+    telegram_bot_token: Optional[str] = None
+    telegram_chat_id: Optional[str] = None
+    backup_retention_days: int = 7
+    
+    @validator('inflacion_mensual')
+    def validate_inflacion(cls, v):
+        if v < 0:
+            raise ValueError('Inflación no puede ser negativa')
+        if v > 50:  # Limite razonable para alertas
+            print(f"⚠️  Inflación alta detectada: {v}%")
+        return v
+    
+    @validator('temporada')
+    def validate_temporada(cls, v):
+        if v.lower() not in ['verano', 'invierno', 'otoño', 'primavera']:
+            raise ValueError('Temporada debe ser: verano, invierno, otoño, primavera')
+        return v.lower()
+    
+    @validator('jwt_secret')
+    def validate_jwt_secret(cls, v):
+        if len(v) < 32:
+            raise ValueError('JWT secret debe tener al menos 32 caracteres')
+        return v
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
+
+# Instancia global
+settings = Settings()
+
+def get_database_url() -> str:
+    """Obtener URL de base de datos con configuración WAL"""
+    url = settings.database_url
+    if settings.database_wal_mode and "sqlite" in url:
+        # Asegurar que existe el directorio
+        Path("data").mkdir(exist_ok=True)
+    return url
+
+def get_factor_estacional() -> float:
+    """Calcular factor estacional según temporada"""
+    factores = {
+        "verano": 1.2,   # Alta demanda verano
+        "invierno": 0.9,  # Baja demanda invierno
+        "primavera": 1.1, # Demanda media-alta
+        "otoño": 1.0      # Demanda base
+    }
+    return factores.get(settings.temporada, 1.0)
+
+def format_precio_argentino(precio: float) -> str:
+    """Formatear precio en formato argentino (coma decimal, punto miles)"""
+    return f"$ {precio:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+def validate_cuit_simple(cuit: str) -> bool:
+    """Validación simple de CUIT argentino"""
+    if not cuit or len(cuit) != 11:
+        return False
+    if not cuit.isdigit():
+        return False
+    # Validación básica de dígito verificador (simplificada)
+    return True
+
+if __name__ == "__main__":
+    # Test de configuración
+    print("🔧 Configuración cargada:")
+    print(f"  Database: {settings.database_url}")
+    print(f"  Inflación: {settings.inflacion_mensual}%")
+    print(f"  Temporada: {settings.temporada} (factor: {get_factor_estacional()})")
+    print(f"  Puertos: Negocio={settings.agente_negocio_port}, Depósito={settings.agente_deposito_port}")
+    
+    # Test validaciones
+    precio_test = 12345.67
+    print(f"  Precio formateado: {format_precio_argentino(precio_test)}")
+    print(f"  CUIT válido: {validate_cuit_simple('20123456784')}")
+</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-database mr-2"></i>Base de Datos y Modelos
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>shared/database.py</strong></p>
+        <div class="code-block">"""
+Configuración de base de datos SQLite con WAL mode
+SQLAlchemy 2.0 con soporte para concurrencia
+"""
+
+from sqlalchemy import create_engine, event
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.engine import Engine
+from contextlib import contextmanager
+import sqlite3
+import logging
+from pathlib import Path
+
+from .config import settings, get_database_url
+
+# Configurar logging
+logging.basicConfig(level=getattr(logging, settings.log_level))
+logger = logging.getLogger(__name__)
+
+# Base para modelos
+Base = declarative_base()
+
+# Engine global
+engine = None
+SessionLocal = None
+
+def init_database():
+    """Inicializar base de datos con configuración WAL"""
+    global engine, SessionLocal
+    
+    database_url = get_database_url()
+    logger.info(f"Inicializando base de datos: {database_url}")
+    
+    # Crear directorio si no existe
+    if "sqlite" in database_url:
+        db_path = Path(database_url.replace("sqlite:///", ""))
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Crear engine con configuración optimizada
+    engine = create_engine(
+        database_url,
+        echo=False,  # Cambiar a True para debug SQL
+        pool_pre_ping=True,
+        connect_args={
+            "check_same_thread": False,  # Permite multi-threading
+            "timeout": 20,               # Timeout en segundos
+        } if "sqlite" in database_url else {}
+    )
+    
+    # Configurar WAL mode para SQLite
+    if "sqlite" in database_url and settings.database_wal_mode:
+        @event.listens_for(engine, "connect")
+        def set_sqlite_pragma(dbapi_connection, connection_record):
+            cursor = dbapi_connection.cursor()
+            
+            # Habilitar WAL mode para concurrencia
+            cursor.execute("PRAGMA journal_mode=WAL")
+            
+            # Optimizaciones de performance
+            cursor.execute("PRAGMA synchronous=NORMAL")  # Balance seguridad/performance
+            cursor.execute("PRAGMA cache_size=10000")     # Cache 10MB aprox
+            cursor.execute("PRAGMA temp_store=memory")    # Tablas temp en RAM
+            cursor.execute("PRAGMA foreign_keys=ON")      # Habilitar FK constraints
+            
+            cursor.close()
+            logger.info("SQLite configurado con WAL mode y optimizaciones")
+    
+    # Crear sessionmaker
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    # Crear tablas
+    from .models import *  # Import aquí para evitar circular imports
+    Base.metadata.create_all(bind=engine)
+    
+    logger.info("Base de datos inicializada correctamente")
+
+def get_database():
+    """Dependency para FastAPI - obtener sesión DB"""
+    if SessionLocal is None:
+        raise RuntimeError("Database no inicializada. Llamar init_database() primero")
+    
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@contextmanager
+def get_db_session():
+    """Context manager para uso fuera de FastAPI"""
+    if SessionLocal is None:
+        raise RuntimeError("Database no inicializada. Llamar init_database() primero")
+    
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+def execute_raw_sql(sql: str, params: dict = None):
+    """Ejecutar SQL raw (para casos especiales)"""
+    with get_db_session() as db:
+        result = db.execute(sql, params or {})
+        db.commit()
+        return result
+
+def backup_database(backup_path: str = None):
+    """Crear backup de la base de datos SQLite"""
+    if "sqlite" not in get_database_url():
+        logger.warning("Backup solo soportado para SQLite")
+        return False
+    
+    try:
+        import shutil
+        from datetime import datetime
+        
+        source_path = get_database_url().replace("sqlite:///", "")
+        if not backup_path:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_path = f"data/backups/inventario_backup_{timestamp}.db"
+        
+        # Crear directorio backup si no existe
+        Path(backup_path).parent.mkdir(parents=True, exist_ok=True)
+        
+        shutil.copy2(source_path, backup_path)
+        logger.info(f"Backup creado: {backup_path}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error creando backup: {e}")
+        return False
+
+def get_db_stats():
+    """Obtener estadísticas de la base de datos"""
+    try:
+        with get_db_session() as db:
+            # Contar registros principales
+            from .models import Producto, MovimientoStock
+            
+            stats = {
+                "productos_total": db.query(Producto).count(),
+                "movimientos_total": db.query(MovimientoStock).count(),
+                "productos_stock_critico": db.query(Producto).filter(
+                    Producto.stock_actual <= Producto.stock_minimo
+                ).count()
+            }
+            
+            # Agregar estadísticas SQLite si aplica
+            if "sqlite" in get_database_url():
+                result = db.execute("PRAGMA page_count").scalar()
+                page_size = db.execute("PRAGMA page_size").scalar()
+                stats["db_size_mb"] = round((result * page_size) / 1024 / 1024, 2)
+                
+                journal_mode = db.execute("PRAGMA journal_mode").scalar()
+                stats["journal_mode"] = journal_mode
+            
+            return stats
+            
+    except Exception as e:
+        logger.error(f"Error obteniendo stats DB: {e}")
+        return {}
+
+if __name__ == "__main__":
+    # Test de inicialización
+    print("🗄️  Testando inicialización de base de datos...")
+    init_database()
+    
+    stats = get_db_stats()
+    print(f"📊 Estadísticas DB: {stats}")
+    
+    print("✅ Test de base de datos completado")
+</div>
+
+        <p class="mb-3 text-gray-700"><strong>shared/models.py</strong></p>
+        <div class="code-block">"""
+Modelos SQLAlchemy para el sistema de inventario
+Incluye validaciones, constraints y auditoría
+"""
+
+from sqlalchemy import (
+    Column, Integer, String, Float, DateTime, Boolean, 
+    ForeignKey, CheckConstraint, Index, Text, func
+)
+from sqlalchemy.orm import relationship, validates
+from sqlalchemy.ext.hybrid import hybrid_property
+from datetime import datetime
+from decimal import Decimal
+import uuid
+
+from .database import Base
+from .config import validate_cuit_simple
+
+class BaseModel:
+    """Modelo base con campos comunes"""
+    
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+
+class Producto(Base, BaseModel):
+    """Modelo de Producto con validaciones argentinas"""
+    
+    __tablename__ = "productos"
+    
+    # Campos básicos
+    codigo = Column(String(50), unique=True, nullable=False, index=True)
+    nombre = Column(String(200), nullable=False)
+    descripcion = Column(Text)
+    
+    # Stock y precios
+    stock_actual = Column(Integer, default=0, nullable=False)
+    stock_minimo = Column(Integer, default=0, nullable=False) 
+    precio_compra = Column(Float, nullable=False)
+    precio_venta = Column(Float)
+    
+    # Categorización
+    categoria = Column(String(100))
+    proveedor = Column(String(200))
+    
+    # Flags
+    activo = Column(Boolean, default=True, nullable=False)
+    
+    # Constraints SQL
+    __table_args__ = (
+        CheckConstraint('stock_actual >= 0', name='check_stock_no_negativo'),
+        CheckConstraint('stock_minimo >= 0', name='check_stock_minimo_no_negativo'),
+        CheckConstraint('precio_compra > 0', name='check_precio_compra_positivo'),
+        CheckConstraint('precio_venta IS NULL OR precio_venta > 0', name='check_precio_venta_positivo'),
+        Index('idx_producto_categoria', 'categoria'),
+        Index('idx_producto_proveedor', 'proveedor'),
+        Index('idx_producto_activo', 'activo'),
+    )
+    
+    # Relationships
+    movimientos = relationship("MovimientoStock", back_populates="producto", cascade="all, delete-orphan")
+    
+    @validates('stock_actual')
+    def validate_stock_actual(self, key, value):
+        if value < 0:
+            raise ValueError(f"Stock actual no puede ser negativo: {value}")
+        return value
+    
+    @validates('precio_compra')
+    def validate_precio_compra(self, key, value):
+        if value <= 0:
+            raise ValueError(f"Precio compra debe ser positivo: {value}")
+        return value
+    
+    @hybrid_property
+    def stock_critico(self):
+        """Indica si el producto tiene stock crítico"""
+        return self.stock_actual <= self.stock_minimo
+    
+    @hybrid_property  
+    def margen_bruto(self):
+        """Calcular margen bruto si hay precio de venta"""
+        if not self.precio_venta or self.precio_compra <= 0:
+            return None
+        return ((self.precio_venta - self.precio_compra) / self.precio_compra) * 100
+    
+    def ajustar_stock_minimo_estacional(self, factor: float):
+        """Ajustar stock mínimo por factor estacional"""
+        self.stock_minimo = max(1, int(self.stock_minimo * factor))
+    
+    def __repr__(self):
+        return f"<Producto(codigo='{self.codigo}', nombre='{self.nombre}', stock={self.stock_actual})>"
+
+class MovimientoStock(Base, BaseModel):
+    """Auditoría completa de movimientos de stock"""
+    
+    __tablename__ = "movimientos_stock"
+    
+    # Relación con producto
+    producto_id = Column(Integer, ForeignKey("productos.id", ondelete="CASCADE"), nullable=False)
+    
+    # Tipo de movimiento
+    tipo = Column(String(20), nullable=False)  # 'entrada', 'salida', 'ajuste'
+    cantidad = Column(Integer, nullable=False)
+    
+    # Estados antes/después para auditoría
+    stock_anterior = Column(Integer, nullable=False)
+    stock_posterior = Column(Integer, nullable=False)
+    
+    # Metadatos del movimiento
+    motivo = Column(String(500))  # Razón del movimiento
+    referencia = Column(String(100))  # Número factura, orden, etc.
+    usuario = Column(String(100))  # Usuario que realizó el movimiento
+    
+    # Precios al momento del movimiento
+    precio_unitario = Column(Float)  # Precio al momento del movimiento
+    
+    # Constraints SQL
+    __table_args__ = (
+        CheckConstraint("tipo IN ('entrada', 'salida', 'ajuste')", name='check_tipo_movimiento'),
+        CheckConstraint('cantidad != 0', name='check_cantidad_no_cero'),
+        CheckConstraint('stock_anterior >= 0', name='check_stock_anterior_no_negativo'),
+        CheckConstraint('stock_posterior >= 0', name='check_stock_posterior_no_negativo'),
+        Index('idx_movimiento_producto', 'producto_id'),
+        Index('idx_movimiento_tipo', 'tipo'),  
+        Index('idx_movimiento_fecha', 'created_at'),
+    )
+    
+    # Relationship
+    producto = relationship("Producto", back_populates="movimientos")
+    
+    @validates('tipo')
+    def validate_tipo(self, key, value):
+        tipos_validos = ['entrada', 'salida', 'ajuste']
+        if value not in tipos_validos:
+            raise ValueError(f"Tipo debe ser uno de: {tipos_validos}")
+        return value
+    
+    @validates('cantidad')
+    def validate_cantidad(self, key, value):
+        if value == 0:
+            raise ValueError("Cantidad no puede ser cero")
+        return value
+    
+    def validar_consistencia_stock(self):
+        """Validar que los stocks anterior/posterior sean consistentes"""
+        if self.tipo == 'entrada':
+            expected = self.stock_anterior + abs(self.cantidad)
+        elif self.tipo == 'salida':
+            expected = self.stock_anterior - abs(self.cantidad)
+        else:  # ajuste
+            expected = self.stock_posterior  # Para ajustes, no validamos cálculo
+            
+        if self.tipo != 'ajuste' and expected != self.stock_posterior:
+            raise ValueError(
+                f"Stock inconsistente. Anterior: {self.stock_anterior}, "
+                f"Cantidad: {self.cantidad}, Esperado: {expected}, "
+                f"Posterior: {self.stock_posterior}"
+            )
+    
+    @hybrid_property
+    def valor_total(self):
+        """Valor total del movimiento"""
+        if self.precio_unitario:
+            return self.precio_unitario * abs(self.cantidad)
+        return None
+    
+    def __repr__(self):
+        return (f"<MovimientoStock(producto_id={self.producto_id}, "
+                f"tipo='{self.tipo}', cantidad={self.cantidad}, "
+                f"stock={self.stock_anterior}->{self.stock_posterior})>")
+
+class Factura(Base, BaseModel):
+    """Modelo de Factura argentina (AFIP)"""
+    
+    __tablename__ = "facturas"
+    
+    # Identificación AFIP
+    numero = Column(String(50), nullable=False, index=True)
+    tipo = Column(String(5), nullable=False)  # A, B, C
+    punto_venta = Column(String(10))
+    
+    # Datos del emisor
+    cuit_emisor = Column(String(11), nullable=False)
+    nombre_emisor = Column(String(200))
+    
+    # Totales
+    subtotal = Column(Float)
+    iva = Column(Float) 
+    total = Column(Float, nullable=False)
+    
+    # Metadatos procesamiento
+    fecha_emision = Column(DateTime)
+    fecha_procesamiento = Column(DateTime, default=func.now())
+    estado_procesamiento = Column(String(20), default='pendiente')  # pendiente, procesada, error
+    
+    # OCR y archivo
+    archivo_original = Column(String(500))  # Path al archivo original
+    datos_ocr = Column(Text)  # JSON con datos extraídos por OCR
+    
+    # Constraints
+    __table_args__ = (
+        CheckConstraint("tipo IN ('A', 'B', 'C')", name='check_tipo_factura'),
+        CheckConstraint('total > 0', name='check_total_positivo'),
+        CheckConstraint("estado_procesamiento IN ('pendiente', 'procesada', 'error')", 
+                       name='check_estado_procesamiento'),
+        Index('idx_factura_cuit', 'cuit_emisor'),
+        Index('idx_factura_estado', 'estado_procesamiento'),
+        Index('idx_factura_fecha', 'fecha_emision'),
+    )
+    
+    # Relationships
+    items = relationship("FacturaItem", back_populates="factura", cascade="all, delete-orphan")
+    
+    @validates('cuit_emisor')
+    def validate_cuit(self, key, value):
+        if not validate_cuit_simple(value):
+            raise ValueError(f"CUIT inválido: {value}")
+        return value
+    
+    @validates('total')
+    def validate_total(self, key, value):
+        if value <= 0:
+            raise ValueError(f"Total debe ser positivo: {value}")
+        return value
+    
+    @hybrid_property
+    def numero_completo(self):
+        """Número completo de factura formato AFIP"""
+        if self.punto_venta:
+            return f"{self.punto_venta}-{self.numero}"
+        return self.numero
+    
+    def __repr__(self):
+        return f"<Factura(numero='{self.numero_completo}', tipo='{self.tipo}', total={self.total})>"
+
+class FacturaItem(Base, BaseModel):
+    """Items de factura"""
+    
+    __tablename__ = "factura_items"
+    
+    # Relaciones
+    factura_id = Column(Integer, ForeignKey("facturas.id", ondelete="CASCADE"), nullable=False)
+    producto_id = Column(Integer, ForeignKey("productos.id"), nullable=True)  # Puede ser null si no se identifica
+    
+    # Datos del item
+    descripcion = Column(String(500), nullable=False)
+    cantidad = Column(Float, nullable=False)
+    precio_unitario = Column(Float, nullable=False) 
+    subtotal = Column(Float, nullable=False)
+    
+    # Metadatos matching
+    confianza_matching = Column(Float)  # 0-1 score de matching con producto
+    
+    # Constraints
+    __table_args__ = (
+        CheckConstraint('cantidad > 0', name='check_cantidad_positiva'),
+        CheckConstraint('precio_unitario > 0', name='check_precio_unitario_positivo'),
+        CheckConstraint('subtotal > 0', name='check_subtotal_positivo'),
+        CheckConstraint('confianza_matching IS NULL OR (confianza_matching >= 0 AND confianza_matching <= 1)', 
+                       name='check_confianza_range'),
+        Index('idx_item_factura', 'factura_id'),
+        Index('idx_item_producto', 'producto_id'),
+    )
+    
+    # Relationships
+    factura = relationship("Factura", back_populates="items")
+    producto = relationship("Producto")
+    
+    @validates('cantidad', 'precio_unitario', 'subtotal')
+    def validate_positive(self, key, value):
+        if value <= 0:
+            raise ValueError(f"{key} debe ser positivo: {value}")
+        return value
+    
+    def __repr__(self):
+        return f"<FacturaItem(descripcion='{self.descripcion}', cantidad={self.cantidad}, precio={self.precio_unitario})>"
+
+# Función helper para crear datos de ejemplo
+def create_sample_data(db_session):
+    """Crear datos de ejemplo para testing"""
+    from .config import settings
+    
+    # Productos de ejemplo
+    productos_sample = [
+        {
+            "codigo": "COCA001",
+            "nombre": "Coca Cola 600ml",
+            "stock_actual": 50,
+            "stock_minimo": 10,
+            "precio_compra": 120.0,
+            "precio_venta": 180.0,
+            "categoria": "bebidas",
+            "proveedor": "Maxi Consumo Necochea"
+        },
+        {
+            "codigo": "PAN001", 
+            "nombre": "Pan Lactal Bimbo",
+            "stock_actual": 25,
+            "stock_minimo": 5,
+            "precio_compra": 250.0,
+            "precio_venta": 380.0,
+            "categoria": "panaderia",
+            "proveedor": "Distribuidora Centro"
+        },
+        {
+            "codigo": "LECHE001",
+            "nombre": "Leche Entera La Serenísima 1L",
+            "stock_actual": 3,  # Stock crítico
+            "stock_minimo": 15,
+            "precio_compra": 180.0,
+            "precio_venta": 280.0,
+            "categoria": "lacteos",
+            "proveedor": "Maxi Consumo Necochea"
+        }
+    ]
+    
+    for prod_data in productos_sample:
+        producto = Producto(**prod_data)
+        db_session.add(producto)
+    
+    db_session.commit()
+    print(f"✅ Creados {len(productos_sample)} productos de ejemplo")
+
+if __name__ == "__main__":
+    # Test de modelos
+    print("🧪 Testing modelos...")
+    
+    from .database import init_database, get_db_session
+    
+    init_database()
+    
+    with get_db_session() as db:
+        create_sample_data(db)
+        
+        # Verificar productos
+        productos = db.query(Producto).all()
+        print(f"📦 Productos en BD: {len(productos)}")
+        
+        for p in productos:
+            print(f"  - {p.codigo}: {p.nombre} (Stock: {p.stock_actual}, Crítico: {p.stock_critico})")
+    
+    print("✅ Test de modelos completado")
+</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-tools mr-2"></i>Utilidades Compartidas
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>shared/utils.py</strong></p>
+        <div class="code-block">"""
+Utilidades compartidas para el sistema
+Funciones helpers para formato, validación, etc.
+"""
+
+import re
+import hashlib
+import uuid
+from datetime import datetime, timedelta
+from typing import Optional, Dict, Any, List
+from decimal import Decimal, ROUND_HALF_UP
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Regex patterns para Argentina
+CUIT_PATTERN = re.compile(r'^[0-9]{11}$')
+NUMERO_FACTURA_PATTERN = re.compile(r'(\d+)-(\d+)')
+PRECIO_AR_PATTERN = re.compile(r'\$?\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)')
+
+def format_currency_ar(amount: float, symbol: str = "$") -> str:
+    """
+    Formatear moneda en formato argentino
+    Ejemplo: 1234.56 -> "$ 1.234,56"
+    """
+    try:
+        # Redondear a 2 decimales
+        rounded = round(float(amount), 2)
+        
+        # Separar entero y decimal
+        integer_part = int(rounded)
+        decimal_part = int(round((rounded - integer_part) * 100))
+        
+        # Formatear parte entera con puntos cada 3 dígitos
+        integer_str = f"{integer_part:,}".replace(',', '.')
+        
+        # Construir resultado
+        return f"{symbol} {integer_str},{decimal_part:02d}"
+        
+    except (ValueError, TypeError) as e:
+        logger.error(f"Error formateando precio {amount}: {e}")
+        return f"{symbol} 0,00"
+
+def parse_currency_ar(price_str: str) -> Optional[float]:
+    """
+    Parsear precio en formato argentino a float
+    Ejemplo: "$ 1.234,56" -> 1234.56
+    """
+    try:
+        # Limpiar string
+        clean_str = price_str.strip().replace('$', '').strip()
+        
+        # Buscar patrón de precio argentino
+        match = PRECIO_AR_PATTERN.search(clean_str)
+        if not match:
+            return None
+        
+        price_part = match.group(1)
+        
+        # Convertir: punto = separador miles, coma = decimal
+        # 1.234,56 -> 1234.56
+        if ',' in price_part:
+            integer_part, decimal_part = price_part.rsplit(',', 1)
+            integer_part = integer_part.replace('.', '')
+            result_str = f"{integer_part}.{decimal_part}"
+        else:
+            # Solo parte entera
+            result_str = price_part.replace('.', '')
+        
+        return float(result_str)
+        
+    except (ValueError, AttributeError) as e:
+        logger.error(f"Error parseando precio '{price_str}': {e}")
+        return None
+
+def validate_cuit(cuit: str, strict: bool = False) -> bool:
+    """
+    Validar CUIT argentino
+    strict=False: solo formato
+    strict=True: incluye dígito verificador
+    """
+    if not cuit:
+        return False
+    
+    # Limpiar guiones y espacios
+    clean_cuit = re.sub(r'[-\s]', '', cuit.strip())
+    
+    # Validar formato
+    if not CUIT_PATTERN.match(clean_cuit):
+        return False
+    
+    if not strict:
+        return True
+    
+    # Validación de dígito verificador (algoritmo AFIP)
+    try:
+        # Factores de multiplicación
+        factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+        
+        # Calcular suma
+        digits = [int(d) for d in clean_cuit[:10]]
+        suma = sum(d * f for d, f in zip(digits, factors))
+        
+        # Calcular dígito verificador
+        resto = suma % 11
+        if resto < 2:
+            dv_calculated = resto
+        else:
+            dv_calculated = 11 - resto
+        
+        dv_provided = int(clean_cuit[10])
+        return dv_calculated == dv_provided
+        
+    except (ValueError, IndexError) as e:
+        logger.error(f"Error validando CUIT {cuit}: {e}")
+        return False
+
+def generate_uuid() -> str:
+    """Generar UUID único"""
+    return str(uuid.uuid4())
+
+def generate_hash(data: str, algorithm: str = "sha256") -> str:
+    """Generar hash de string"""
+    try:
+        hasher = hashlib.new(algorithm)
+        hasher.update(data.encode('utf-8'))
+        return hasher.hexdigest()
+    except ValueError as e:
+        logger.error(f"Algoritmo hash inválido {algorithm}: {e}")
+        return ""
+
+def calculate_inflation_price(base_price: float, 
+                            monthly_rate: float, 
+                            days_elapsed: int) -> float:
+    """
+    Calcular precio con inflación
+    Formula: precio_base * (1 + tasa_mensual/100) ^ (dias/30.44)
+    """
+    try:
+        if base_price <= 0 or monthly_rate < 0:
+            raise ValueError("Precio base debe ser positivo y tasa no negativa")
+        
+        # Días promedio por mes
+        days_per_month = 30.44
+        
+        # Factor de inflación
+        inflation_factor = (1 + monthly_rate / 100) ** (days_elapsed / days_per_month)
+        
+        # Precio ajustado
+        adjusted_price = base_price * inflation_factor
+        
+        # Redondear a 2 decimales
+        return round(adjusted_price, 2)
+        
+    except (ValueError, TypeError, ZeroDivisionError) as e:
+        logger.error(f"Error calculando inflación: {e}")
+        return base_price
+
+def apply_seasonal_factor(base_value: float, season: str) -> float:
+    """Aplicar factor estacional"""
+    factors = {
+        "verano": 1.2,    # +20% demanda alta
+        "invierno": 0.9,  # -10% demanda baja  
+        "primavera": 1.1, # +10% demanda media-alta
+        "otoño": 1.0      # Base
+    }
+    
+    factor = factors.get(season.lower(), 1.0)
+    return round(base_value * factor, 2)
+
+def extract_factura_number(text: str) -> Optional[Dict[str, str]]:
+    """
+    Extraer número de factura del texto OCR
+    Retorna dict con punto_venta y numero
+    """
+    # Patrones comunes en facturas argentinas
+    patterns = [
+        r'(?:FACTURA?\s*[A-C]?\s*N°?\s*)?(\d{4})-(\d{8})',  # 0001-12345678
+        r'(?:N°?\s*)?(\d{1,4})-(\d{6,8})',                 # 1-123456
+        r'FACTURA?\s*[A-C]?\s*(\d+)',                       # FACTURA A 12345
+        r'N°?\s*(\d{6,10})',                               # N° 123456789
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            groups = match.groups()
+            if len(groups) == 2:
+                return {
+                    "punto_venta": groups[0].zfill(4),
+                    "numero": groups[1].zfill(8)
+                }
+            elif len(groups) == 1:
+                num = groups[0]
+                if len(num) >= 8:
+                    # Asumir últimos 8 dígitos son número
+                    return {
+                        "punto_venta": num[:-8].zfill(4) or "0001",
+                        "numero": num[-8:].zfill(8)
+                    }
+                else:
+                    return {
+                        "punto_venta": "0001",
+                        "numero": num.zfill(8)
+                    }
+    
+    return None
+
+def extract_cuit_from_text(text: str) -> Optional[str]:
+    """Extraer CUIT del texto OCR"""
+    # Patrones comunes
+    patterns = [
+        r'CUIT[:\s]*(\d{2}[-\s]?\d{8}[-\s]?\d{1})',
+        r'C\.?U\.?I\.?T\.?[:\s]*(\d{11})',
+        r'(\d{2}[-\s]\d{8}[-\s]\d{1})',  # Formato con guiones
+        r'(\d{11})',  # 11 dígitos seguidos
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, text, re.IGNORECASE)
+        for match in matches:
+            # Limpiar y validar
+            clean_cuit = re.sub(r'[-\s]', '', match)
+            if validate_cuit(clean_cuit):
+                return clean_cuit
+    
+    return None
+
+def extract_prices_from_text(text: str) -> List[float]:
+    """Extraer todos los precios del texto"""
+    prices = []
+    
+    # Buscar patrones de precios argentinos
+    matches = PRECIO_AR_PATTERN.findall(text)
+    
+    for match in matches:
+        price = parse_currency_ar(match)
+        if price and price > 0:
+            prices.append(price)
+    
+    return sorted(prices, reverse=True)  # Mayor a menor
+
+def clean_text_for_ocr(text: str) -> str:
+    """Limpiar texto OCR de caracteres problemáticos"""
+    if not text:
+        return ""
+    
+    # Normalizar espacios
+    text = re.sub(r'\s+', ' ', text.strip())
+    
+    # Corregir caracteres comunes mal interpretados
+    replacements = {
+        'l': 'I',  # l minúscula -> I mayúscula en números
+        'O': '0',  # O -> 0 en contexto numérico
+        'S': '5',  # S -> 5 en contexto numérico (común error)
+    }
+    
+    # Aplicar solo en contextos numéricos
+    for old, new in replacements.items():
+        # Reemplazar solo si está rodeado de números
+        pattern = rf'(?<=\d){old}(?=\d)'
+        text = re.sub(pattern, new, text)
+    
+    return text
+
+def calculate_business_days(start_date: datetime, end_date: datetime) -> int:
+    """Calcular días hábiles entre dos fechas"""
+    current = start_date
+    business_days = 0
+    
+    while current < end_date:
+        # Lunes=0, Domingo=6
+        if current.weekday() < 5:  # Lunes a Viernes
+            business_days += 1
+        current += timedelta(days=1)
+    
+    return business_days
+
+def format_datetime_ar(dt: datetime, include_time: bool = True) -> str:
+    """Formatear datetime en formato argentino"""
+    if include_time:
+        return dt.strftime("%d/%m/%Y %H:%M")
+    return dt.strftime("%d/%m/%Y")
+
+def truncate_string(text: str, max_length: int, suffix: str = "...") -> str:
+    """Truncar string con sufijo"""
+    if not text or len(text) <= max_length:
+        return text
+    
+    return text[:max_length - len(suffix)] + suffix
+
+def safe_float(value: Any, default: float = 0.0) -> float:
+    """Conversión segura a float"""
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return default
+
+def safe_int(value: Any, default: int = 0) -> int:
+    """Conversión segura a int"""
+    try:
+        return int(float(value))  # Pasar por float para manejar "123.0"
+    except (ValueError, TypeError):
+        return default
+
+# Cache simple en memoria (para desarrollo)
+_cache = {}
+
+def simple_cache_get(key: str) -> Any:
+    """Obtener valor del cache"""
+    return _cache.get(key)
+
+def simple_cache_set(key: str, value: Any, ttl_seconds: int = 3600):
+    """Guardar valor en cache con TTL"""
+    expire_time = datetime.now() + timedelta(seconds=ttl_seconds)
+    _cache[key] = {
+        'value': value,
+        'expires': expire_time
+    }
+
+def simple_cache_clear():
+    """Limpiar cache"""
+    global _cache
+    _cache = {}
+
+def simple_cache_cleanup():
+    """Limpiar items expirados del cache"""
+    now = datetime.now()
+    expired_keys = [
+        key for key, data in _cache.items()
+        if data['expires'] < now
+    ]
+    for key in expired_keys:
+        del _cache[key]
+
+if __name__ == "__main__":
+    # Tests de utilidades
+    print("🧪 Testing utilidades...")
+    
+    # Test formateo precios
+    test_prices = [1234.56, 0.5, 1000000.99]
+    for price in test_prices:
+        formatted = format_currency_ar(price)
+        parsed = parse_currency_ar(formatted)
+        print(f"  Precio: {price} -> '{formatted}' -> {parsed}")
+    
+    # Test CUIT
+    test_cuits = ["20123456784", "20-12345678-4", "invalid"]
+    for cuit in test_cuits:
+        valid = validate_cuit(cuit)
+        print(f"  CUIT: '{cuit}' -> {'✅' if valid else '❌'}")
+    
+    # Test inflación
+    base_price = 100.0
+    monthly_rate = 4.5
+    days = 30
+    inflated = calculate_inflation_price(base_price, monthly_rate, days)
+    print(f"  Inflación: ${base_price} + {monthly_rate}% ({days} días) = ${inflated}")
+    
+    print("✅ Tests de utilidades completados")
+</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-list mr-2"></i>Archivos de Configuración
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>requirements.txt</strong></p>
+        <div class="code-block"># FastAPI y servidor
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Base de datos
+sqlalchemy==2.0.23
+alembic==1.13.0
+
+# Validación y configuración  
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# HTTP client
+httpx==0.25.2
+
+# JWT y seguridad
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
+passlib[bcrypt]==1.7.4
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# Utilidades
+python-dotenv==1.0.0
+loguru==0.7.2
+
+# OCR (para siguiente iteración)
+easyocr==1.7.0
+pillow==10.1.0
+opencv-python-headless==4.8.1.78
+
+# Opcional: desarrollo
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0</div>
+
+        <p class="mb-3 text-gray-700"><strong>.gitignore</strong></p>
+        <div class="code-block"># Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment variables
+.env
+.env.local
+.env.prod
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+data/inventario.db*
+data/backups/
+
+# Logs
+*.log
+logs/
+data/app.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads y temporales
+data/uploads/
+data/temp/
+uploads/
+temp/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OCR cache
+ocr_cache/
+
+# FastAPI
+.mypy_cache/
+
+# Backup files
+*.bak
+*.backup</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-rocket mr-2"></i>Agentes Básicos
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>agente_negocio/main.py</strong></p>
+        <div class="code-block">"""
+Agente Negocio - Stub inicial
+FastAPI app básica en puerto 8001
+"""
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from datetime import datetime
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title="Agente Negocio", 
+    description="Procesamiento de facturas y pricing", 
+    version="1.0.0"
+)
+
+class HealthResponse(BaseModel):
+    status: str
+    timestamp: datetime
+    service: str
+    version: str
+
+@app.get("/health", response_model=HealthResponse)
+async def health_check():
+    """Health check endpoint"""
+    return HealthResponse(
+        status="ok",
+        timestamp=datetime.now(),
+        service="agente_negocio", 
+        version="1.0.0"
+    )
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "Agente Negocio - Sistema Inventario Retail Argentino",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/docs"
+        }
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    from shared.config import settings
+    
+    logger.info(f"🚀 Iniciando Agente Negocio en puerto {settings.agente_negocio_port}")
+    
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=settings.agente_negocio_port,
+        reload=True,
+        log_level="info"
+    )
+</div>
+
+        <p class="mb-3 text-gray-700"><strong>agente_deposito/main.py</strong></p>
+        <div class="code-block">"""
+Agente Depósito - Stub inicial  
+FastAPI app básica en puerto 8002
+"""
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from datetime import datetime
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title="Agente Depósito",
+    description="Gestión de stock y auditoría", 
+    version="1.0.0"
+)
+
+class HealthResponse(BaseModel):
+    status: str
+    timestamp: datetime
+    service: str
+    version: str
+
+@app.get("/health", response_model=HealthResponse) 
+async def health_check():
+    """Health check endpoint"""
+    return HealthResponse(
+        status="ok",
+        timestamp=datetime.now(),
+        service="agente_deposito",
+        version="1.0.0"
+    )
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "Agente Depósito - Sistema Inventario Retail Argentino",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/docs"
+        }
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    from shared.config import settings
+    
+    logger.info(f"🚀 Iniciando Agente Depósito en puerto {settings.agente_deposito_port}")
+    
+    uvicorn.run(
+        "main:app", 
+        host="0.0.0.0",
+        port=settings.agente_deposito_port,
+        reload=True,
+        log_level="info"
+    )
+</div>
+
+        <!-- Sección 2: Instrucciones -->
+        <div class="section-header">
+            <h2 class="text-2xl font-bold">
+                <i class="fas fa-list-ol mr-3"></i>
+                Sección 2: Instrucciones de Setup
+            </h2>
+        </div>
+
+        <div class="subsection-header">
+            <i class="fas fa-download mr-2"></i>Instalación Paso a Paso
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Requisitos Previos:</strong></p>
+            <ul class="list-disc ml-6 mt-2">
+                <li>Python 3.11+ instalado</li>
+                <li>Git para control de versiones</li>
+                <li>Editor de código (VS Code recomendado)</li>
+            </ul>
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>1. Crear y clonar estructura del proyecto</strong></p>
+        <div class="bash-block">mkdir inventario-retail-mvp
+cd inventario-retail-mvp
+
+# Crear estructura de carpetas
+mkdir -p shared agente_negocio agente_deposito tests scripts data/backups data/uploads
+
+# Crear archivos __init__.py
+touch shared/__init__.py agente_negocio/__init__.py agente_deposito/__init__.py tests/__init__.py</div>
+
+        <p class="mb-3 text-gray-700"><strong>2. Copiar código base</strong></p>
+        <div class="bash-block"># Copiar todos los archivos mostrados en la Sección 1:
+# - shared/config.py
+# - shared/database.py  
+# - shared/models.py
+# - shared/utils.py
+# - agente_negocio/main.py
+# - agente_deposito/main.py
+# - scripts/init_project.sh
+# - requirements.txt
+# - .gitignore
+# - .env.template
+
+echo "Copiando archivos desde este documento..."</div>
+
+        <p class="mb-3 text-gray-700"><strong>3. Ejecutar script de inicialización</strong></p>
+        <div class="bash-block">chmod +x scripts/init_project.sh
+./scripts/init_project.sh</div>
+
+        <p class="mb-3 text-gray-700"><strong>4. Configurar variables de entorno</strong></p>
+        <div class="bash-block"># El script creó .env desde .env.template
+# Editar valores importantes:
+
+nano .env
+
+# Cambiar al menos:
+# JWT_SECRET=tu_secreto_super_seguro_de_32_caracteres_minimo</div>
+
+        <p class="mb-3 text-gray-700"><strong>5. Activar entorno virtual</strong></p>
+        <div class="bash-block">source venv/bin/activate
+
+# Verificar instalación
+python --version  # Debe ser 3.11+
+pip list | grep fastapi  # Verificar FastAPI instalado</div>
+
+        <p class="mb-3 text-gray-700"><strong>6. Verificar setup básico</strong></p>
+        <div class="bash-block"># Test de configuración
+python -c "from shared.config import settings; print('✅ Config OK')"
+
+# Test de base de datos
+python -c "from shared.database import init_database; init_database(); print('✅ Database OK')"
+
+# Test de modelos
+python -c "from shared.models import Producto; print('✅ Models OK')"</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-play mr-2"></i>Ejecutar Aplicaciones
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>Terminal 1: Agente Depósito (Puerto 8002)</strong></p>
+        <div class="bash-block">cd inventario-retail-mvp
+source venv/bin/activate
+python -m agente_deposito.main
+
+# O usando uvicorn directamente:
+uvicorn agente_deposito.main:app --host 0.0.0.0 --port 8002 --reload</div>
+
+        <p class="mb-3 text-gray-700"><strong>Terminal 2: Agente Negocio (Puerto 8001)</strong></p>
+        <div class="bash-block">cd inventario-retail-mvp
+source venv/bin/activate  
+python -m agente_negocio.main
+
+# O usando uvicorn directamente:
+uvicorn agente_negocio.main:app --host 0.0.0.0 --port 8001 --reload</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-globe mr-2"></i>Verificar Servicios
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>URLs de verificación:</strong></p>
+        <div class="code-block">🏪 Agente Negocio:
+   - http://localhost:8001/
+   - http://localhost:8001/health 
+   - http://localhost:8001/docs (Swagger UI)
+
+📦 Agente Depósito:
+   - http://localhost:8002/
+   - http://localhost:8002/health
+   - http://localhost:8002/docs (Swagger UI)</div>
+
+        <!-- Sección 3: Tests -->
+        <div class="section-header">
+            <h2 class="text-2xl font-bold">
+                <i class="fas fa-flask mr-3"></i>
+                Sección 3: Tests Básicos
+            </h2>
+        </div>
+
+        <div class="subsection-header">
+            <i class="fas fa-cog mr-2"></i>Test de Configuración
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>tests/test_config.py</strong></p>
+        <div class="code-block">"""
+Tests para configuración del sistema
+"""
+
+import pytest
+import os
+from shared.config import Settings, get_factor_estacional, format_precio_argentino, validate_cuit_simple
+
+def test_settings_load():
+    """Test que la configuración se carga correctamente"""
+    settings = Settings()
+    
+    assert settings.agente_negocio_port == 8001
+    assert settings.agente_deposito_port == 8002
+    assert settings.jwt_algorithm == "HS256"
+    assert settings.moneda == "ARS"
+
+def test_factor_estacional():
+    """Test factores estacionales"""
+    # Mock temporada en settings
+    from shared.config import settings
+    original_temporada = settings.temporada
+    
+    try:
+        settings.temporada = "verano"
+        factor = get_factor_estacional()
+        assert factor == 1.2
+        
+        settings.temporada = "invierno"  
+        factor = get_factor_estacional()
+        assert factor == 0.9
+        
+    finally:
+        settings.temporada = original_temporada
+
+def test_format_precio_argentino():
+    """Test formateo de precios argentinos"""
+    assert format_precio_argentino(1234.56) == "$ 1.234,56"
+    assert format_precio_argentino(100) == "$ 100,00"
+    assert format_precio_argentino(1000000.99) == "$ 1.000.000,99"
+
+def test_validate_cuit_simple():
+    """Test validación básica de CUIT"""
+    assert validate_cuit_simple("20123456784") == True
+    assert validate_cuit_simple("123") == False
+    assert validate_cuit_simple("abc123def45") == False
+    assert validate_cuit_simple("") == False
+
+def test_env_variables():
+    """Test que variables de entorno críticas están configuradas"""
+    settings = Settings()
+    
+    # JWT secret debe existir y tener longitud mínima
+    assert len(settings.jwt_secret) >= 32
+    
+    # Inflación debe ser razonable
+    assert 0 <= settings.inflacion_mensual <= 50
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
+</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-database mr-2"></i>Test de Base de Datos
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>tests/test_database.py</strong></p>
+        <div class="code-block">"""
+Tests para base de datos y conexiones
+"""
+
+import pytest
+import tempfile
+import os
+from pathlib import Path
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from shared.database import init_database, get_db_session, backup_database, get_db_stats
+from shared.models import Base, Producto, MovimientoStock
+
+@pytest.fixture
+def temp_database():
+    """Fixture para base de datos temporal"""
+    # Crear DB temporal
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
+    temp_path = temp_file.name
+    temp_file.close()
+    
+    # Override database URL
+    original_url = os.environ.get('DATABASE_URL')
+    os.environ['DATABASE_URL'] = f'sqlite:///{temp_path}'
+    
+    try:
+        # Inicializar DB temporal
+        init_database()
+        yield temp_path
+    finally:
+        # Cleanup
+        if original_url:
+            os.environ['DATABASE_URL'] = original_url
+        else:
+            os.environ.pop('DATABASE_URL', None)
+        
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+def test_database_initialization(temp_database):
+    """Test que la base de datos se inicializa correctamente"""
+    
+    # Verificar que el archivo DB existe
+    assert os.path.exists(temp_database)
+    
+    # Verificar que podemos crear sesión
+    with get_db_session() as db:
+        assert db is not None
+
+def test_database_session_context_manager(temp_database):
+    """Test del context manager de sesiones"""
+    
+    with get_db_session() as db:
+        # Crear un producto de prueba
+        producto = Producto(
+            codigo="TEST001",
+            nombre="Producto Test",
+            stock_actual=10,
+            stock_minimo=5,
+            precio_compra=100.0
+        )
+        db.add(producto)
+        db.commit()
+        
+        # Verificar que se guardó
+        saved = db.query(Producto).filter_by(codigo="TEST001").first()
+        assert saved is not None
+        assert saved.nombre == "Producto Test"
+
+def test_database_backup(temp_database):
+    """Test de backup de base de datos"""
+    
+    # Crear datos de prueba
+    with get_db_session() as db:
+        producto = Producto(
+            codigo="BACKUP001",
+            nombre="Producto Backup",
+            stock_actual=20,
+            stock_minimo=5,
+            precio_compra=150.0
+        )
+        db.add(producto)
+        db.commit()
+    
+    # Crear backup
+    backup_path = temp_database + ".backup"
+    success = backup_database(backup_path)
+    
+    assert success == True
+    assert os.path.exists(backup_path)
+    
+    # Cleanup
+    if os.path.exists(backup_path):
+        os.unlink(backup_path)
+
+def test_database_stats(temp_database):
+    """Test de estadísticas de base de datos"""
+    
+    # Crear datos de prueba
+    with get_db_session() as db:
+        # Producto con stock normal
+        producto1 = Producto(
+            codigo="STAT001", 
+            nombre="Stock Normal",
+            stock_actual=50,
+            stock_minimo=10,
+            precio_compra=100.0
+        )
+        
+        # Producto con stock crítico
+        producto2 = Producto(
+            codigo="STAT002",
+            nombre="Stock Crítico", 
+            stock_actual=3,
+            stock_minimo=10,
+            precio_compra=100.0
+        )
+        
+        db.add_all([producto1, producto2])
+        db.commit()
+    
+    # Obtener stats
+    stats = get_db_stats()
+    
+    assert "productos_total" in stats
+    assert "movimientos_total" in stats
+    assert "productos_stock_critico" in stats
+    
+    assert stats["productos_total"] >= 2
+    assert stats["productos_stock_critico"] >= 1
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
+</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-cube mr-2"></i>Test de Modelos
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>tests/test_models.py</strong></p>
+        <div class="code-block">"""
+Tests para modelos de datos
+"""
+
+import pytest
+from datetime import datetime
+from sqlalchemy.exc import IntegrityError
+
+from shared.database import init_database, get_db_session
+from shared.models import Producto, MovimientoStock, Factura, FacturaItem
+
+def test_producto_creation():
+    """Test creación básica de producto"""
+    producto = Producto(
+        codigo="TEST001",
+        nombre="Producto Test",
+        stock_actual=100,
+        stock_minimo=20,
+        precio_compra=50.0,
+        precio_venta=75.0,
+        categoria="test",
+        proveedor="Test Provider"
+    )
+    
+    assert producto.codigo == "TEST001"
+    assert producto.stock_critico == False  # 100 > 20
+    assert producto.margen_bruto == 50.0  # (75-50)/50 * 100
+
+def test_producto_stock_critico():
+    """Test detección de stock crítico"""
+    producto = Producto(
+        codigo="CRITICO001",
+        nombre="Stock Crítico",
+        stock_actual=5,
+        stock_minimo=10,
+        precio_compra=100.0
+    )
+    
+    assert producto.stock_critico == True
+
+def test_producto_validaciones():
+    """Test validaciones del modelo Producto"""
+    
+    # Stock negativo debe fallar
+    with pytest.raises(ValueError):
+        Producto(
+            codigo="INVALID001",
+            nombre="Invalid",
+            stock_actual=-10,  # Inválido
+            precio_compra=100.0
+        )
+    
+    # Precio compra cero debe fallar
+    with pytest.raises(ValueError):
+        Producto(
+            codigo="INVALID002", 
+            nombre="Invalid",
+            stock_actual=10,
+            precio_compra=0  # Inválido
+        )
+
+def test_movimiento_stock_creation():
+    """Test creación de movimiento de stock"""
+    movimiento = MovimientoStock(
+        producto_id=1,
+        tipo="entrada",
+        cantidad=50,
+        stock_anterior=100,
+        stock_posterior=150,
+        motivo="Compra",
+        precio_unitario=25.0
+    )
+    
+    assert movimiento.tipo == "entrada"
+    assert movimiento.valor_total == 1250.0  # 50 * 25.0
+
+def test_movimiento_validaciones():
+    """Test validaciones de MovimientoStock"""
+    
+    # Tipo inválido
+    with pytest.raises(ValueError):
+        MovimientoStock(
+            producto_id=1,
+            tipo="invalido",  # Debe ser entrada/salida/ajuste
+            cantidad=10,
+            stock_anterior=100,
+            stock_posterior=110
+        )
+    
+    # Cantidad cero
+    with pytest.raises(ValueError):
+        MovimientoStock(
+            producto_id=1,
+            tipo="entrada",
+            cantidad=0,  # Inválido
+            stock_anterior=100,
+            stock_posterior=100
+        )
+
+def test_movimiento_consistencia_stock():
+    """Test validación de consistencia de stocks"""
+    
+    # Entrada consistente
+    mov_entrada = MovimientoStock(
+        producto_id=1,
+        tipo="entrada",
+        cantidad=20,
+        stock_anterior=100,
+        stock_posterior=120
+    )
+    
+    # No debe lanzar excepción
+    mov_entrada.validar_consistencia_stock()
+    
+    # Salida inconsistente
+    mov_salida = MovimientoStock(
+        producto_id=1,
+        tipo="salida", 
+        cantidad=30,
+        stock_anterior=100,
+        stock_posterior=80  # Debería ser 70
+    )
+    
+    with pytest.raises(ValueError):
+        mov_salida.validar_consistencia_stock()
+
+def test_factura_creation():
+    """Test creación de factura"""
+    factura = Factura(
+        numero="12345678",
+        tipo="B",
+        punto_venta="0001",
+        cuit_emisor="20123456784",
+        nombre_emisor="Test Emisor",
+        total=1500.0,
+        fecha_emision=datetime.now()
+    )
+    
+    assert factura.numero_completo == "0001-12345678"
+    assert factura.tipo == "B"
+
+def test_factura_validaciones():
+    """Test validaciones de Factura"""
+    
+    # CUIT inválido
+    with pytest.raises(ValueError):
+        Factura(
+            numero="12345678",
+            tipo="A",
+            cuit_emisor="invalid",  # CUIT inválido
+            total=100.0
+        )
+    
+    # Total negativo  
+    with pytest.raises(ValueError):
+        Factura(
+            numero="12345678",
+            tipo="B", 
+            cuit_emisor="20123456784",
+            total=-100.0  # Inválido
+        )
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
+</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-play mr-2"></i>Ejecutar Tests
+        </div>
+
+        <div class="bash-block"># Ejecutar todos los tests
+python -m pytest tests/ -v
+
+# Ejecutar test específico
+python -m pytest tests/test_config.py -v
+
+# Con cobertura
+python -m pytest tests/ --cov=shared --cov-report=html
+
+# Test de configuración rápida
+python -c "
+from shared.config import settings
+from shared.database import init_database
+from shared.models import Producto
+
+print('🧪 Testing configuración...')
+print(f'  ✅ Configuración cargada: JWT={len(settings.jwt_secret)} chars')
+print(f'  ✅ Puerto Negocio: {settings.agente_negocio_port}')
+print(f'  ✅ Puerto Depósito: {settings.agente_deposito_port}')
+
+init_database()
+print('  ✅ Base de datos inicializada')
+
+print('🎉 Setup básico funcionando correctamente!')
+"</div>
+
+        <!-- Sección 4: Verificación -->
+        <div class="section-header">
+            <h2 class="text-2xl font-bold">
+                <i class="fas fa-check-circle mr-3"></i>
+                Sección 4: Verificación Final
+            </h2>
+        </div>
+
+        <div class="subsection-header">
+            <i class="fas fa-terminal mr-2"></i>Comandos de Verificación
+        </div>
+
+        <p class="mb-3 text-gray-700"><strong>1. Verificar estructura del proyecto</strong></p>
+        <div class="bash-block">tree inventario-retail-mvp/
+# Debe mostrar estructura completa con todas las carpetas y archivos</div>
+
+        <p class="mb-3 text-gray-700"><strong>2. Verificar servicios con curl</strong></p>
+        <div class="bash-block"># Health check Agente Negocio
+curl -X GET "http://localhost:8001/health" | jq '.'
+
+# Health check Agente Depósito  
+curl -X GET "http://localhost:8002/health" | jq '.'
+
+# Root endpoints
+curl -X GET "http://localhost:8001/" | jq '.'
+curl -X GET "http://localhost:8002/" | jq '.'</div>
+
+        <p class="mb-3 text-gray-700"><strong>3. Verificar base de datos</strong></p>
+        <div class="bash-block"># Verificar que la BD se creó
+ls -la data/inventario.db*
+
+# Crear datos de prueba
+python -c "
+from shared.database import init_database, get_db_session
+from shared.models import create_sample_data
+
+init_database()
+with get_db_session() as db:
+    create_sample_data(db)
+    
+print('✅ Datos de ejemplo creados')
+"</div>
+
+        <p class="mb-3 text-gray-700"><strong>4. Verificar configuración completa</strong></p>
+        <div class="bash-block">python -c "
+from shared.config import settings
+from shared.database import get_db_stats
+from shared.utils import format_currency_ar, validate_cuit
+
+print('📊 Resumen del Sistema:')
+print(f'  Database: {settings.database_url}')
+print(f'  Inflación: {settings.inflacion_mensual}%')
+print(f'  Temporada: {settings.temporada}')
+
+stats = get_db_stats()
+print(f'  Productos en BD: {stats.get(\"productos_total\", 0)}')
+print(f'  Stock crítico: {stats.get(\"productos_stock_critico\", 0)}')
+
+# Test utilidades
+precio = format_currency_ar(1234.56)
+cuit_ok = validate_cuit('20123456784')
+print(f'  Formato precio: {precio}')
+print(f'  Validación CUIT: {\"✅\" if cuit_ok else \"❌\"}')
+
+print('🎉 Sistema completamente configurado y funcionando!')
+"</div>
+
+        <div class="subsection-header">
+            <i class="fas fa-check-double mr-2"></i>Checklist Final
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border-2 border-green-200">
+            <h4 class="text-lg font-semibold text-green-800 mb-4">✅ Checklist de Verificación</h4>
+            <ul class="space-y-2">
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Estructura de proyecto creada correctamente
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Virtual environment configurado con Python 3.11+
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Dependencias instaladas (FastAPI, SQLAlchemy, etc.)
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Base de datos SQLite con WAL mode inicializada
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Modelos de datos creados y validados
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Configuración compartida funcionando (.env cargado)
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Agente Negocio ejecutándose en puerto 8001
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Agente Depósito ejecutándose en puerto 8002
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Tests básicos pasando correctamente
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-600 mr-2">☑️</span>
+                    Utilidades argentinas funcionando (CUIT, precios, inflación)
+                </li>
+            </ul>
+        </div>
+
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mt-8">
+            <h3 class="text-xl font-bold text-blue-800 mb-4">
+                🎉 Setup Completo - ¡Sistema Base Funcionando!
+            </h3>
+            <p class="text-blue-700 mb-4">
+                El sistema multi-agente básico está completamente configurado y operativo. 
+                Tienes una base sólida con FastAPI, SQLite WAL, modelos bien diseñados y 
+                configuración específica para el contexto argentino.
+            </p>
+            <div class="bg-white p-4 rounded border">
+                <h4 class="font-semibold text-blue-800 mb-2">🚀 Siguiente Paso Sugerido:</h4>
+                <p class="text-blue-700">
+                    <strong>Desarrollo completo del AgenteDepósito</strong> con funcionalidades CRUD, 
+                    gestión de stock ACID, endpoints RESTful y tests exhaustivos. 
+                    Esto incluirá el motor de actualización de stock con transacciones seguras 
+                    y auditoría completa.
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 p-6 bg-gray-800 text-white rounded-lg">
+            <h3 class="text-xl font-bold mb-2">Sistema Multi-Agente Inventario Retail Argentino</h3>
+            <p class="text-gray-300">MVP Base Completo - Ready for Development</p>
+            <div class="mt-4 text-sm text-gray-400">
+                <span class="mr-4">🐍 Python 3.11</span>
+                <span class="mr-4">⚡ FastAPI</span>
+                <span class="mr-4">🗄️ SQLite WAL</span>
+                <span>🇦🇷 Contexto Argentino</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDlxadeInkbMRPyWyBPVL12VpUTTZcIEIk702t9mgPyOjPjvLKNnLom%2FvQ%2F%2BC2YnScYUgTp9I66iyLZjJoCv5fJT7ObyrIh1N0yXDwxEJoFCL5PMciAl0%2F9T%2BsnKjz%2BOCRfL2ChiwfHfMzKEN6YCf9OXGRDw3flDenDJqTMRs15hKD3D5EHwrgPUiOblN%2BQAw%2BRGUldXFaz87EBRE0pf7AJhxjVGSPKH0vsdne1MZLZhUBY3Ay0SyopYpOSfZPWGci8MmtveleCt%2B5ZHFxSL45%2BLSWy6Ar3fhKr7H9WkCWYvoTfDrPqUlahCVDYicxxs7cYGNupM9cNZVNHvlc7TkPA8tUbXJ7x%2FVJzwVn6PzB8bfkbtTvZJgTKrm5cYUvG5R9e3DrZJfI7kBFW%2BGTPAiEPHzj%2FQWvgYMqShvGn6F2YuX5BnGX20Fv%2FiqY0Zwn84KewoBS05SvDaIeTuTtutqIcOqizrcr6V69mDXKnVpEXshuzLs%2B3614A%2FVc3fzK1CdIw%3D%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDlxadeInkbMRPyWyBPVL12VpUTTZcIEIk702t9mgPyOjPjvLKNnLom/vQ/+C2YnScYUgTp9I66iyLZjJoCv5fJT7ObyrIh1N0yXDwxEJoFCL5PMciAl0/9T+snKjz+OCRfL2ChiwfHfMzKEN6YCf9OXGRDw3flDenDJqTMRs15hKD3D5EHwrgPUiOblN+QAw+RGUldXFaz87EBRE0pf7AJhxjVGSPKH0vsdne1MZLZhUBY3Ay0SyopYpOSfZPWGci8MmtveleCt+5ZHFxSL45+LSWy6Ar3fhKr7H9WkCWYvoTfDrPqUlahCVDYicxxs7cYGNupM9cNZVNHvlc7TkPA8tUbXJ7x/VJzwVn6PzB8bfkbtTvZJgTKrm5cYUvG5R9e3DrZJfI7kBFW+GTPAiEPHzj/QWvgYMqShvGn6F2YuX5BnGX20Fv/iqY0Zwn84KewoBS05SvDaIeTuTtutqIcOqizrcr6V69mDXKnVpEXshuzLs+3614A/Vc3fzK1CdIw==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

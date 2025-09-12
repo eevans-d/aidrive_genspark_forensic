@@ -1,0 +1,50 @@
+[Unit]
+Description=VIBE Continuous Learning System for RAG Agro-Portuario
+Documentation=https://vibe-intelligence.com/docs/learning-system
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=vibe
+Group=vibe
+WorkingDirectory=/vibe_production_system/components/learning_system
+ExecStart=/usr/bin/python3 /vibe_production_system/components/learning_system/learning_scheduler.py
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Restart configuration
+Restart=always
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=5
+
+# Environment configuration
+Environment=PYTHONPATH=/vibe_production_system/components/learning_system:/ECOSISTEMA_RAG_AGRO_PORTUARIO_COMPLETO
+Environment=VIBE_ENV=production
+Environment=LEARNING_LOG_LEVEL=INFO
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log /vibe_production_system/components/learning_system
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+# Resource limits
+MemoryAccounting=true
+MemoryMax=2G
+CPUAccounting=true
+CPUQuota=200%
+TasksMax=100
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=vibe-learning
+
+[Install]
+WantedBy=multi-user.target

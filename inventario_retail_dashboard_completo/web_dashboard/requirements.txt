@@ -1,0 +1,35 @@
+# Dashboard Web Interactivo - Inventario Retail Argentino
+# Dependencias principales
+
+# Framework web
+Flask==2.3.3
+Flask-SocketIO==5.3.6
+
+# Base de datos
+psycopg2-binary==2.9.7
+SQLAlchemy==2.0.20
+
+# Cache
+redis==4.6.0
+
+# Procesamiento archivos
+Pillow==10.0.0
+pandas==2.0.3
+
+# Charts y visualización
+plotly==5.15.0
+
+# Utilitarios
+python-dateutil==2.8.2
+werkzeug==2.3.7
+
+# Opcional para deployment
+gunicorn==21.2.0
+eventlet==0.33.3
+
+# ML (si se integra con sistema ML)
+scikit-learn==1.3.0
+numpy==1.24.3
+
+# OCR (si se integra con sistema OCR)
+opencv-python==4.8.0.76

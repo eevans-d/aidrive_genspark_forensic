@@ -1,0 +1,209 @@
+name: CI/CD Pipeline Inventario Retail Argentino
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '16'
+
+jobs:
+  test:
+    name: Tests y Quality Gates
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: inventario_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-cov black isort flake8 bandit safety
+
+    - name: Code Quality - Black
+      run: black --check --diff .
+
+    - name: Code Quality - isort
+      run: isort --check-only --diff .
+
+    - name: Code Quality - flake8
+      run: flake8 . --max-line-length=88 --extend-ignore=E203,W503
+
+    - name: Security Scan - Bandit
+      run: bandit -r . -x tests/ -f json -o bandit-report.json
+
+    - name: Security Scan - Safety
+      run: safety check --json --output safety-report.json
+
+    - name: Setup Test Environment
+      run: |
+        cp .env.template .env
+        echo "DATABASE_URL=postgresql://postgres:postgres@localhost/inventario_test" >> .env
+        echo "REDIS_URL=redis://localhost:6379/0" >> .env
+        echo "TESTING=true" >> .env
+
+    - name: Run Tests with Coverage
+      run: |
+        pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
+
+    - name: Upload Coverage Reports
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+
+    - name: Performance Tests
+      run: python tests/performance/load_testing.py --quick
+
+    - name: Store Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          htmlcov/
+          bandit-report.json
+          safety-report.json
+
+  build:
+    name: Build y Docker Images
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/${{ github.repository }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to Staging
+      run: |
+        echo "🚀 Deploying to staging environment..."
+        ./scripts/deploy/deploy_staging.sh
+      env:
+        STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
+        STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+        DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+
+    - name: Run Smoke Tests
+      run: |
+        python tests/e2e/smoke_tests.py --environment=staging
+
+    - name: Notify Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Deploy to Production
+      run: |
+        echo "🚀 Deploying to production environment..."
+        ./scripts/deploy/deploy_production.sh
+      env:
+        PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER }}
+        PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+        DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+
+    - name: Run Production Health Checks
+      run: |
+        python tests/e2e/health_checks.py --environment=production
+
+    - name: Update Monitoring Dashboards
+      run: |
+        python monitoring/grafana/update_dashboards.py --version=v${{ github.run_number }}
+
+    - name: Notify Success
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#production'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        text: '🎉 Inventario Retail v${{ github.run_number }} deployed successfully to production!'

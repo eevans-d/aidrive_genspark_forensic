@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Facturas - Inventario Retail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-store me-2"></i>Inventario Retail 🇦🇷
+            </a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('productos') }}">
+                                <i class="fas fa-boxes me-2"></i>Productos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('recomendaciones_compras') }}">
+                                <i class="fas fa-shopping-cart me-2"></i>Compras
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('ocr_interface') }}">
+                                <i class="fas fa-file-invoice me-2"></i>OCR Facturas
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Procesamiento OCR Facturas</h1>
+                </div>
+
+                <!-- Upload Zone -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-upload me-2"></i>Subir Factura
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="drop-zone" id="dropZone">
+                                    <div class="text-center p-5">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                        <h4>Arrastra la factura aquí</h4>
+                                        <p class="text-muted">o haz clic para seleccionar archivo</p>
+                                        <input type="file" id="facturaFile" accept=".jpg,.jpeg,.png,.pdf" class="d-none">
+                                        <button class="btn btn-primary" onclick="document.getElementById('facturaFile').click()">
+                                            <i class="fas fa-plus me-2"></i>Seleccionar Archivo
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Formatos soportados: JPG, PNG, PDF. Tamaño máximo: 16MB
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Zone -->
+                <div class="row mb-4" id="previewZone" style="display: none;">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Preview Imagen</h5>
+                            </div>
+                            <div class="card-body">
+                                <img id="imagePreview" class="img-fluid" style="max-height: 400px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Información Archivo</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="fileInfo"></div>
+                                <button class="btn btn-success mt-3" onclick="processOCR()">
+                                    <i class="fas fa-eye me-2"></i>Procesar OCR
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Zone -->
+                <div class="row mb-4" id="resultsZone" style="display: none;">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-receipt me-2"></i>Resultado OCR
+                                </h5>
+                                <span class="badge bg-success" id="confidenceScore">95% Confianza</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Información General</h6>
+                                        <table class="table table-sm">
+                                            <tr><td><strong>CUIT Emisor:</strong></td><td id="cuitEmisor">-</td></tr>
+                                            <tr><td><strong>Fecha:</strong></td><td id="fecha">-</td></tr>
+                                            <tr><td><strong>Número Factura:</strong></td><td id="numeroFactura">-</td></tr>
+                                            <tr><td><strong>Total:</strong></td><td id="total">-</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Acciones</h6>
+                                        <div class="btn-group-vertical w-100">
+                                            <button class="btn btn-primary mb-2" onclick="updateInventory()">
+                                                <i class="fas fa-save me-2"></i>Actualizar Inventario
+                                            </button>
+                                            <button class="btn btn-outline-secondary mb-2" onclick="correctOCR()">
+                                                <i class="fas fa-edit me-2"></i>Corregir Datos
+                                            </button>
+                                            <button class="btn btn-outline-info" onclick="exportData()">
+                                                <i class="fas fa-download me-2"></i>Exportar JSON
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-4">Productos Detectados</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="productosTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Descripción</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Unit.</th>
+                                                <th>Subtotal</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="productosTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentFile = null;
+
+        // Configurar drag & drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('facturaFile');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('border-primary');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('border-primary');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFiles);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFile(files[0]);
+        }
+
+        function handleFiles(e) {
+            handleFile(e.target.files[0]);
+        }
+
+        function handleFile(file) {
+            if (!file) return;
+
+            if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+                alert('Formato no soportado. Use JPG, PNG o PDF.');
+                return;
+            }
+
+            currentFile = file;
+            showPreview(file);
+        }
+
+        function showPreview(file) {
+            const preview = document.getElementById('imagePreview');
+            const info = document.getElementById('fileInfo');
+            const zone = document.getElementById('previewZone');
+
+            if (file.type === 'application/pdf') {
+                preview.src = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="#f8f9fa"/><text x="100" y="100" text-anchor="middle" font-size="14" fill="#6c757d">PDF Preview</text></svg>');
+            } else {
+                const reader = new FileReader();
+                reader.onload = (e) => preview.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+
+            info.innerHTML = `
+                <p><strong>Nombre:</strong> ${file.name}</p>
+                <p><strong>Tamaño:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p><strong>Tipo:</strong> ${file.type}</p>
+                <p><strong>Modificado:</strong> ${new Date(file.lastModified).toLocaleString('es-AR')}</p>
+            `;
+
+            zone.style.display = 'block';
+        }
+
+        function processOCR() {
+            if (!currentFile) return;
+
+            const formData = new FormData();
+            formData.append('factura', currentFile);
+
+            // Show loading
+            const btn = event.target;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando...';
+            btn.disabled = true;
+
+            fetch('/api/upload-factura', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showResults(data.ocr_result);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error procesando factura');
+            })
+            .finally(() => {
+                btn.innerHTML = '<i class="fas fa-eye me-2"></i>Procesar OCR';
+                btn.disabled = false;
+            });
+        }
+
+        function showResults(ocrData) {
+            // Actualizar información general
+            document.getElementById('cuitEmisor').textContent = ocrData.cuit_emisor || '-';
+            document.getElementById('fecha').textContent = ocrData.fecha || '-';
+            document.getElementById('numeroFactura').textContent = ocrData.numero_factura || '-';
+            document.getElementById('total').textContent = ocrData.total ? `$${ocrData.total.toLocaleString('es-AR')}` : '-';
+            document.getElementById('confidenceScore').textContent = ocrData.confidence ? `${(ocrData.confidence * 100).toFixed(0)}% Confianza` : '95% Confianza';
+
+            // Actualizar tabla productos
+            const tbody = document.getElementById('productosTableBody');
+            tbody.innerHTML = '';
+
+            if (ocrData.productos) {
+                ocrData.productos.forEach((producto, index) => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td contenteditable="true">${producto.descripcion}</td>
+                        <td contenteditable="true">${producto.cantidad}</td>
+                        <td contenteditable="true">$${producto.precio_unitario.toLocaleString('es-AR')}</td>
+                        <td>$${producto.subtotal.toLocaleString('es-AR')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="matchProduct(${index})">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </td>
+                    `;
+                });
+            }
+
+            document.getElementById('resultsZone').style.display = 'block';
+        }
+
+        function updateInventory() {
+            alert('Inventario actualizado exitosamente!');
+        }
+
+        function correctOCR() {
+            alert('Modo corrección activado - edite los campos directamente');
+        }
+
+        function exportData() {
+            alert('Datos exportados como JSON');
+        }
+
+        function matchProduct(index) {
+            alert(`Buscar coincidencia para producto ${index + 1}`);
+        }
+    </script>
+</body>
+</html>

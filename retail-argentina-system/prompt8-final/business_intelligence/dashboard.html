@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard BI - Sistema Retail Argentina</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .kpi-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .kpi-target {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-on-target { background-color: #28a745; }
+        .status-below-target { background-color: #ffc107; }
+        .status-critical { background-color: #dc3545; }
+        .status-no-target { background-color: #6c757d; }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .alert-badge {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line me-2"></i>
+                Dashboard BI - Retail Argentina
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-calendar me-1"></i>
+                    <span id="current-date"></span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card kpi-card text-center p-3">
+                    <div class="card-body">
+                        <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                        <h5>Total KPIs</h5>
+                        <div class="kpi-value" id="total-kpis">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card kpi-card text-center p-3">
+                    <div class="card-body">
+                        <i class="fas fa-thumbs-up fa-2x mb-2"></i>
+                        <h5>En Objetivo</h5>
+                        <div class="kpi-value" id="on-target">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card kpi-card text-center p-3">
+                    <div class="card-body">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <h5>Críticos</h5>
+                        <div class="kpi-value alert-badge" id="critical">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card kpi-card text-center p-3">
+                    <div class="card-body">
+                        <i class="fas fa-heart-pulse fa-2x mb-2"></i>
+                        <h5>Salud General</h5>
+                        <div class="kpi-value" id="overall-health">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-dollar-sign me-2"></i>KPIs de Ventas</h5>
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-boxes me-2"></i>KPIs de Inventario</h5>
+                    <canvas id="inventoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-calculator me-2"></i>KPIs Financieros</h5>
+                    <canvas id="financialChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5><i class="fas fa-cogs me-2"></i>KPIs Operacionales</h5>
+                    <canvas id="operationsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Details Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-table me-2"></i>Detalle de KPIs</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="kpi-table">
+                                <thead>
+                                    <tr>
+                                        <th>Estado</th>
+                                        <th>Categoría</th>
+                                        <th>KPI</th>
+                                        <th>Valor Actual</th>
+                                        <th>Objetivo</th>
+                                        <th>Rendimiento</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kpi-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bell me-2"></i>Alertas</h5>
+                    </div>
+                    <div class="card-body" id="alerts-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Update current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-AR');
+
+        // Sample KPI data (in production, this would come from your API)
+        const kpiData = {
+            "period": "monthly",
+            "summary": {
+                "total_kpis": 10,
+                "on_target": 6,
+                "critical": 2,
+                "overall_health": "warning"
+            },
+            "kpis_by_category": {
+                "sales": [
+                    {
+                        "name": "total_revenue",
+                        "value": 850000,
+                        "target": 1000000,
+                        "unit": "ARS",
+                        "description": "Ingresos totales de facturas aprobadas",
+                        "status": "below_target",
+                        "performance_ratio": 0.85
+                    },
+                    {
+                        "name": "average_order_value",
+                        "value": 12500,
+                        "target": 15000,
+                        "unit": "ARS",
+                        "description": "Valor promedio por pedido",
+                        "status": "below_target",
+                        "performance_ratio": 0.83
+                    }
+                ],
+                "inventory": [
+                    {
+                        "name": "inventory_turnover",
+                        "value": 3.2,
+                        "target": 4.0,
+                        "unit": "ratio",
+                        "description": "Rotación de inventario (mensual)",
+                        "status": "below_target",
+                        "performance_ratio": 0.8
+                    }
+                ],
+                "financial": [
+                    {
+                        "name": "gross_margin",
+                        "value": 38.5,
+                        "target": 35.0,
+                        "unit": "%",
+                        "description": "Margen de ganancia bruto",
+                        "status": "on_target",
+                        "performance_ratio": 1.1
+                    }
+                ],
+                "operations": [
+                    {
+                        "name": "invoice_processing_time",
+                        "value": 1.5,
+                        "target": 2.0,
+                        "unit": "hours",
+                        "description": "Tiempo promedio de procesamiento de facturas",
+                        "status": "on_target",
+                        "performance_ratio": 0.75
+                    }
+                ]
+            },
+            "alerts": [
+                {
+                    "kpi": "total_revenue",
+                    "message": "Los ingresos están 15% por debajo del objetivo mensual",
+                    "severity": "high"
+                }
+            ]
+        };
+
+        // Update summary cards
+        function updateSummaryCards(data) {
+            document.getElementById('total-kpis').textContent = data.summary.total_kpis;
+            document.getElementById('on-target').textContent = data.summary.on_target;
+            document.getElementById('critical').textContent = data.summary.critical;
+
+            const healthElement = document.getElementById('overall-health');
+            const health = data.summary.overall_health;
+            healthElement.textContent = health === 'good' ? 'Buena' : 
+                                     health === 'warning' ? 'Alerta' : 'Crítica';
+            healthElement.className = 'kpi-value ' + 
+                                    (health === 'good' ? 'text-success' : 
+                                     health === 'warning' ? 'text-warning' : 'text-danger');
+        }
+
+        // Create charts
+        function createCharts(data) {
+            const categories = Object.keys(data.kpis_by_category);
+
+            categories.forEach(category => {
+                const kpis = data.kpis_by_category[category];
+                const canvasId = category === 'sales' ? 'salesChart' :
+                               category === 'inventory' ? 'inventoryChart' :
+                               category === 'financial' ? 'financialChart' :
+                               'operationsChart';
+
+                const ctx = document.getElementById(canvasId);
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: kpis.map(k => k.name.replace(/_/g, ' ')),
+                            datasets: [{
+                                label: 'Valor Actual',
+                                data: kpis.map(k => k.value),
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Objetivo',
+                                data: kpis.map(k => k.target || 0),
+                                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: category.charAt(0).toUpperCase() + category.slice(1)
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Update KPI table
+        function updateKPITable(data) {
+            const tbody = document.getElementById('kpi-table-body');
+            tbody.innerHTML = '';
+
+            Object.entries(data.kpis_by_category).forEach(([category, kpis]) => {
+                kpis.forEach(kpi => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td><span class="status-indicator status-${kpi.status.replace('_', '-')}"></span></td>
+                        <td><span class="badge bg-secondary">${category}</span></td>
+                        <td>${kpi.name.replace(/_/g, ' ')}</td>
+                        <td><strong>${kpi.value.toLocaleString('es-AR')} ${kpi.unit}</strong></td>
+                        <td>${kpi.target ? kpi.target.toLocaleString('es-AR') + ' ' + kpi.unit : 'N/A'}</td>
+                        <td>${kpi.performance_ratio ? (kpi.performance_ratio * 100).toFixed(1) + '%' : 'N/A'}</td>
+                        <td><small>${kpi.description}</small></td>
+                    `;
+                });
+            });
+        }
+
+        // Update alerts
+        function updateAlerts(data) {
+            const container = document.getElementById('alerts-container');
+
+            if (data.alerts && data.alerts.length > 0) {
+                container.innerHTML = data.alerts.map(alert => `
+                    <div class="alert alert-${alert.severity === 'high' ? 'danger' : 'warning'} alert-dismissible fade show">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>${alert.kpi}:</strong> ${alert.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>No hay alertas activas</div>';
+            }
+        }
+
+        // Initialize dashboard
+        function initializeDashboard() {
+            updateSummaryCards(kpiData);
+            createCharts(kpiData);
+            updateKPITable(kpiData);
+            updateAlerts(kpiData);
+        }
+
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            // In production, fetch fresh data from API
+            // fetch('/api/kpi-dashboard').then(response => response.json()).then(initializeDashboard);
+            console.log('Dashboard would refresh with fresh data');
+        }, 300000);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

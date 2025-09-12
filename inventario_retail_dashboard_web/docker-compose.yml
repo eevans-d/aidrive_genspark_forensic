@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  # Dashboard Web
+  dashboard-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+      - API_DEPOSITO_URL=http://agente-deposito:8000
+      - API_NEGOCIO_URL=http://agente-negocio:8001
+      - API_ML_URL=http://ml-predictor:8002
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+      - agente-deposito
+      - agente-negocio
+      - ml-predictor
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+  # Base de Datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: inventario_retail
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+  # Agente Depósito (API Backend)
+  agente-deposito:
+    image: inventario-retail/agente-deposito:latest
+    build:
+      context: ../agente_deposito
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+  # Agente Negocio (OCR + Pricing)  
+  agente-negocio:
+    image: inventario-retail/agente-negocio:latest
+    build:
+      context: ../agente_negocio
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./facturas:/app/facturas
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+  # ML Predictor
+  ml-predictor:
+    image: inventario-retail/ml-predictor:latest
+    build:
+      context: ../ml
+    ports:
+      - "8002:8002"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inventario_retail
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy (opcional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - dashboard-web
+    networks:
+      - inventario-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  inventario-network:
+    driver: bridge

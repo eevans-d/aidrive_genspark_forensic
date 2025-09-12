@@ -1,0 +1,263 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: sistema_bancario_db
+    environment:
+      POSTGRES_DB: sistema_bancario
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    networks:
+      - banking_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: sistema_bancario_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - banking_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Agente Depósito Service
+  agente-deposito:
+    build:
+      context: .
+      dockerfile: Dockerfile.agente-deposito
+    container_name: agente_deposito_service
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/sistema_bancario
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - OCR_MODEL_PATH=/app/models/ocr
+      - UPLOAD_DIR=/app/uploads
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./models:/app/models
+      - ./logs:/app/logs
+    networks:
+      - banking_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Agente Negocio Service
+  agente-negocio:
+    build:
+      context: .
+      dockerfile: Dockerfile.agente-negocio
+    container_name: agente_negocio_service
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/sistema_bancario
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - ML_MODEL_PATH=/app/models/ml
+      - RISK_THRESHOLD=0.7
+      - MAX_LOAN_AMOUNT=1000000
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+    networks:
+      - banking_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      agente-deposito:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ML Service
+  ml-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml-service
+    container_name: ml_service
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/sistema_bancario
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - MODEL_UPDATE_INTERVAL=3600
+      - TRAINING_DATA_PATH=/app/data/training
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - banking_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Scheduler Service - Reports
+  scheduler-reports:
+    build:
+      context: .
+      dockerfile: Dockerfile.scheduler
+    container_name: scheduler_reports
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/sistema_bancario
+      - REDIS_URL=redis://redis:6379
+      - SCHEDULER_TYPE=reports
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - REPORT_OUTPUT_DIR=/app/reports
+      - DAILY_REPORT_TIME=02:00
+      - WEEKLY_REPORT_DAY=monday
+      - MONTHLY_REPORT_DAY=1
+    volumes:
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+    networks:
+      - banking_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      agente-deposito:
+        condition: service_healthy
+      agente-negocio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Scheduler Service - Maintenance
+  scheduler-maintenance:
+    build:
+      context: .
+      dockerfile: Dockerfile.scheduler
+    container_name: scheduler_maintenance
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/sistema_bancario
+      - REDIS_URL=redis://redis:6379
+      - SCHEDULER_TYPE=maintenance
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - BACKUP_DIR=/app/backups
+      - CLEANUP_RETENTION_DAYS=30
+      - BACKUP_TIME=03:00
+    volumes:
+      - ./backups:/app/backups
+      - ./logs:/app/logs
+      - postgres_data:/var/lib/postgresql/data:ro
+    networks:
+      - banking_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Web Interface (Optional)
+  web-interface:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: web_interface
+    environment:
+      - API_BASE_URL=http://agente-deposito:8000
+      - BUSINESS_API_URL=http://agente-negocio:8000
+      - ML_API_URL=http://ml-service:8000
+      - ENVIRONMENT=development
+    ports:
+      - "3000:3000"
+    networks:
+      - banking_network
+    depends_on:
+      - agente-deposito
+      - agente-negocio
+      - ml-service
+    restart: unless-stopped
+
+  # Nginx Load Balancer/Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - banking_network
+    depends_on:
+      - agente-deposito
+      - agente-negocio
+      - ml-service
+      - web-interface
+    restart: unless-stopped
+
+networks:
+  banking_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/postgres
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/redis

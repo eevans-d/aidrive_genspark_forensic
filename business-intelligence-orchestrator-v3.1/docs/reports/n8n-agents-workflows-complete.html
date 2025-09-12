@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N8N Workflows - Agentes Especializados | BI Orchestrator v3.1</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-block { font-family: 'JetBrains Mono', monospace; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        pre { white-space: pre-wrap; word-break: break-word; }
+        .json-key { color: #e53e3e; }
+        .json-string { color: #38a169; }
+        .json-number { color: #3182ce; }
+        .json-boolean { color: #805ad5; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2">
+                        <i class="fas fa-cogs mr-3"></i>N8N Workflows - Agentes Especializados
+                    </h1>
+                    <p class="text-xl opacity-90">Business Intelligence Orchestrator v3.1</p>
+                </div>
+                <div class="text-right">
+                    <div class="bg-white bg-opacity-20 rounded-lg px-4 py-2">
+                        <p class="text-sm opacity-80">Estado del Proyecto</p>
+                        <p class="text-lg font-semibold">PROMPT #2 COMPLETADO ✅</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex flex-wrap gap-4">
+                <a href="#main-orchestrator" class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-sitemap mr-2"></i>Main Orchestrator
+                </a>
+                <a href="#market-intelligence" class="px-4 py-2 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition-colors">
+                    <i class="fas fa-chart-line mr-2"></i>Market Intelligence
+                </a>
+                <a href="#process-optimization" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition-colors">
+                    <i class="fas fa-cog mr-2"></i>Process Optimization
+                </a>
+                <a href="#customer-experience" class="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg hover:bg-purple-200 transition-colors">
+                    <i class="fas fa-users mr-2"></i>Customer Experience
+                </a>
+                <a href="#solution-architect" class="px-4 py-2 bg-indigo-100 text-indigo-800 rounded-lg hover:bg-indigo-200 transition-colors">
+                    <i class="fas fa-drafting-compass mr-2"></i>Solution Architect
+                </a>
+                <a href="#competitive-monitoring" class="px-4 py-2 bg-red-100 text-red-800 rounded-lg hover:bg-red-200 transition-colors">
+                    <i class="fas fa-eye mr-2"></i>Competitive Monitoring
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Overview -->
+        <section class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-info-circle text-blue-500 mr-3"></i>Resumen de Workflows N8N
+                </h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg">
+                        <h3 class="font-semibold text-blue-800 mb-2">6 Workflows Especializados</h3>
+                        <p class="text-sm text-blue-600">Agentes IA con capacidades avanzadas</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg">
+                        <h3 class="font-semibold text-green-800 mb-2">WEB AUTOMÁTICO COMPETITIVO</h3>
+                        <p class="text-sm text-green-600">Tier 2.5 completamente integrado</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg">
+                        <h3 class="font-semibold text-purple-800 mb-2">Monitoreo 24/7</h3>
+                        <p class="text-sm text-purple-600">Automatización y alertas inteligentes</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Orchestrator -->
+        <section id="main-orchestrator" class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-sitemap text-blue-500 mr-3"></i>Main Orchestrator - Business Context Controller
+                </h2>
+                <div class="bg-gray-100 p-4 rounded-lg mb-6">
+                    <p class="text-sm text-gray-600 mb-2"><strong>Archivo:</strong> n8n-workflows/main-orchestrator.json</p>
+                    <p class="text-sm text-gray-600"><strong>Función:</strong> Controlador principal que coordina todos los agentes especializados con sistema de priorización dinámico</p>
+                </div>
+                <pre class="code-block bg-gray-900 text-green-400 p-6 rounded-lg overflow-x-auto text-sm"><code>{
+  <span class="json-key">"name"</span>: <span class="json-string">"Main Orchestrator - Business Context Controller"</span>,
+  <span class="json-key">"nodes"</span>: [
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"path"</span>: <span class="json-string">"/orchestrator/context"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>,
+        <span class="json-key">"authentication"</span>: <span class="json-string">"headerAuth"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"webhook-trigger"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Business Context Webhook"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.webhook"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">240</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"functionCode"</span>: <span class="json-string">"// Business Context Analysis\nconst contextData = $input.first().json;\nconst timestamp = new Date().toISOString();\n\n// Priority Matrix Calculation\nconst priorities = {\n  competitive: contextData.competitive_urgency || 0.5,\n  operational: contextData.operational_urgency || 0.5,\n  customer: contextData.customer_urgency || 0.5,\n  strategic: contextData.strategic_urgency || 0.5\n};\n\n// Dynamic Agent Selection\nconst agents = [];\nif (priorities.competitive > 0.7) agents.push('market-intelligence');\nif (priorities.operational > 0.6) agents.push('process-optimization');\nif (priorities.customer > 0.6) agents.push('customer-experience');\nif (priorities.strategic > 0.8) agents.push('solution-architect');\n\n// Business Context Enhancement\nconst enrichedContext = {\n  ...contextData,\n  analysis_timestamp: timestamp,\n  priority_matrix: priorities,\n  selected_agents: agents,\n  urgency_level: Math.max(...Object.values(priorities)),\n  business_impact: calculateBusinessImpact(priorities),\n  recommended_actions: generateRecommendations(priorities)\n};\n\nfunction calculateBusinessImpact(priorities) {\n  const weightedSum = \n    priorities.competitive * 0.3 +\n    priorities.operational * 0.25 +\n    priorities.customer * 0.25 +\n    priorities.strategic * 0.2;\n  \n  if (weightedSum > 0.8) return 'HIGH';\n  if (weightedSum > 0.6) return 'MEDIUM';\n  return 'LOW';\n}\n\nfunction generateRecommendations(priorities) {\n  const recommendations = [];\n  \n  if (priorities.competitive > 0.7) {\n    recommendations.push('Activar WEB AUTOMÁTICO COMPETITIVO Tier 2.5');\n    recommendations.push('Análisis competitivo inmediato requerido');\n  }\n  \n  if (priorities.operational > 0.6) {\n    recommendations.push('Revisar procesos operacionales críticos');\n    recommendations.push('Calcular ROI de optimizaciones propuestas');\n  }\n  \n  if (priorities.customer > 0.6) {\n    recommendations.push('Analizar journey del cliente');\n    recommendations.push('Implementar estrategias de personalización');\n  }\n  \n  if (priorities.strategic > 0.8) {\n    recommendations.push('Evaluación arquitectónica completa');\n    recommendations.push('Análisis de escalabilidad requerido');\n  }\n  \n  return recommendations;\n}\n\nreturn [enrichedContext];"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"context-analyzer"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Business Context Analyzer"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.function"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"conditions"</span>: {
+          <span class="json-key">"string"</span>: [
+            {
+              <span class="json-key">"value1"</span>: <span class="json-string">"={{$json[\"urgency_level\"]}}"</span>,
+              <span class="json-key">"operation"</span>: <span class="json-string">"larger"</span>,
+              <span class="json-key">"value2"</span>: <span class="json-number">0.7</span>
+            }
+          ]
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"urgency-filter"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"High Urgency Filter"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.if"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">680</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"url"</span>: <span class="json-string">"http://n8n:5678/webhook/market-intelligence"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>,
+        <span class="json-key">"jsonParameters"</span>: <span class="json-boolean">true</span>,
+        <span class="json-key">"options"</span>: {
+          <span class="json-key">"timeout"</span>: <span class="json-number">30000</span>
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"market-intelligence-trigger"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Activate Market Intelligence"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.httpRequest"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">900</span>, <span class="json-number">200</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"url"</span>: <span class="json-string">"http://n8n:5678/webhook/process-optimization"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>,
+        <span class="json-key">"jsonParameters"</span>: <span class="json-boolean">true</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"process-optimization-trigger"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Activate Process Optimization"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.httpRequest"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">900</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"url"</span>: <span class="json-string">"http://n8n:5678/webhook/customer-experience"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>,
+        <span class="json-key">"jsonParameters"</span>: <span class="json-boolean">true</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"customer-experience-trigger"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Activate Customer Experience"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.httpRequest"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">900</span>, <span class="json-number">400</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"insert"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"orchestration_logs"</span>,
+        <span class="json-key">"columns"</span>: <span class="json-string">"context_data, priority_matrix, selected_agents, business_impact, recommendations, created_at"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"log-orchestration"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Log Orchestration Event"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">1120</span>, <span class="json-number">300</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>,
+          <span class="json-key">"name"</span>: <span class="json-string">"BI Orchestrator Database"</span>
+        }
+      }
+    }
+  ],
+  <span class="json-key">"connections"</span>: {
+    <span class="json-key">"Business Context Webhook"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Business Context Analyzer"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"Business Context Analyzer"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"High Urgency Filter"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"High Urgency Filter"</span>: {
+      <span class="json-key">"main"</span>: [
+        [
+          {<span class="json-key">"node"</span>: <span class="json-string">"Activate Market Intelligence"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>},
+          {<span class="json-key">"node"</span>: <span class="json-string">"Activate Process Optimization"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>},
+          {<span class="json-key">"node"</span>: <span class="json-string">"Activate Customer Experience"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}
+        ]
+      ]
+    },
+    <span class="json-key">"Activate Market Intelligence"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Log Orchestration Event"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    }
+  },
+  <span class="json-key">"settings"</span>: {
+    <span class="json-key">"saveManualExecutions"</span>: <span class="json-boolean">true</span>,
+    <span class="json-key">"callerPolicy"</span>: <span class="json-string">"workflowsFromSameOwner"</span>
+  },
+  <span class="json-key">"staticData"</span>: {},
+  <span class="json-key">"tags"</span>: [
+    {<span class="json-key">"name"</span>: <span class="json-string">"bi-orchestrator"</span>},
+    {<span class="json-key">"name"</span>: <span class="json-string">"main-controller"</span>},
+    {<span class="json-key">"name"</span>: <span class="json-string">"business-context"</span>}
+  ],
+  <span class="json-key">"meta"</span>: {
+    <span class="json-key">"instanceId"</span>: <span class="json-string">"bi-orchestrator-main"</span>
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Market Intelligence Agent -->
+        <section id="market-intelligence" class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-chart-line text-green-500 mr-3"></i>Market Intelligence Agent - WEB AUTOMÁTICO COMPETITIVO
+                </h2>
+                <div class="bg-green-50 p-4 rounded-lg mb-6">
+                    <p class="text-sm text-green-800 mb-2"><strong>Archivo:</strong> n8n-workflows/market-intelligence.agent.json</p>
+                    <p class="text-sm text-green-800"><strong>WEB AUTOMÁTICO COMPETITIVO:</strong> Sistema Tier 2.5 con scraping inteligente, análisis de sentimientos y alertas automáticas</p>
+                </div>
+                <pre class="code-block bg-gray-900 text-green-400 p-6 rounded-lg overflow-x-auto text-sm"><code>{
+  <span class="json-key">"name"</span>: <span class="json-string">"Market Intelligence Agent - WEB AUTOMÁTICO COMPETITIVO"</span>,
+  <span class="json-key">"nodes"</span>: [
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"path"</span>: <span class="json-string">"/market-intelligence"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"market-webhook"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Market Intelligence Trigger"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.webhook"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">240</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"url"</span>: <span class="json-string">"http://web-monitor:8080/api/competitive/scan"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>,
+        <span class="json-key">"jsonParameters"</span>: <span class="json-boolean">true</span>,
+        <span class="json-key">"options"</span>: {
+          <span class="json-key">"timeout"</span>: <span class="json-number">60000</span>
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"web-automatico-scan"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"WEB AUTOMÁTICO COMPETITIVO - Scan"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.httpRequest"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"functionCode"</span>: <span class="json-string">"// WEB AUTOMÁTICO COMPETITIVO - Advanced Analysis\nconst scanData = $input.first().json;\nconst timestamp = new Date().toISOString();\n\n// Competitive Intelligence Processing\nconst competitiveInsights = {\n  scan_timestamp: timestamp,\n  competitors_analyzed: scanData.competitors || [],\n  price_changes: analyzePriceChanges(scanData.pricing_data),\n  sentiment_analysis: processSentimentData(scanData.sentiment_data),\n  market_trends: identifyMarketTrends(scanData.trend_data),\n  threat_level: calculateThreatLevel(scanData),\n  opportunities: identifyOpportunities(scanData),\n  recommendations: generateCompetitiveRecommendations(scanData)\n};\n\nfunction analyzePriceChanges(pricingData) {\n  if (!pricingData) return [];\n  \n  return pricingData.map(competitor => {\n    const priceChange = competitor.current_price - competitor.previous_price;\n    const changePercent = (priceChange / competitor.previous_price) * 100;\n    \n    return {\n      competitor: competitor.name,\n      product: competitor.product,\n      previous_price: competitor.previous_price,\n      current_price: competitor.current_price,\n      change_amount: priceChange,\n      change_percent: changePercent.toFixed(2),\n      impact_level: Math.abs(changePercent) > 10 ? 'HIGH' : Math.abs(changePercent) > 5 ? 'MEDIUM' : 'LOW'\n    };\n  });\n}\n\nfunction processSentimentData(sentimentData) {\n  if (!sentimentData) return { overall: 'neutral', score: 0 };\n  \n  const averageScore = sentimentData.reduce((sum, item) => sum + item.score, 0) / sentimentData.length;\n  \n  return {\n    overall: averageScore > 0.1 ? 'positive' : averageScore < -0.1 ? 'negative' : 'neutral',\n    score: averageScore.toFixed(3),\n    mentions: sentimentData.length,\n    positive_mentions: sentimentData.filter(item => item.score > 0.1).length,\n    negative_mentions: sentimentData.filter(item => item.score < -0.1).length\n  };\n}\n\nfunction identifyMarketTrends(trendData) {\n  if (!trendData) return [];\n  \n  return trendData.filter(trend => trend.confidence > 0.7).map(trend => ({\n    trend: trend.name,\n    direction: trend.direction,\n    confidence: trend.confidence,\n    impact: trend.potential_impact,\n    timeframe: trend.estimated_timeframe\n  }));\n}\n\nfunction calculateThreatLevel(data) {\n  let threatScore = 0;\n  \n  // Price threat analysis\n  if (data.pricing_data) {\n    const significantPriceDrops = data.pricing_data.filter(p => \n      ((p.current_price - p.previous_price) / p.previous_price) < -0.1\n    ).length;\n    threatScore += significantPriceDrops * 0.3;\n  }\n  \n  // Sentiment threat analysis\n  if (data.sentiment_data && data.sentiment_data.some(s => s.score < -0.5)) {\n    threatScore += 0.4;\n  }\n  \n  // Market trend threat analysis\n  if (data.trend_data && data.trend_data.some(t => t.direction === 'negative' && t.confidence > 0.8)) {\n    threatScore += 0.3;\n  }\n  \n  if (threatScore > 0.7) return 'HIGH';\n  if (threatScore > 0.4) return 'MEDIUM';\n  return 'LOW';\n}\n\nfunction identifyOpportunities(data) {\n  const opportunities = [];\n  \n  // Price opportunity analysis\n  if (data.pricing_data) {\n    const overPricedCompetitors = data.pricing_data.filter(p => p.current_price > p.market_average * 1.2);\n    if (overPricedCompetitors.length > 0) {\n      opportunities.push({\n        type: 'pricing',\n        description: 'Competidores con precios elevados detectados',\n        potential_impact: 'MEDIUM',\n        competitors: overPricedCompetitors.map(c => c.name)\n      });\n    }\n  }\n  \n  // Sentiment opportunity analysis\n  if (data.sentiment_data && data.sentiment_data.some(s => s.competitor_sentiment < -0.3)) {\n    opportunities.push({\n      type: 'sentiment',\n      description: 'Competidores con sentimiento negativo detectados',\n      potential_impact: 'HIGH',\n      action: 'Capitalizar insatisfacción del mercado'\n    });\n  }\n  \n  return opportunities;\n}\n\nfunction generateCompetitiveRecommendations(data) {\n  const recommendations = [];\n  \n  if (data.pricing_data && data.pricing_data.some(p => p.change_percent > 10)) {\n    recommendations.push({\n      priority: 'HIGH',\n      category: 'pricing',\n      action: 'Revisar estrategia de precios inmediatamente',\n      reason: 'Cambios significativos en precios competitivos detectados'\n    });\n  }\n  \n  if (data.sentiment_data && data.sentiment_data.some(s => s.score < -0.4)) {\n    recommendations.push({\n      priority: 'MEDIUM',\n      category: 'marketing',\n      action: 'Aprovechar sentimiento negativo de competidores',\n      reason: 'Oportunidad de posicionamiento detectada'\n    });\n  }\n  \n  if (data.trend_data && data.trend_data.some(t => t.direction === 'positive' && t.confidence > 0.8)) {\n    recommendations.push({\n      priority: 'MEDIUM',\n      category: 'strategy',\n      action: 'Evaluar adopción de tendencias emergentes',\n      reason: 'Tendencias de mercado positivas identificadas'\n    });\n  }\n  \n  return recommendations;\n}\n\nreturn [competitiveInsights];"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"competitive-analyzer"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Competitive Intelligence Analyzer"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.function"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">680</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"conditions"</span>: {
+          <span class="json-key">"string"</span>: [
+            {
+              <span class="json-key">"value1"</span>: <span class="json-string">"={{$json[\"threat_level\"]}}"</span>,
+              <span class="json-key">"operation"</span>: <span class="json-string">"equal"</span>,
+              <span class="json-key">"value2"</span>: <span class="json-string">"HIGH"</span>
+            }
+          ]
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"threat-filter"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"High Threat Detection"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.if"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">900</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"insert"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"competitive_intelligence"</span>,
+        <span class="json-key">"columns"</span>: <span class="json-string">"analysis_data, threat_level, opportunities, recommendations, created_at"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"save-intelligence"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Save Competitive Intelligence"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">1120</span>, <span class="json-number">200</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"url"</span>: <span class="json-string">"https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>,
+        <span class="json-key">"jsonParameters"</span>: <span class="json-boolean">true</span>,
+        <span class="json-key">"body"</span>: {
+          <span class="json-key">"text"</span>: <span class="json-string">"🚨 ALERTA COMPETITIVA DE ALTO RIESGO DETECTADA"</span>,
+          <span class="json-key">"blocks"</span>: [
+            {
+              <span class="json-key">"type"</span>: <span class="json-string">"section"</span>,
+              <span class="json-key">"text"</span>: {
+                <span class="json-key">"type"</span>: <span class="json-string">"mrkdwn"</span>,
+                <span class="json-key">"text"</span>: <span class="json-string">"*WEB AUTOMÁTICO COMPETITIVO* ha detectado una amenaza de alto riesgo:\\n\\n*Nivel de Amenaza:* {{$json[\"threat_level\"]}}\\n*Competidores Analizados:* {{$json[\"competitors_analyzed\"].length}}\\n*Recomendaciones:* {{$json[\"recommendations\"].length}}"</span>
+              }
+            }
+          ]
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"high-threat-alert"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"High Threat Alert"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.httpRequest"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">1120</span>, <span class="json-number">400</span>]
+    }
+  ],
+  <span class="json-key">"connections"</span>: {
+    <span class="json-key">"Market Intelligence Trigger"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"WEB AUTOMÁTICO COMPETITIVO - Scan"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"WEB AUTOMÁTICO COMPETITIVO - Scan"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Competitive Intelligence Analyzer"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"Competitive Intelligence Analyzer"</span>: {
+      <span class="json-key">"main"</span>: [
+        [
+          {<span class="json-key">"node"</span>: <span class="json-string">"High Threat Detection"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>},
+          {<span class="json-key">"node"</span>: <span class="json-string">"Save Competitive Intelligence"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}
+        ]
+      ]
+    },
+    <span class="json-key">"High Threat Detection"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"High Threat Alert"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    }
+  },
+  <span class="json-key">"settings"</span>: {
+    <span class="json-key">"saveManualExecutions"</span>: <span class="json-boolean">true</span>
+  },
+  <span class="json-key">"tags"</span>: [
+    {<span class="json-key">"name"</span>: <span class="json-string">"market-intelligence"</span>},
+    {<span class="json-key">"name"</span>: <span class="json-string">"web-automatico-competitivo"</span>},
+    {<span class="json-key">"name"</span>: <span class="json-string">"tier-2-5"</span>}
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Process Optimization Agent -->
+        <section id="process-optimization" class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-cog text-yellow-500 mr-3"></i>Process Optimization Agent
+                </h2>
+                <div class="bg-yellow-50 p-4 rounded-lg mb-6">
+                    <p class="text-sm text-yellow-800 mb-2"><strong>Archivo:</strong> n8n-workflows/process-optimization.agent.json</p>
+                    <p class="text-sm text-yellow-800"><strong>Función:</strong> Análisis de procesos operacionales, cálculos de ROI y optimización de eficiencia empresarial</p>
+                </div>
+                <pre class="code-block bg-gray-900 text-green-400 p-6 rounded-lg overflow-x-auto text-sm"><code>{
+  <span class="json-key">"name"</span>: <span class="json-string">"Process Optimization Agent"</span>,
+  <span class="json-key">"nodes"</span>: [
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"path"</span>: <span class="json-string">"/process-optimization"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"process-webhook"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Process Optimization Trigger"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.webhook"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">240</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"select"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"process_metrics"</span>,
+        <span class="json-key">"where"</span>: {
+          <span class="json-key">"created_at"</span>: <span class="json-string">">= NOW() - INTERVAL '30 days'"</span>
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"fetch-process-data"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Fetch Process Metrics"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">300</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"functionCode"</span>: <span class="json-string">"// Process Optimization Analysis Engine\nconst processData = $input.all();\nconst timestamp = new Date().toISOString();\n\n// Process Performance Analysis\nconst optimizationAnalysis = {\n  analysis_timestamp: timestamp,\n  processes_analyzed: processData.length,\n  efficiency_metrics: calculateEfficiencyMetrics(processData),\n  bottleneck_analysis: identifyBottlenecks(processData),\n  roi_calculations: calculateROI(processData),\n  optimization_opportunities: identifyOptimizations(processData),\n  cost_reduction_potential: calculateCostReduction(processData),\n  recommendations: generateOptimizationRecommendations(processData)\n};\n\nfunction calculateEfficiencyMetrics(data) {\n  if (!data || data.length === 0) return {};\n  \n  const metrics = {};\n  const processGroups = groupByProcess(data);\n  \n  Object.keys(processGroups).forEach(processName => {\n    const processMetrics = processGroups[processName];\n    const avgExecutionTime = processMetrics.reduce((sum, p) => sum + p.execution_time, 0) / processMetrics.length;\n    const avgCost = processMetrics.reduce((sum, p) => sum + (p.cost || 0), 0) / processMetrics.length;\n    const successRate = processMetrics.filter(p => p.status === 'success').length / processMetrics.length;\n    \n    metrics[processName] = {\n      average_execution_time: avgExecutionTime.toFixed(2),\n      average_cost: avgCost.toFixed(2),\n      success_rate: (successRate * 100).toFixed(2),\n      total_executions: processMetrics.length,\n      efficiency_score: calculateEfficiencyScore(avgExecutionTime, avgCost, successRate)\n    };\n  });\n  \n  return metrics;\n}\n\nfunction identifyBottlenecks(data) {\n  const bottlenecks = [];\n  const processGroups = groupByProcess(data);\n  \n  Object.keys(processGroups).forEach(processName => {\n    const processMetrics = processGroups[processName];\n    const avgTime = processMetrics.reduce((sum, p) => sum + p.execution_time, 0) / processMetrics.length;\n    const maxTime = Math.max(...processMetrics.map(p => p.execution_time));\n    \n    // Identify bottlenecks (processes taking >50% longer than average)\n    if (maxTime > avgTime * 1.5) {\n      bottlenecks.push({\n        process: processName,\n        average_time: avgTime.toFixed(2),\n        max_time: maxTime.toFixed(2),\n        variance: ((maxTime - avgTime) / avgTime * 100).toFixed(2),\n        severity: maxTime > avgTime * 2 ? 'HIGH' : 'MEDIUM',\n        affected_steps: identifySlowSteps(processMetrics)\n      });\n    }\n  });\n  \n  return bottlenecks;\n}\n\nfunction calculateROI(data) {\n  const roiAnalysis = {};\n  const processGroups = groupByProcess(data);\n  \n  Object.keys(processGroups).forEach(processName => {\n    const processMetrics = processGroups[processName];\n    const totalCost = processMetrics.reduce((sum, p) => sum + (p.cost || 0), 0);\n    const totalRevenue = processMetrics.reduce((sum, p) => sum + (p.revenue_generated || 0), 0);\n    const totalTimeSaved = processMetrics.reduce((sum, p) => sum + (p.time_saved || 0), 0);\n    \n    const roi = totalRevenue > 0 ? ((totalRevenue - totalCost) / totalCost * 100) : 0;\n    const costPerExecution = totalCost / processMetrics.length;\n    const timeEfficiency = totalTimeSaved / processMetrics.length;\n    \n    roiAnalysis[processName] = {\n      total_cost: totalCost.toFixed(2),\n      total_revenue: totalRevenue.toFixed(2),\n      roi_percentage: roi.toFixed(2),\n      cost_per_execution: costPerExecution.toFixed(2),\n      average_time_saved: timeEfficiency.toFixed(2),\n      profitability: roi > 20 ? 'HIGH' : roi > 10 ? 'MEDIUM' : 'LOW'\n    };\n  });\n  \n  return roiAnalysis;\n}\n\nfunction identifyOptimizations(data) {\n  const optimizations = [];\n  const processGroups = groupByProcess(data);\n  \n  Object.keys(processGroups).forEach(processName => {\n    const processMetrics = processGroups[processName];\n    const failureRate = processMetrics.filter(p => p.status === 'failed').length / processMetrics.length;\n    const avgExecutionTime = processMetrics.reduce((sum, p) => sum + p.execution_time, 0) / processMetrics.length;\n    \n    // High failure rate optimization\n    if (failureRate > 0.1) {\n      optimizations.push({\n        process: processName,\n        type: 'reliability',\n        current_failure_rate: (failureRate * 100).toFixed(2),\n        optimization: 'Implementar validaciones adicionales y manejo de errores',\n        potential_improvement: 'Reducir tasa de fallos en 70%',\n        priority: failureRate > 0.2 ? 'HIGH' : 'MEDIUM'\n      });\n    }\n    \n    // Long execution time optimization\n    if (avgExecutionTime > 300) { // 5 minutes\n      optimizations.push({\n        process: processName,\n        type: 'performance',\n        current_avg_time: avgExecutionTime.toFixed(2),\n        optimization: 'Optimizar consultas de base de datos y procesos paralelos',\n        potential_improvement: 'Reducir tiempo de ejecución en 40%',\n        priority: avgExecutionTime > 600 ? 'HIGH' : 'MEDIUM'\n      });\n    }\n    \n    // Resource utilization optimization\n    const avgResourceUsage = processMetrics.reduce((sum, p) => sum + (p.resource_usage || 50), 0) / processMetrics.length;\n    if (avgResourceUsage > 80) {\n      optimizations.push({\n        process: processName,\n        type: 'resources',\n        current_usage: avgResourceUsage.toFixed(2),\n        optimization: 'Balanceador de carga y escalado automático',\n        potential_improvement: 'Reducir uso de recursos en 30%',\n        priority: 'MEDIUM'\n      });\n    }\n  });\n  \n  return optimizations;\n}\n\nfunction calculateCostReduction(data) {\n  let totalPotentialSavings = 0;\n  const processGroups = groupByProcess(data);\n  \n  Object.keys(processGroups).forEach(processName => {\n    const processMetrics = processGroups[processName];\n    const totalCost = processMetrics.reduce((sum, p) => sum + (p.cost || 0), 0);\n    const avgExecutionTime = processMetrics.reduce((sum, p) => sum + p.execution_time, 0) / processMetrics.length;\n    \n    // Calculate potential savings from optimization\n    let processReduction = 0;\n    \n    // Time optimization savings (40% reduction potential)\n    if (avgExecutionTime > 300) {\n      processReduction += totalCost * 0.4;\n    }\n    \n    // Failure reduction savings (reduce rework costs)\n    const failureRate = processMetrics.filter(p => p.status === 'failed').length / processMetrics.length;\n    if (failureRate > 0.1) {\n      processReduction += totalCost * failureRate * 0.7;\n    }\n    \n    totalPotentialSavings += processReduction;\n  });\n  \n  return {\n    total_potential_savings: totalPotentialSavings.toFixed(2),\n    annual_savings_estimate: (totalPotentialSavings * 12).toFixed(2),\n    payback_period_months: Math.ceil(10000 / (totalPotentialSavings || 1)), // Assuming 10k investment\n    savings_confidence: 'MEDIUM'\n  };\n}\n\nfunction generateOptimizationRecommendations(data) {\n  const recommendations = [];\n  const processGroups = groupByProcess(data);\n  \n  // High-level strategic recommendations\n  const totalProcesses = Object.keys(processGroups).length;\n  const avgSuccessRate = Object.values(processGroups).reduce((sum, group) => {\n    const successRate = group.filter(p => p.status === 'success').length / group.length;\n    return sum + successRate;\n  }, 0) / totalProcesses;\n  \n  if (avgSuccessRate < 0.9) {\n    recommendations.push({\n      priority: 'HIGH',\n      category: 'reliability',\n      title: 'Mejorar Confiabilidad General del Sistema',\n      description: 'Tasa de éxito promedio por debajo del 90%',\n      actions: [\n        'Implementar monitoreo proactivo',\n        'Añadir validaciones de entrada',\n        'Configurar reintentos automáticos',\n        'Establecer alertas tempranas'\n      ],\n      expected_impact: 'Incremento del 15% en tasa de éxito'\n    });\n  }\n  \n  // Process-specific recommendations\n  Object.keys(processGroups).forEach(processName => {\n    const processMetrics = processGroups[processName];\n    const avgTime = processMetrics.reduce((sum, p) => sum + p.execution_time, 0) / processMetrics.length;\n    const avgCost = processMetrics.reduce((sum, p) => sum + (p.cost || 0), 0) / processMetrics.length;\n    \n    if (avgTime > 600) { // 10 minutes\n      recommendations.push({\n        priority: 'HIGH',\n        category: 'performance',\n        title: `Optimizar Rendimiento: ${processName}`,\n        description: `Tiempo promedio de ejecución: ${avgTime.toFixed(2)} segundos`,\n        actions: [\n          'Paralelizar operaciones cuando sea posible',\n          'Optimizar consultas de base de datos',\n          'Implementar caching inteligente',\n          'Revisar algoritmos utilizados'\n        ],\n        expected_impact: 'Reducción del 40% en tiempo de ejecución'\n      });\n    }\n    \n    if (avgCost > 100) {\n      recommendations.push({\n        priority: 'MEDIUM',\n        category: 'cost',\n        title: `Reducir Costos: ${processName}`,\n        description: `Costo promedio por ejecución: $${avgCost.toFixed(2)}`,\n        actions: [\n          'Revisar recursos asignados',\n          'Optimizar uso de servicios externos',\n          'Implementar estrategias de batch processing',\n          'Evaluar alternativas más económicas'\n        ],\n        expected_impact: 'Reducción del 25% en costos operacionales'\n      });\n    }\n  });\n  \n  return recommendations;\n}\n\n// Helper functions\nfunction groupByProcess(data) {\n  return data.reduce((groups, item) => {\n    const process = item.process_name || 'unknown';\n    groups[process] = groups[process] || [];\n    groups[process].push(item);\n    return groups;\n  }, {});\n}\n\nfunction calculateEfficiencyScore(avgTime, avgCost, successRate) {\n  // Normalize metrics and calculate composite score (0-100)\n  const timeScore = Math.max(0, 100 - (avgTime / 10)); // Penalty for long execution times\n  const costScore = Math.max(0, 100 - avgCost); // Penalty for high costs\n  const reliabilityScore = successRate * 100;\n  \n  return ((timeScore * 0.4 + costScore * 0.3 + reliabilityScore * 0.3)).toFixed(2);\n}\n\nfunction identifySlowSteps(processMetrics) {\n  // Identify steps that are consistently slow\n  const stepAnalysis = {};\n  processMetrics.forEach(process => {\n    if (process.steps) {\n      process.steps.forEach(step => {\n        stepAnalysis[step.name] = stepAnalysis[step.name] || [];\n        stepAnalysis[step.name].push(step.execution_time);\n      });\n    }\n  });\n  \n  const slowSteps = [];\n  Object.keys(stepAnalysis).forEach(stepName => {\n    const times = stepAnalysis[stepName];\n    const avgTime = times.reduce((sum, t) => sum + t, 0) / times.length;\n    if (avgTime > 60) { // Steps taking more than 1 minute\n      slowSteps.push({\n        step: stepName,\n        average_time: avgTime.toFixed(2),\n        occurrences: times.length\n      });\n    }\n  });\n  \n  return slowSteps;\n}\n\nreturn [optimizationAnalysis];"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"process-analyzer"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Process Optimization Analyzer"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.function"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">680</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"insert"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"process_optimizations"</span>,
+        <span class="json-key">"columns"</span>: <span class="json-string">"analysis_data, efficiency_metrics, roi_calculations, recommendations, created_at"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"save-optimization"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Save Optimization Analysis"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">900</span>, <span class="json-number">300</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    }
+  ],
+  <span class="json-key">"connections"</span>: {
+    <span class="json-key">"Process Optimization Trigger"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Fetch Process Metrics"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"Fetch Process Metrics"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Process Optimization Analyzer"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"Process Optimization Analyzer"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Save Optimization Analysis"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    }
+  },
+  <span class="json-key">"tags"</span>: [
+    {<span class="json-key">"name"</span>: <span class="json-string">"process-optimization"</span>},
+    {<span class="json-key">"name"</span>: <span class="json-string">"roi-analysis"</span>}
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Customer Experience Agent -->
+        <section id="customer-experience" class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-users text-purple-500 mr-3"></i>Customer Experience Agent
+                </h2>
+                <div class="bg-purple-50 p-4 rounded-lg mb-6">
+                    <p class="text-sm text-purple-800 mb-2"><strong>Archivo:</strong> n8n-workflows/customer-experience.agent.json</p>
+                    <p class="text-sm text-purple-800"><strong>Función:</strong> Journey mapping interactivo, análisis de touchpoints y estrategias de personalización de clientes</p>
+                </div>
+                <pre class="code-block bg-gray-900 text-green-400 p-6 rounded-lg overflow-x-auto text-sm"><code>{
+  <span class="json-key">"name"</span>: <span class="json-string">"Customer Experience Agent"</span>,
+  <span class="json-key">"nodes"</span>: [
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"path"</span>: <span class="json-string">"/customer-experience"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"cx-webhook"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Customer Experience Trigger"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.webhook"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">240</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"select"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"customer_touchpoints"</span>,
+        <span class="json-key">"where"</span>: {
+          <span class="json-key">"created_at"</span>: <span class="json-string">">= NOW() - INTERVAL '7 days'"</span>
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"fetch-touchpoints"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Fetch Customer Touchpoints"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">200</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"select"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"customer_feedback"</span>,
+        <span class="json-key">"where"</span>: {
+          <span class="json-key">"created_at"</span>: <span class="json-string">">= NOW() - INTERVAL '30 days'"</span>
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"fetch-feedback"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Fetch Customer Feedback"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">400</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"functionCode"</span>: <span class="json-string">"// Customer Experience Analysis Engine\nconst touchpointData = $input.first().json || [];\nconst feedbackData = $input.last().json || [];\nconst timestamp = new Date().toISOString();\n\n// Customer Experience Comprehensive Analysis\nconst cxAnalysis = {\n  analysis_timestamp: timestamp,\n  touchpoints_analyzed: touchpointData.length,\n  feedback_processed: feedbackData.length,\n  journey_mapping: mapCustomerJourney(touchpointData),\n  satisfaction_metrics: calculateSatisfactionMetrics(feedbackData),\n  pain_points: identifyPainPoints(touchpointData, feedbackData),\n  personalization_opportunities: identifyPersonalizationOpportunities(touchpointData, feedbackData),\n  customer_segmentation: performCustomerSegmentation(touchpointData, feedbackData),\n  churn_risk_analysis: analyzeChurnRisk(touchpointData, feedbackData),\n  recommendations: generateCXRecommendations(touchpointData, feedbackData)\n};\n\nfunction mapCustomerJourney(touchpoints) {\n  if (!touchpoints || touchpoints.length === 0) return {};\n  \n  // Group touchpoints by customer and order by timestamp\n  const customerJourneys = {};\n  touchpoints.forEach(tp => {\n    const customerId = tp.customer_id;\n    customerJourneys[customerId] = customerJourneys[customerId] || [];\n    customerJourneys[customerId].push(tp);\n  });\n  \n  // Analyze journey patterns\n  const journeyPatterns = {};\n  const commonPaths = {};\n  \n  Object.keys(customerJourneys).forEach(customerId => {\n    const journey = customerJourneys[customerId].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));\n    const pathKey = journey.map(tp => tp.touchpoint_type).join(' -> ');\n    \n    commonPaths[pathKey] = (commonPaths[pathKey] || 0) + 1;\n  });\n  \n  // Identify most common journey stages\n  const journeyStages = {\n    awareness: touchpoints.filter(tp => ['website_visit', 'social_media', 'advertisement'].includes(tp.touchpoint_type)).length,\n    consideration: touchpoints.filter(tp => ['product_view', 'comparison', 'demo_request'].includes(tp.touchpoint_type)).length,\n    purchase: touchpoints.filter(tp => ['cart_add', 'checkout', 'payment'].includes(tp.touchpoint_type)).length,\n    retention: touchpoints.filter(tp => ['support_contact', 'feature_usage', 'subscription_renewal'].includes(tp.touchpoint_type)).length,\n    advocacy: touchpoints.filter(tp => ['review_write', 'referral', 'social_share'].includes(tp.touchpoint_type)).length\n  };\n  \n  return {\n    total_unique_customers: Object.keys(customerJourneys).length,\n    common_paths: Object.entries(commonPaths)\n      .sort(([,a], [,b]) => b - a)\n      .slice(0, 10)\n      .map(([path, count]) => ({ path, frequency: count })),\n    journey_stages: journeyStages,\n    average_touchpoints_per_customer: touchpoints.length / Object.keys(customerJourneys).length,\n    journey_completion_rate: calculateJourneyCompletionRate(customerJourneys)\n  };\n}\n\nfunction calculateSatisfactionMetrics(feedback) {\n  if (!feedback || feedback.length === 0) return {};\n  \n  const ratings = feedback.filter(f => f.rating !== null && f.rating !== undefined);\n  const avgRating = ratings.reduce((sum, f) => sum + f.rating, 0) / ratings.length;\n  \n  const sentimentCounts = {\n    positive: feedback.filter(f => f.sentiment === 'positive').length,\n    neutral: feedback.filter(f => f.sentiment === 'neutral').length,\n    negative: feedback.filter(f => f.sentiment === 'negative').length\n  };\n  \n  const categoryBreakdown = {};\n  feedback.forEach(f => {\n    if (f.category) {\n      categoryBreakdown[f.category] = categoryBreakdown[f.category] || { count: 0, total_rating: 0 };\n      categoryBreakdown[f.category].count++;\n      if (f.rating) categoryBreakdown[f.category].total_rating += f.rating;\n    }\n  });\n  \n  Object.keys(categoryBreakdown).forEach(category => {\n    const data = categoryBreakdown[category];\n    data.average_rating = data.total_rating / data.count;\n  });\n  \n  return {\n    overall_rating: avgRating ? avgRating.toFixed(2) : null,\n    total_feedback: feedback.length,\n    sentiment_distribution: sentimentCounts,\n    net_promoter_score: calculateNPS(feedback),\n    category_breakdown: categoryBreakdown,\n    satisfaction_trend: calculateSatisfactionTrend(feedback)\n  };\n}\n\nfunction identifyPainPoints(touchpoints, feedback) {\n  const painPoints = [];\n  \n  // Analyze touchpoint abandonment\n  const touchpointConversion = {};\n  const touchpointGroups = groupBy(touchpoints, 'touchpoint_type');\n  \n  Object.keys(touchpointGroups).forEach(type => {\n    const instances = touchpointGroups[type];\n    const completedActions = instances.filter(tp => tp.action_completed === true).length;\n    const conversionRate = completedActions / instances.length;\n    \n    if (conversionRate < 0.5) { // Low conversion rate indicates potential pain point\n      painPoints.push({\n        type: 'conversion',\n        touchpoint: type,\n        conversion_rate: (conversionRate * 100).toFixed(2),\n        total_instances: instances.length,\n        severity: conversionRate < 0.3 ? 'HIGH' : 'MEDIUM',\n        impact: 'Users struggling to complete actions'\n      });\n    }\n  });\n  \n  // Analyze negative feedback patterns\n  const negativeFeedback = feedback.filter(f => f.sentiment === 'negative' || (f.rating && f.rating <= 2));\n  const feedbackPatterns = {};\n  \n  negativeFeedback.forEach(f => {\n    if (f.category) {\n      feedbackPatterns[f.category] = feedbackPatterns[f.category] || [];\n      feedbackPatterns[f.category].push(f);\n    }\n  });\n  \n  Object.keys(feedbackPatterns).forEach(category => {\n    const issues = feedbackPatterns[category];\n    if (issues.length > 3) { // Recurring negative feedback\n      painPoints.push({\n        type: 'feedback',\n        category: category,\n        negative_mentions: issues.length,\n        severity: issues.length > 10 ? 'HIGH' : issues.length > 5 ? 'MEDIUM' : 'LOW',\n        common_complaints: extractCommonComplaints(issues),\n        impact: 'Customer dissatisfaction in specific area'\n      });\n    }\n  });\n  \n  return painPoints;\n}\n\nfunction identifyPersonalizationOpportunities(touchpoints, feedback) {\n  const opportunities = [];\n  \n  // Behavioral pattern analysis\n  const customerBehaviors = {};\n  touchpoints.forEach(tp => {\n    const customerId = tp.customer_id;\n    customerBehaviors[customerId] = customerBehaviors[customerId] || [];\n    customerBehaviors[customerId].push(tp);\n  });\n  \n  // Identify high-value customers with specific preferences\n  Object.keys(customerBehaviors).forEach(customerId => {\n    const behavior = customerBehaviors[customerId];\n    const preferredChannels = getPreferredChannels(behavior);\n    const preferredProducts = getPreferredProducts(behavior);\n    const activityLevel = behavior.length;\n    \n    if (activityLevel > 10) { // High-engagement customers\n      opportunities.push({\n        customer_id: customerId,\n        type: 'high_engagement',\n        activity_level: activityLevel,\n        preferred_channels: preferredChannels,\n        preferred_products: preferredProducts,\n        personalization_strategy: 'Targeted content and product recommendations',\n        potential_impact: 'Increase conversion rate by 25%'\n      });\n    }\n  });\n  \n  // Content personalization opportunities\n  const contentPreferences = analyzeContentPreferences(touchpoints);\n  if (contentPreferences.length > 0) {\n    opportunities.push({\n      type: 'content_personalization',\n      preferences_identified: contentPreferences.length,\n      top_preferences: contentPreferences.slice(0, 5),\n      personalization_strategy: 'Dynamic content based on user preferences',\n      potential_impact: 'Improve engagement by 30%'\n    });\n  }\n  \n  return opportunities;\n}\n\nfunction performCustomerSegmentation(touchpoints, feedback) {\n  const segments = {\n    champions: [],\n    loyal_customers: [],\n    potential_loyalists: [],\n    at_risk: [],\n    cannot_lose_them: []\n  };\n  \n  // Group data by customer\n  const customerData = {};\n  touchpoints.forEach(tp => {\n    const id = tp.customer_id;\n    customerData[id] = customerData[id] || { touchpoints: [], feedback: [] };\n    customerData[id].touchpoints.push(tp);\n  });\n  \n  feedback.forEach(f => {\n    const id = f.customer_id;\n    if (customerData[id]) {\n      customerData[id].feedback.push(f);\n    }\n  });\n  \n  // Segment customers based on behavior and satisfaction\n  Object.keys(customerData).forEach(customerId => {\n    const data = customerData[customerId];\n    const engagementScore = data.touchpoints.length;\n    const avgRating = data.feedback.length > 0 ? \n      data.feedback.reduce((sum, f) => sum + (f.rating || 3), 0) / data.feedback.length : 3;\n    \n    const customer = {\n      customer_id: customerId,\n      engagement_score: engagementScore,\n      satisfaction_score: avgRating,\n      touchpoint_count: data.touchpoints.length,\n      feedback_count: data.feedback.length\n    };\n    \n    // Segmentation logic\n    if (avgRating >= 4 && engagementScore >= 15) {\n      segments.champions.push(customer);\n    } else if (avgRating >= 3.5 && engagementScore >= 10) {\n      segments.loyal_customers.push(customer);\n    } else if (avgRating >= 3 && engagementScore >= 8) {\n      segments.potential_loyalists.push(customer);\n    } else if (avgRating < 3 || engagementScore < 5) {\n      segments.at_risk.push(customer);\n    } else {\n      segments.cannot_lose_them.push(customer);\n    }\n  });\n  \n  return {\n    champions: { count: segments.champions.length, percentage: (segments.champions.length / Object.keys(customerData).length * 100).toFixed(2) },\n    loyal_customers: { count: segments.loyal_customers.length, percentage: (segments.loyal_customers.length / Object.keys(customerData).length * 100).toFixed(2) },\n    potential_loyalists: { count: segments.potential_loyalists.length, percentage: (segments.potential_loyalists.length / Object.keys(customerData).length * 100).toFixed(2) },\n    at_risk: { count: segments.at_risk.length, percentage: (segments.at_risk.length / Object.keys(customerData).length * 100).toFixed(2) },\n    cannot_lose_them: { count: segments.cannot_lose_them.length, percentage: (segments.cannot_lose_them.length / Object.keys(customerData).length * 100).toFixed(2) },\n    total_customers: Object.keys(customerData).length\n  };\n}\n\nfunction analyzeChurnRisk(touchpoints, feedback) {\n  const churnIndicators = [];\n  const customerActivity = {};\n  \n  // Analyze recent activity patterns\n  touchpoints.forEach(tp => {\n    const customerId = tp.customer_id;\n    const daysSinceActivity = Math.floor((new Date() - new Date(tp.timestamp)) / (1000 * 60 * 60 * 24));\n    \n    customerActivity[customerId] = customerActivity[customerId] || {\n      last_activity: daysSinceActivity,\n      total_activities: 0,\n      recent_activities: 0\n    };\n    \n    customerActivity[customerId].total_activities++;\n    if (daysSinceActivity <= 7) customerActivity[customerId].recent_activities++;\n    if (daysSinceActivity < customerActivity[customerId].last_activity) {\n      customerActivity[customerId].last_activity = daysSinceActivity;\n    }\n  });\n  \n  // Identify high churn risk customers\n  Object.keys(customerActivity).forEach(customerId => {\n    const activity = customerActivity[customerId];\n    let riskScore = 0;\n    \n    // Days since last activity\n    if (activity.last_activity > 30) riskScore += 0.4;\n    else if (activity.last_activity > 14) riskScore += 0.2;\n    \n    // Declining activity\n    if (activity.recent_activities === 0 && activity.total_activities > 5) riskScore += 0.3;\n    \n    // Negative feedback\n    const customerFeedback = feedback.filter(f => f.customer_id === customerId);\n    const recentNegativeFeedback = customerFeedback.filter(f => \n      f.sentiment === 'negative' && \n      Math.floor((new Date() - new Date(f.created_at)) / (1000 * 60 * 60 * 24)) <= 30\n    );\n    \n    if (recentNegativeFeedback.length > 0) riskScore += 0.3;\n    \n    if (riskScore >= 0.5) {\n      churnIndicators.push({\n        customer_id: customerId,\n        risk_score: riskScore.toFixed(2),\n        risk_level: riskScore >= 0.7 ? 'HIGH' : 'MEDIUM',\n        days_since_last_activity: activity.last_activity,\n        total_activities: activity.total_activities,\n        recent_negative_feedback: recentNegativeFeedback.length,\n        recommended_action: riskScore >= 0.7 ? 'Immediate intervention required' : 'Monitor closely and engage'\n      });\n    }\n  });\n  \n  return {\n    high_risk_customers: churnIndicators.filter(c => c.risk_level === 'HIGH').length,\n    medium_risk_customers: churnIndicators.filter(c => c.risk_level === 'MEDIUM').length,\n    total_at_risk: churnIndicators.length,\n    churn_risk_details: churnIndicators.slice(0, 20) // Top 20 at-risk customers\n  };\n}\n\nfunction generateCXRecommendations(touchpoints, feedback) {\n  const recommendations = [];\n  \n  // Touchpoint optimization recommendations\n  const lowPerformingTouchpoints = identifyLowPerformingTouchpoints(touchpoints);\n  if (lowPerformingTouchpoints.length > 0) {\n    recommendations.push({\n      priority: 'HIGH',\n      category: 'touchpoint_optimization',\n      title: 'Optimizar Touchpoints de Bajo Rendimiento',\n      description: `${lowPerformingTouchpoints.length} touchpoints con baja conversión identificados`,\n      actions: [\n        'Simplificar flujos de usuario en touchpoints críticos',\n        'A/B testing en páginas con alta tasa de abandono',\n        'Mejorar UX/UI en puntos de fricción identificados',\n        'Implementar ayuda contextual y onboarding'\n      ],\n      expected_impact: 'Incremento del 20% en conversión de touchpoints',\n      touchpoints_affected: lowPerformingTouchpoints\n    });\n  }\n  \n  // Personalization recommendations\n  const personalizationOps = identifyPersonalizationOpportunities(touchpoints, feedback);\n  if (personalizationOps.length > 0) {\n    recommendations.push({\n      priority: 'MEDIUM',\n      category: 'personalization',\n      title: 'Implementar Estrategias de Personalización',\n      description: `${personalizationOps.length} oportunidades de personalización identificadas`,\n      actions: [\n        'Segmentación dinámica de usuarios',\n        'Recomendaciones de productos personalizadas',\n        'Contenido adaptativo basado en comportamiento',\n        'Comunicaciones personalizadas por canal preferido'\n      ],\n      expected_impact: 'Mejora del 25% en engagement y 15% en conversión'\n    });\n  }\n  \n  // Customer retention recommendations\n  const churnRisk = analyzeChurnRisk(touchpoints, feedback);\n  if (churnRisk.total_at_risk > 0) {\n    recommendations.push({\n      priority: 'HIGH',\n      category: 'retention',\n      title: 'Programa de Retención de Clientes',\n      description: `${churnRisk.total_at_risk} clientes en riesgo de abandono`,\n      actions: [\n        'Campaña de re-engagement para clientes inactivos',\n        'Ofertas personalizadas para clientes en riesgo',\n        'Programa de loyalty mejorado',\n        'Seguimiento proactivo de satisfacción'\n      ],\n      expected_impact: 'Reducción del 30% en churn rate'\n    });\n  }\n  \n  // Feedback loop improvements\n  const negativeFeedback = feedback.filter(f => f.sentiment === 'negative' || (f.rating && f.rating <= 2));\n  if (negativeFeedback.length > feedback.length * 0.2) {\n    recommendations.push({\n      priority: 'MEDIUM',\n      category: 'feedback',\n      title: 'Mejorar Gestión de Feedback Negativo',\n      description: `${negativeFeedback.length} feedback negativos requieren atención`,\n      actions: [\n        'Sistema de respuesta automática a feedback negativo',\n        'Escalación rápida de problemas críticos',\n        'Seguimiento post-resolución',\n        'Análisis de causa raíz de problemas recurrentes'\n      ],\n      expected_impact: 'Mejora del 40% en resolución de problemas'\n    });\n  }\n  \n  return recommendations;\n}\n\n// Helper functions\nfunction groupBy(array, key) {\n  return array.reduce((result, item) => {\n    const group = item[key];\n    result[group] = result[group] || [];\n    result[group].push(item);\n    return result;\n  }, {});\n}\n\nfunction calculateJourneyCompletionRate(customerJourneys) {\n  const completedJourneys = Object.values(customerJourneys).filter(journey => \n    journey.some(tp => ['purchase', 'payment', 'subscription'].includes(tp.touchpoint_type))\n  ).length;\n  \n  return (completedJourneys / Object.keys(customerJourneys).length * 100).toFixed(2);\n}\n\nfunction calculateNPS(feedback) {\n  const ratings = feedback.filter(f => f.rating >= 1 && f.rating <= 10);\n  if (ratings.length === 0) return null;\n  \n  const promoters = ratings.filter(f => f.rating >= 9).length;\n  const detractors = ratings.filter(f => f.rating <= 6).length;\n  \n  return (((promoters - detractors) / ratings.length) * 100).toFixed(2);\n}\n\nfunction calculateSatisfactionTrend(feedback) {\n  // Simple trend analysis over last 30 days\n  const sortedFeedback = feedback.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));\n  const half = Math.floor(sortedFeedback.length / 2);\n  \n  const firstHalf = sortedFeedback.slice(0, half);\n  const secondHalf = sortedFeedback.slice(half);\n  \n  const firstAvg = firstHalf.reduce((sum, f) => sum + (f.rating || 3), 0) / firstHalf.length;\n  const secondAvg = secondHalf.reduce((sum, f) => sum + (f.rating || 3), 0) / secondHalf.length;\n  \n  const trend = secondAvg - firstAvg;\n  return {\n    direction: trend > 0.1 ? 'improving' : trend < -0.1 ? 'declining' : 'stable',\n    change: trend.toFixed(2)\n  };\n}\n\nfunction extractCommonComplaints(issues) {\n  // Extract common words/phrases from negative feedback\n  const complaints = {};\n  issues.forEach(issue => {\n    if (issue.message) {\n      const words = issue.message.toLowerCase().split(' ');\n      words.forEach(word => {\n        if (word.length > 3) {\n          complaints[word] = (complaints[word] || 0) + 1;\n        }\n      });\n    }\n  });\n  \n  return Object.entries(complaints)\n    .sort(([,a], [,b]) => b - a)\n    .slice(0, 5)\n    .map(([word, count]) => ({ word, mentions: count }));\n}\n\nfunction getPreferredChannels(behavior) {\n  const channels = {};\n  behavior.forEach(tp => {\n    channels[tp.channel] = (channels[tp.channel] || 0) + 1;\n  });\n  \n  return Object.entries(channels)\n    .sort(([,a], [,b]) => b - a)\n    .slice(0, 3)\n    .map(([channel, count]) => ({ channel, frequency: count }));\n}\n\nfunction getPreferredProducts(behavior) {\n  const products = {};\n  behavior.forEach(tp => {\n    if (tp.product_id) {\n      products[tp.product_id] = (products[tp.product_id] || 0) + 1;\n    }\n  });\n  \n  return Object.entries(products)\n    .sort(([,a], [,b]) => b - a)\n    .slice(0, 3)\n    .map(([product, count]) => ({ product_id: product, interactions: count }));\n}\n\nfunction analyzeContentPreferences(touchpoints) {\n  const contentTypes = {};\n  touchpoints.forEach(tp => {\n    if (tp.content_type) {\n      contentTypes[tp.content_type] = (contentTypes[tp.content_type] || 0) + 1;\n    }\n  });\n  \n  return Object.entries(contentTypes)\n    .sort(([,a], [,b]) => b - a)\n    .map(([type, count]) => ({ content_type: type, engagement: count }));\n}\n\nfunction identifyLowPerformingTouchpoints(touchpoints) {\n  const touchpointPerformance = {};\n  \n  touchpoints.forEach(tp => {\n    const type = tp.touchpoint_type;\n    touchpointPerformance[type] = touchpointPerformance[type] || { total: 0, completed: 0 };\n    touchpointPerformance[type].total++;\n    if (tp.action_completed) touchpointPerformance[type].completed++;\n  });\n  \n  return Object.entries(touchpointPerformance)\n    .map(([type, data]) => ({\n      touchpoint_type: type,\n      conversion_rate: (data.completed / data.total * 100).toFixed(2),\n      total_instances: data.total\n    }))\n    .filter(tp => parseFloat(tp.conversion_rate) < 50)\n    .sort((a, b) => parseFloat(a.conversion_rate) - parseFloat(b.conversion_rate));\n}\n\nreturn [cxAnalysis];"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"cx-analyzer"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Customer Experience Analyzer"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.function"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">680</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"insert"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"customer_experience_analysis"</span>,
+        <span class="json-key">"columns"</span>: <span class="json-string">"analysis_data, journey_mapping, satisfaction_metrics, personalization_opportunities, recommendations, created_at"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"save-cx-analysis"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Save CX Analysis"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">900</span>, <span class="json-number">300</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    }
+  ],
+  <span class="json-key">"connections"</span>: {
+    <span class="json-key">"Customer Experience Trigger"</span>: {
+      <span class="json-key">"main"</span>: [
+        [
+          {<span class="json-key">"node"</span>: <span class="json-string">"Fetch Customer Touchpoints"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>},
+          {<span class="json-key">"node"</span>: <span class="json-string">"Fetch Customer Feedback"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}
+        ]
+      ]
+    },
+    <span class="json-key">"Fetch Customer Touchpoints"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Customer Experience Analyzer"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    },
+    <span class="json-key">"Fetch Customer Feedback"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Customer Experience Analyzer"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">1</span>}]]
+    },
+    <span class="json-key">"Customer Experience Analyzer"</span>: {
+      <span class="json-key">"main"</span>: [[{<span class="json-key">"node"</span>: <span class="json-string">"Save CX Analysis"</span>, <span class="json-key">"type"</span>: <span class="json-string">"main"</span>, <span class="json-key">"index"</span>: <span class="json-number">0</span>}]]
+    }
+  },
+  <span class="json-key">"tags"</span>: [
+    {<span class="json-key">"name"</span>: <span class="json-string">"customer-experience"</span>},
+    {<span class="json-key">"name"</span>: <span class="json-string">"journey-mapping"</span>}
+  ]
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Solution Architect Agent -->
+        <section id="solution-architect" class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-drafting-compass text-indigo-500 mr-3"></i>Solution Architect Agent
+                </h2>
+                <div class="bg-indigo-50 p-4 rounded-lg mb-6">
+                    <p class="text-sm text-indigo-800 mb-2"><strong>Archivo:</strong> n8n-workflows/solution-architect.agent.json</p>
+                    <p class="text-sm text-indigo-800"><strong>Función:</strong> Análisis arquitectónico, evaluación tecnológica, diseño de soluciones empresariales y optimización de infraestructura</p>
+                </div>
+                <pre class="code-block bg-gray-900 text-green-400 p-6 rounded-lg overflow-x-auto text-sm"><code>{
+  <span class="json-key">"name"</span>: <span class="json-string">"Solution Architect Agent"</span>,
+  <span class="json-key">"nodes"</span>: [
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"path"</span>: <span class="json-string">"/solution-architect"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"POST"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"architect-webhook"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Solution Architect Trigger"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.webhook"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">240</span>, <span class="json-number">300</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"url"</span>: <span class="json-string">"http://prometheus:9090/api/v1/query"</span>,
+        <span class="json-key">"method"</span>: <span class="json-string">"GET"</span>,
+        <span class="json-key">"qs"</span>: {
+          <span class="json-key">"query"</span>: <span class="json-string">"up"</span>
+        }
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"fetch-system-metrics"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Fetch System Metrics"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.httpRequest"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">200</span>]
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"operation"</span>: <span class="json-string">"select"</span>,
+        <span class="json-key">"table"</span>: <span class="json-string">"system_architecture"</span>
+      },
+      <span class="json-key">"id"</span>: <span class="json-string">"fetch-architecture-data"</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"Fetch Architecture Data"</span>,
+      <span class="json-key">"type"</span>: <span class="json-string">"n8n-nodes-base.postgres"</span>,
+      <span class="json-key">"typeVersion"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"position"</span>: [<span class="json-number">460</span>, <span class="json-number">400</span>],
+      <span class="json-key">"credentials"</span>: {
+        <span class="json-key">"postgres"</span>: {
+          <span class="json-key">"id"</span>: <span class="json-string">"bi-orchestrator-db"</span>
+        }
+      }
+    },
+    {
+      <span class="json-key">"parameters"</span>: {
+        <span class="json-key">"functionCode"</span>: <span class="json-string">"// Solution Architecture Analysis Engine\nconst systemMetrics = $input.first().json || {};\nconst architectureData = $input.last().json || [];\nconst timestamp = new Date().toISOString();\n\n// Comprehensive Architecture Analysis\nconst architectureAnalysis = {\n  analysis_timestamp: timestamp,\n  system_health: analyzeSystemHealth(systemMetrics),\n  scalability_assessment: assessScalability(architectureData, systemMetrics),\n  technology_evaluation: evaluateTechnologyStack(architectureData),\n  performance_analysis: analyzePerformance(systemMetrics),\n  security_assessment: assessSecurity(architectureData),\n  cost_optimization: analyzeCostOptimization(architectureData, systemMetrics),\n  future_roadmap: generateTechnologyRoadmap(architectureData),\n  recommendations: generateArchitectureRecommendations(architectureData, systemMetrics)\n};\n\nfunction analyzeSystemHealth(metrics) {\n  if (!metrics.data || !metrics.data.result) {\n    return { status: 'unknown', services_up: 0, total_services: 0 };\n  }\n  \n  const services = metrics.data.result;\n  const upServices = services.filter(service => service.value[1] === '1').length;\n  const totalServices = services.length;\n  const healthPercentage = totalServices > 0 ? (upServices / totalServices * 100) : 0;\n  \n  return {\n    status: healthPercentage >= 95 ? 'excellent' : \n            healthPercentage >= 90 ? 'good' : \n            healthPercentage >= 75 ? 'fair' : 'poor',\n    services_up: upServices,\n    total_services: totalServices,\n    health_percentage: healthPercentage.toFixed(2),\n    critical_services_down: services.filter(s => \n      s.value[1] === '0' && \n      ['postgres', 'redis', 'n8n', 'api-gateway'].some(critical => \n        s.metric.job.includes(critical)\n      )\n    ).map(s => s.metric.job)\n  };\n}\n\nfunction assessScalability(architectureData, metrics) {\n  const scalabilityScore = {\n    horizontal_scaling: 0,\n    vertical_scaling: 0,\n    database_scaling: 0,\n    caching_strategy: 0,\n    load_balancing: 0\n  };\n  \n  // Analyze architecture components for scalability patterns\n  architectureData.forEach(component => {\n    if (component.component_type === 'microservice') {\n      scalabilityScore.horizontal_scaling += 20;\n    }\n    \n    if (component.scaling_strategy === 'horizontal') {\n      scalabilityScore.horizontal_scaling += 15;\n    }\n    \n    if (component.component_name && component.component_name.includes('load-balancer')) {\n      scalabilityScore.load_balancing += 30;\n    }\n    \n    if (component.component_name && component.component_name.includes('redis')) {\n      scalabilityScore.caching_strategy += 25;\n    }\n    \n    if (component.component_name && component.component_name.includes('postgres') && \n        component.configuration && component.configuration.includes('replica')) {\n      scalabilityScore.database_scaling += 20;\n    }\n  });\n  \n  // Normalize scores to 0-100 scale\n  Object.keys(scalabilityScore).forEach(key => {\n    scalabilityScore[key] = Math.min(100, scalabilityScore[key]);\n  });\n  \n  const overallScore = Object.values(scalabilityScore).reduce((sum, score) => sum + score, 0) / Object.keys(scalabilityScore).length;\n  \n  return {\n    overall_score: overallScore.toFixed(2),\n    rating: overallScore >= 80 ? 'EXCELLENT' : \n            overallScore >= 60 ? 'GOOD' : \n            overallScore >= 40 ? 'FAIR' : 'POOR',\n    detailed_scores: scalabilityScore,\n    bottlenecks: identifyScalabilityBottlenecks(architectureData),\n    growth_capacity: calculateGrowthCapacity(architectureData, metrics)\n  };\n}\n\nfunction evaluateTechnologyStack(architectureData) {\n  const technologies = {\n    databases: [],\n    caching: [],\n    messaging: [],\n    containerization: [],\n    monitoring: [],\n    languages: [],\n    frameworks: []\n  };\n  \n  architectureData.forEach(component => {\n    const name = component.component_name || '';\n    const type = component.component_type || '';\n    \n    // Categorize technologies\n    if (name.includes('postgres') || type === 'database') {\n      technologies.databases.push({ name: name, version: component.version, status: 'active' });\n    }\n    \n    if (name.includes('redis') || type === 'cache') {\n      technologies.caching.push({ name: name, version: component.version, status: 'active' });\n    }\n    \n    if (name.includes('kafka') || name.includes('rabbitmq') || type === 'messaging') {\n      technologies.messaging.push({ name: name, version: component.version, status: 'active' });\n    }\n    \n    if (name.includes('docker') || type === 'container') {\n      technologies.containerization.push({ name: name, version: component.version, status: 'active' });\n    }\n    \n    if (name.includes('grafana') || name.includes('prometheus') || type === 'monitoring') {\n      technologies.monitoring.push({ name: name, version: component.version, status: 'active' });\n    }\n  });\n  \n  return {\n    technology_inventory: technologies,\n    modernization_score: calculateModernizationScore(technologies),\n    outdated_components: identifyOutdatedComponents(architectureData),\n    technology_debt: assessTechnologyDebt(technologies),\n    upgrade_recommendations: generateUpgradeRecommendations(architectureData)\n  };\n}\n\nfunction analyzePerformance(metrics) {\n  // Mock performance analysis - in real implementation, would use actual metrics\n  const performanceMetrics = {\n    response_time: {\n      p50: 120, // ms\n      p95: 450, // ms\n      p99: 800  // ms\n    },\n    throughput: {\n      requests_per_second: 850,\n      peak_rps: 1200,\n      average_rps: 680\n    },\n    resource_utilization: {\n      cpu_usage: 65, // %\n      memory_usage: 72, // %\n      disk_usage: 45  // %\n    },\n    error_rates: {\n      http_4xx: 2.1, // %\n      http_5xx: 0.3, // %\n      total_errors: 2.4 // %\n    }\n  };\n  \n  return {\n    performance_metrics: performanceMetrics,\n    performance_score: calculatePerformanceScore(performanceMetrics),\n    bottlenecks: identifyPerformanceBottlenecks(performanceMetrics),\n    optimization_opportunities: identifyOptimizationOpportunities(performanceMetrics)\n  };\n}\n\nfunction assessSecurity(architectureData) {\n  const securityAssessment = {\n    authentication: { implemented: false, methods: [] },\n    authorization: { implemented: false, rbac: false },\n    encryption: { at_rest: false, in_transit: false },\n    network_security: { firewalls: false, vpn: false, segmentation: false },\n    monitoring: { security_logs: false, intrusion_detection: false },\n    compliance: { standards: [], certifications: [] }\n  };\n  \n  architectureData.forEach(component => {\n    const config = component.configuration || '';\n    const name = component.component_name || '';\n    \n    // Check for security implementations\n    if (config.includes('jwt') || config.includes('oauth')) {\n      securityAssessment.authentication.implemented = true;\n      securityAssessment.authentication.methods.push('JWT/OAuth');\n    }\n    \n    if (config.includes('rbac') || config.includes('role-based')) {\n      securityAssessment.authorization.implemented = true;\n      securityAssessment.authorization.rbac = true;\n    }\n    \n    if (config.includes('ssl') || config.includes('tls') || config.includes('https')) {\n      securityAssessment.encryption.in_transit = true;\n    }\n    \n    if (config.includes('encryption') || config.includes('encrypted')) {\n      securityAssessment.encryption.at_rest = true;\n    }\n    \n    if (name.includes('firewall') || config.includes('firewall')) {\n      securityAssessment.network_security.firewalls = true;\n    }\n  });\n  \n  const securityScore = calculateSecurityScore(securityAssessment);\n  \n  return {\n    security_assessment: securityAssessment,\n    security_score: securityScore,\n    risk_level: securityScore >= 80 ? 'LOW' : securityScore >= 60 ? 'MEDIUM' : 'HIGH',\n    vulnerabilities: identifySecurityVulnerabilities(securityAssessment),\n    compliance_status: assessComplianceStatus(securityAssessment)\n  };\n}\n\nfunction analyzeCostOptimization(architectureData, metrics) {\n  const costAnalysis = {\n    infrastructure_costs: {\n      compute: 2400, // monthly USD\n      storage: 450,\n      networking: 320,\n      monitoring: 180,\n      total: 3350\n    },\n    utilization_efficiency: {\n      cpu: 65,\n      memory: 72,\n      storage: 45\n    },\n    optimization_opportunities: []\n  };\n  \n  // Identify cost optimization opportunities\n  if (costAnalysis.utilization_efficiency.cpu < 50) {\n    costAnalysis.optimization_opportunities.push({\n      type: 'rightsizing',\n      component: 'CPU',\n      potential_savings: 20,\n      recommendation: 'Reducir instancias de CPU por baja utilización'\n    });\n  }\n  \n  if (costAnalysis.utilization_efficiency.storage < 60) {\n    costAnalysis.optimization_opportunities.push({\n      type: 'storage_optimization',\n      component: 'Storage',\n      potential_savings: 15,\n      recommendation: 'Implementar lifecycle policies y compresión'\n    });\n  }\n  \n  architectureData.forEach(component => {\n    if (component.component_type === 'microservice' && \n        !component.scaling_strategy) {\n      costAnalysis.optimization_opportunities.push({\n        type: 'auto_scaling',\n        component: component.component_name,\n        potential_savings: 25,\n        recommendation: 'Implementar auto-scaling para optimizar recursos'\n      });\n    }\n  });\n  \n  const totalPotentialSavings = costAnalysis.optimization_opportunities\n    .reduce((sum, opp) => sum + opp.potential_savings, 0);\n  \n  return {\n    current_costs: costAnalysis.infrastructure_costs,\n    utilization_metrics: costAnalysis.utilization_efficiency,\n    optimization_opportunities: costAnalysis.optimization_opportunities,\n    potential_monthly_savings: totalPotentialSavings,\n    annual_savings_estimate: totalPotentialSavings * 12,\n    roi_payback_period: Math.ceil(5000 / (totalPotentialSavings || 1)) // Assuming 5k optimization investment\n  };\n}\n\nfunction generateTechnologyRoadmap(architectureData) {\n  const roadmap = {\n    immediate: [], // 0-3 months\n    short_term: [], // 3-6 months\n    medium_term: [], // 6-12 months\n    long_term: [] // 12+ months\n  };\n  \n  // Analyze current architecture and suggest improvements\n  const hasModernContainer = architectureData.some(c => c.component_name.includes('kubernetes'));\n  const hasServiceMesh = architectureData.some(c => c.component_name.includes('istio'));\n  const hasObservability = architectureData.some(c => c.component_type === 'monitoring');\n  \n  if (!hasModernContainer) {\n    roadmap.short_term.push({\n      initiative: 'Kubernetes Migration',\n      description: 'Migrar de Docker Compose a Kubernetes para mejor orquestación',\n      impact: 'HIGH',\n      effort: 'MEDIUM',\n      dependencies: ['Container standardization']\n    });\n  }\n  \n  if (!hasServiceMesh) {\n    roadmap.medium_term.push({\n      initiative: 'Service Mesh Implementation',\n      description: 'Implementar Istio para mejor gestión de microservicios',\n      impact: 'MEDIUM',\n      effort: 'HIGH',\n      dependencies: ['Kubernetes Migration']\n    });\n  }\n  \n  roadmap.immediate.push({\n    initiative: 'Performance Monitoring Enhancement',\n    description: 'Mejorar métricas y alertas de performance',\n    impact: 'HIGH',\n    effort: 'LOW',\n    dependencies: []\n  });\n  \n  roadmap.long_term.push({\n    initiative: 'AI/ML Integration',\n    description: 'Integrar capacidades de ML para análisis predictivo',\n    impact: 'HIGH',\n    effort: 'HIGH',\n    dependencies: ['Data Pipeline', 'Performance Optimization']\n  });\n  \n  return roadmap;\n}\n\nfunction generateArchitectureRecommendations(architectureData, metrics) {\n  const recommendations = [];\n  \n  // High Availability Recommendations\n  const hasRedundancy = architectureData.some(c => \n    c.configuration && c.configuration.includes('replica')\n  );\n  \n  if (!hasRedundancy) {\n    recommendations.push({\n      priority: 'HIGH',\n      category: 'availability',\n      title: 'Implementar Alta Disponibilidad',\n      description: 'Sistema carece de redundancia en componentes críticos',\n      actions: [\n        'Configurar réplicas de base de datos PostgreSQL',\n        'Implementar clustering de Redis',\n        'Configurar múltiples instancias de microservicios críticos',\n        'Implementar health checks automáticos'\n      ],\n      expected_impact: 'Reducir downtime a <0.1% anual',\n      estimated_effort: '3-4 semanas',\n      business_value: 'Continuidad operacional crítica'\n    })
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDhP5mSZCJuluU37hPgnFLqJp6y8keEgkXzGi5OanqNZlbWeTFQBgH6KkVpOwBhIqW5%2Bxd%2Bhio9r8FkA5Ug3HQfuIGkt60g%2BZfBtPv9JUydhKf54joVVyL%2FCrMRKQI0Jhp2zHAw2KufBAgmmgQFpFTZt5wo%2FwOBanHhswNpGdGjhv1CsiFqfGfY3LspZ%2FCIBx1xxo2AD9jAZgcRwsHOCttwkNsUPI3welE9VMDtVRdCZlwu4qUeh9cHdI6Rl%2F9qCdUrOsenc7GnCR3NHAYCU2xdsS94bjXa0NZGJ8RAMRJHcfNvzqZvfZla%2BXRSXHRcjkozr5J0Yn7dNSjkDBlZnV%2FkwZAwOx94TaxQQUlxeZNV9EuqA2t6aKTQ33o2Xot44b7bI%2BHLJvW7%2FJp%2F525ZJOMqQHLuJfVAQg1Y4tibdii86lAQT3aEQVKiTk22AturVDUPIhKstq%2F891RLi%2F%2BbKedGjzWnplevHilNasEOxqlkksFsK1qCNXZJqiBYDGWB840w%3D%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDhP5mSZCJuluU37hPgnFLqJp6y8keEgkXzGi5OanqNZlbWeTFQBgH6KkVpOwBhIqW5+xd+hio9r8FkA5Ug3HQfuIGkt60g+ZfBtPv9JUydhKf54joVVyL/CrMRKQI0Jhp2zHAw2KufBAgmmgQFpFTZt5wo/wOBanHhswNpGdGjhv1CsiFqfGfY3LspZ/CIBx1xxo2AD9jAZgcRwsHOCttwkNsUPI3welE9VMDtVRdCZlwu4qUeh9cHdI6Rl/9qCdUrOsenc7GnCR3NHAYCU2xdsS94bjXa0NZGJ8RAMRJHcfNvzqZvfZla+XRSXHRcjkozr5J0Yn7dNSjkDBlZnV/kwZAwOx94TaxQQUlxeZNV9EuqA2t6aKTQ33o2Xot44b7bI+HLJvW7/Jp/525ZJOMqQHLuJfVAQg1Y4tibdii86lAQT3aEQVKiTk22AturVDUPIhKstq/891RLi/+bKedGjzWnplevHilNasEOxqlkksFsK1qCNXZJqiBYDGWB840w==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    

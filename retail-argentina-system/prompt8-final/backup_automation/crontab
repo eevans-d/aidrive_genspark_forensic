@@ -1,0 +1,12 @@
+# Retail Argentina Backup Schedule
+# Daily database backup at 2 AM
+0 2 * * * backup /usr/bin/python3 /app/backup_manager.py database >> /var/log/backup-daily.log 2>&1
+
+# Weekly full backup on Sunday at 1 AM
+0 1 * * 0 backup /usr/bin/python3 /app/backup_manager.py full >> /var/log/backup-weekly.log 2>&1
+
+# Monthly cleanup on 1st day at 3 AM
+0 3 1 * * backup /usr/bin/python3 /app/backup_manager.py cleanup >> /var/log/backup-cleanup.log 2>&1
+
+# Health check every hour
+0 * * * * backup /usr/bin/python3 /app/health_check.py >> /var/log/backup-health.log 2>&1

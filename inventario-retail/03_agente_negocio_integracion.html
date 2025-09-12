@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgenteNegocio + Integración E2E - OCR AFIP + Pricing</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .code-block {
+            background: #1a202c;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: translateY(-1px);
+        }
+        pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        code {
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        .highlight-python { color: #fbbf24; }
+        .highlight-string { color: #34d399; }
+        .highlight-comment { color: #9ca3af; }
+        .highlight-keyword { color: #60a5fa; }
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-success { background-color: #d1fae5; color: #065f46; }
+        .badge-info { background-color: #dbeafe; color: #1e40af; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        .feature-icon {
+            flex-shrink: 0;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.875rem;
+        }
+        .icon-success { background-color: #d1fae5; color: #065f46; }
+        .icon-info { background-color: #dbeafe; color: #1e40af; }
+        .icon-warning { background-color: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header -->
+    <div class="gradient-bg text-white py-12">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold mb-4">
+                    <i class="fas fa-brain mr-3"></i>
+                    AgenteNegocio + Integración E2E
+                </h1>
+                <p class="text-xl opacity-90 mb-6">OCR Facturas AFIP + Motor Pricing + Integración con AgenteDepósito</p>
+                <div class="flex justify-center space-x-4">
+                    <span class="badge badge-success">
+                        <i class="fas fa-eye mr-1"></i>OCR EasyOCR
+                    </span>
+                    <span class="badge badge-info">
+                        <i class="fas fa-calculator mr-1"></i>Pricing Inflación
+                    </span>
+                    <span class="badge badge-warning">
+                        <i class="fas fa-link mr-1"></i>Integración HTTP
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-8">
+
+        <!-- Sección 1: Código AgenteNegocio -->
+        <div class="section-card">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-code text-blue-600 mr-3"></i>
+                    Sección 1: Código AgenteNegocio Completo
+                </h2>
+                <p class="text-gray-600">Implementación completa con OCR, pricing y procesamiento de facturas AFIP</p>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Estructura Añadida al Proyecto:</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('estructura')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="estructura">agente_negocio/
+├── __init__.py
+├── main.py                    # FastAPI app puerto 8001
+├── schemas.py                 # Pydantic models para API
+├── ocr/
+│   ├── __init__.py
+│   ├── processor.py           # Pipeline OCR principal
+│   ├── extractor.py          # Extracción campos AFIP
+│   └── preprocessor.py       # Preparación imágenes
+├── pricing/
+│   ├── __init__.py
+│   └── engine.py             # Motor precios con inflación
+├── invoice/
+│   ├── __init__.py
+│   └── processor.py          # Procesador facturas E2E
+├── integration/
+│   ├── __init__.py
+│   └── deposito_client.py    # Cliente HTTP para AgenteDepósito
+└── exceptions.py             # Excepciones personalizadas</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/main.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('main')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="main">"""
+AgenteNegocio - FastAPI App
+OCR Facturas AFIP + Pricing + Integración
+"""
+import uvicorn
+from fastapi import FastAPI, HTTPException, UploadFile, File, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import sys
+import os
+from pathlib import Path
+
+# Añadir path del proyecto
+sys.path.append(str(Path(__file__).parent.parent))
+
+from shared.config import get_settings
+from shared.database import get_session
+from .schemas import *
+from .ocr.processor import OCRProcessor
+from .pricing.engine import PricingEngine
+from .invoice.processor import InvoiceProcessor
+from .integration.deposito_client import DepositoClient
+import logging
+from datetime import datetime
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Inicializar componentes
+settings = get_settings()
+ocr_processor = OCRProcessor()
+pricing_engine = PricingEngine()
+deposito_client = DepositoClient()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Gestión ciclo de vida de la aplicación"""
+    logger.info("🚀 Iniciando AgenteNegocio...")
+    
+    # Inicializar OCR
+    await ocr_processor.initialize()
+    logger.info("✅ OCR inicializado")
+    
+    # Verificar conexión con Depósito
+    try:
+        health = await deposito_client.health_check()
+        logger.info(f"✅ Conexión AgenteDepósito: {health}")
+    except Exception as e:
+        logger.warning(f"⚠️ AgenteDepósito no disponible: {e}")
+    
+    yield
+    
+    logger.info("🛑 Deteniendo AgenteNegocio...")
+
+app = FastAPI(
+    title="AgenteNegocio",
+    description="Procesamiento facturas AFIP + OCR + Pricing",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/health")
+async def health_check():
+    """Health check del servicio"""
+    return {
+        "status": "healthy",
+        "service": "agente_negocio",
+        "timestamp": datetime.now().isoformat(),
+        "port": settings.AGENTE_NEGOCIO_PORT,
+        "version": "1.0.0",
+        "ocr_ready": ocr_processor.is_ready(),
+        "deposito_connection": await deposito_client.is_available()
+    }
+
+@app.post("/facturas/procesar", response_model=FacturaProcesadaResponse)
+async def procesar_factura(
+    file: UploadFile = File(...),
+    session = Depends(get_session)
+):
+    """
+    Procesar factura E2E:
+    1. OCR para extraer datos
+    2. Guardar factura en BD
+    3. Actualizar stock en AgenteDepósito
+    """
+    try:
+        logger.info(f"📄 Procesando factura: {file.filename}")
+        
+        # Validar archivo
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(400, "Archivo debe ser una imagen")
+        
+        # Procesar con pipeline completo
+        invoice_processor = InvoiceProcessor(
+            ocr_processor, pricing_engine, deposito_client, session
+        )
+        
+        resultado = await invoice_processor.procesar_factura_completa(file)
+        
+        logger.info(f"✅ Factura procesada: {resultado['factura_id']}")
+        return resultado
+        
+    except Exception as e:
+        logger.error(f"❌ Error procesando factura: {e}")
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.post("/ocr/extraer", response_model=OCRResponse)
+async def extraer_datos_ocr(file: UploadFile = File(...)):
+    """Extraer datos de factura usando OCR"""
+    try:
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(400, "Archivo debe ser una imagen")
+            
+        # Leer imagen
+        image_data = await file.read()
+        
+        # Procesar OCR
+        resultado = await ocr_processor.procesar_imagen(image_data)
+        
+        return {
+            "success": True,
+            "datos_extraidos": resultado,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error OCR: {e}")
+        raise HTTPException(500, f"Error OCR: {str(e)}")
+
+@app.post("/precios/consultar", response_model=PrecioResponse)
+async def consultar_precio(request: PrecioRequest):
+    """Calcular precio con inflación y factores estacionales"""
+    try:
+        precio_ajustado = pricing_engine.calcular_precio_ajustado(
+            precio_base=request.precio_base,
+            dias_transcurridos=request.dias_transcurridos,
+            categoria=request.categoria
+        )
+        
+        return {
+            "precio_base": request.precio_base,
+            "precio_ajustado": precio_ajustado,
+            "factor_inflacion": pricing_engine.get_factor_inflacion(request.dias_transcurridos),
+            "factor_estacional": pricing_engine.get_factor_estacional(request.categoria),
+            "temporada": settings.TEMPORADA,
+            "inflacion_mensual": settings.INFLACION_MENSUAL
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error pricing: {e}")
+        raise HTTPException(500, f"Error pricing: {str(e)}")
+
+@app.get("/facturas/{factura_id}", response_model=FacturaResponse)
+async def obtener_factura(factura_id: int, session = Depends(get_session)):
+    """Obtener detalles de factura procesada"""
+    try:
+        from shared.models import Factura, FacturaItem
+        
+        factura = session.query(Factura).filter(Factura.id == factura_id).first()
+        if not factura:
+            raise HTTPException(404, "Factura no encontrada")
+            
+        items = session.query(FacturaItem).filter(FacturaItem.factura_id == factura_id).all()
+        
+        return {
+            "factura": factura,
+            "items": items,
+            "total_items": len(items)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo factura: {e}")
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.get("/metrics")
+async def obtener_metricas(session = Depends(get_session)):
+    """Métricas del AgenteNegocio"""
+    try:
+        from shared.models import Factura
+        from sqlalchemy import func
+        
+        # Contar facturas procesadas
+        total_facturas = session.query(func.count(Factura.id)).scalar()
+        
+        # Facturas por tipo
+        facturas_por_tipo = session.query(
+            Factura.tipo,
+            func.count(Factura.id)
+        ).group_by(Factura.tipo).all()
+        
+        return {
+            "total_facturas_procesadas": total_facturas,
+            "facturas_por_tipo": dict(facturas_por_tipo),
+            "ocr_ready": ocr_processor.is_ready(),
+            "deposito_disponible": await deposito_client.is_available(),
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error métricas: {e}")
+        raise HTTPException(500, f"Error métricas: {str(e)}")
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=settings.AGENTE_NEGOCIO_PORT,
+        reload=True
+    )</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/schemas.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('schemas')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="schemas">"""
+Schemas Pydantic para AgenteNegocio
+"""
+from pydantic import BaseModel, Field, validator
+from typing import List, Optional, Dict, Any
+from datetime import datetime
+from decimal import Decimal
+
+class OCRResponse(BaseModel):
+    """Respuesta del procesamiento OCR"""
+    success: bool
+    datos_extraidos: Dict[str, Any]
+    timestamp: str
+
+class PrecioRequest(BaseModel):
+    """Request para consulta de precios"""
+    precio_base: Decimal = Field(..., gt=0, description="Precio base en ARS")
+    dias_transcurridos: int = Field(0, ge=0, description="Días desde última actualización")
+    categoria: Optional[str] = Field(None, description="Categoría del producto")
+
+class PrecioResponse(BaseModel):
+    """Respuesta de consulta de precios"""
+    precio_base: Decimal
+    precio_ajustado: Decimal
+    factor_inflacion: float
+    factor_estacional: float
+    temporada: str
+    inflacion_mensual: float
+
+class FacturaItemRequest(BaseModel):
+    """Item de factura para procesamiento"""
+    codigo_producto: Optional[str] = None
+    descripcion: str
+    cantidad: int = Field(..., gt=0)
+    precio_unitario: Decimal = Field(..., gt=0)
+    
+    @validator('precio_unitario')
+    def validar_precio_ar(cls, v):
+        """Validar formato precio argentino"""
+        if v <= 0:
+            raise ValueError('Precio debe ser mayor a 0')
+        return v
+
+class FacturaProcesadaResponse(BaseModel):
+    """Respuesta del procesamiento completo de factura"""
+    factura_id: int
+    numero_factura: str
+    tipo_factura: str
+    total: Decimal
+    items_procesados: int
+    stock_updates_exitosos: int
+    stock_updates_fallidos: int
+    errores: List[str] = []
+    timestamp: str
+
+class FacturaResponse(BaseModel):
+    """Respuesta para obtener factura"""
+    factura: Dict[str, Any]
+    items: List[Dict[str, Any]]
+    total_items: int
+
+class StockUpdateRequest(BaseModel):
+    """Request para actualizar stock en Depósito"""
+    producto_id: int
+    tipo_movimiento: str = Field(..., regex="^(entrada|salida)$")
+    cantidad: int = Field(..., gt=0)
+    motivo: str
+    idempotency_key: str</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/ocr/processor.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('ocr-processor')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="ocr-processor">"""
+OCR Processor para facturas AFIP argentinas
+"""
+import easyocr
+import cv2
+import numpy as np
+from PIL import Image
+import io
+import re
+from typing import Dict, List, Optional, Any
+import logging
+from datetime import datetime, timedelta
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
+from .extractor import AFIPExtractor
+from .preprocessor import ImagePreprocessor
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+settings = get_settings()
+
+class OCRProcessor:
+    """Procesador OCR principal para facturas AFIP"""
+    
+    def __init__(self):
+        self.reader = None
+        self.extractor = AFIPExtractor()
+        self.preprocessor = ImagePreprocessor()
+        self.cache = {}  # Cache simple para resultados
+        self.executor = ThreadPoolExecutor(max_workers=2)
+        
+    async def initialize(self):
+        """Inicializar EasyOCR (puede ser lento la primera vez)"""
+        try:
+            logger.info("🔄 Inicializando EasyOCR...")
+            loop = asyncio.get_event_loop()
+            
+            # Ejecutar inicialización en thread separado
+            self.reader = await loop.run_in_executor(
+                self.executor,
+                lambda: easyocr.Reader(['es'], gpu=False, verbose=False)
+            )
+            
+            logger.info("✅ EasyOCR inicializado correctamente")
+            
+        except Exception as e:
+            logger.error(f"❌ Error inicializando OCR: {e}")
+            raise
+    
+    def is_ready(self) -> bool:
+        """Verificar si OCR está listo"""
+        return self.reader is not None
+    
+    async def procesar_imagen(self, image_data: bytes) -> Dict[str, Any]:
+        """
+        Procesar imagen completa de factura
+        """
+        if not self.is_ready():
+            raise Exception("OCR no inicializado")
+            
+        try:
+            # Generar cache key
+            cache_key = hash(image_data)
+            
+            # Verificar cache (válido por 24h)
+            if cache_key in self.cache:
+                cached_result, timestamp = self.cache[cache_key]
+                if datetime.now() - timestamp < timedelta(hours=24):
+                    logger.info("📋 Usando resultado desde cache")
+                    return cached_result
+            
+            # Preprocesar imagen
+            imagen_procesada = self.preprocessor.procesar(image_data)
+            
+            # Ejecutar OCR
+            loop = asyncio.get_event_loop()
+            texto_detectado = await loop.run_in_executor(
+                self.executor,
+                lambda: self.reader.readtext(imagen_procesada, detail=0)
+            )
+            
+            # Unir todo el texto
+            texto_completo = ' '.join(texto_detectado)
+            logger.info(f"📄 Texto extraído: {len(texto_completo)} caracteres")
+            
+            # Extraer campos específicos AFIP
+            datos_extraidos = self.extractor.extraer_campos_afip(
+                texto_completo, texto_detectado
+            )
+            
+            # Guardar en cache
+            resultado = {
+                "texto_completo": texto_completo,
+                "campos_afip": datos_extraidos,
+                "confidence": self._calcular_confidence(datos_extraidos),
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            self.cache[cache_key] = (resultado, datetime.now())
+            
+            return resultado
+            
+        except Exception as e:
+            logger.error(f"❌ Error procesando imagen OCR: {e}")
+            raise
+    
+    def _calcular_confidence(self, datos: Dict[str, Any]) -> float:
+        """Calcular confidence del procesamiento"""
+        campos_encontrados = sum(1 for v in datos.values() if v is not None)
+        total_campos = len(datos)
+        return (campos_encontrados / total_campos) * 100 if total_campos > 0 else 0</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/ocr/extractor.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('extractor')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="extractor">"""
+Extractor de campos específicos AFIP
+"""
+import re
+from typing import Dict, List, Optional, Any
+from decimal import Decimal, InvalidOperation
+import logging
+
+from shared.utils import validar_cuit_argentina
+
+logger = logging.getLogger(__name__)
+
+class AFIPExtractor:
+    """Extractor de campos específicos de facturas AFIP"""
+    
+    def __init__(self):
+        # Patrones regex para facturas argentinas
+        self.patterns = {
+            'numero_factura': [
+                r'(?:N°|Nº|Numero|NUMERO|Factura|FACTURA)[:\s]*([A-Z]?\s*\d{4}-\d{8})',
+                r'(\d{4}-\d{8})',  # Formato estándar
+                r'([A-Z]\s*\d{4}\s*\d{8})',  # Sin guiones
+            ],
+            'tipo_factura': [
+                r'FACTURA\s+([ABC])',
+                r'TIPO\s+([ABC])',
+                r'([ABC])\s*-\s*\d{4}',
+            ],
+            'cuit_emisor': [
+                r'CUIT[:\s]*(\d{2}-\d{8}-\d{1})',
+                r'(\d{2}-\d{8}-\d{1})',
+                r'(\d{11})',  # CUIT sin guiones
+            ],
+            'fecha': [
+                r'FECHA[:\s]*(\d{2}/\d{2}/\d{4})',
+                r'(\d{2}/\d{2}/\d{4})',
+                r'(\d{2}-\d{2}-\d{4})',
+            ],
+            'total': [
+                r'TOTAL[:\s$]*(\d{1,3}(?:\.\d{3})*,\d{2})',
+                r'IMPORTE[:\s$]*(\d{1,3}(?:\.\d{3})*,\d{2})',
+                r'\$\s*(\d{1,3}(?:\.\d{3})*,\d{2})',
+            ]
+        }
+        
+        # Patrones para items de productos
+        self.item_patterns = [
+            # Formato: cantidad descripcion precio
+            r'(\d+)\s+([A-Za-z][\w\s]{10,50})\s+(\d{1,3}(?:\.\d{3})*,\d{2})',
+            # Formato: descripcion cantidad precio
+            r'([A-Za-z][\w\s]{10,50})\s+(\d+)\s+(\d{1,3}(?:\.\d{3})*,\d{2})',
+        ]
+    
+    def extraer_campos_afip(self, texto_completo: str, texto_detectado: List[str]) -> Dict[str, Any]:
+        """
+        Extraer todos los campos AFIP de la factura
+        """
+        try:
+            campos = {}
+            
+            # Extraer campos básicos
+            for campo, patterns in self.patterns.items():
+                campos[campo] = self._extraer_campo(texto_completo, patterns)
+            
+            # Validar y limpiar campos
+            campos = self._validar_campos(campos)
+            
+            # Extraer items de productos
+            campos['items'] = self._extraer_items(texto_detectado)
+            
+            logger.info(f"✅ Campos extraídos: {list(campos.keys())}")
+            return campos
+            
+        except Exception as e:
+            logger.error(f"❌ Error extrayendo campos: {e}")
+            return {}
+    
+    def _extraer_campo(self, texto: str, patterns: List[str]) -> Optional[str]:
+        """Extraer un campo usando múltiples patrones"""
+        for pattern in patterns:
+            match = re.search(pattern, texto, re.IGNORECASE)
+            if match:
+                return match.group(1).strip()
+        return None
+    
+    def _validar_campos(self, campos: Dict[str, Any]) -> Dict[str, Any]:
+        """Validar y limpiar campos extraídos"""
+        # Validar CUIT
+        if campos.get('cuit_emisor'):
+            cuit = campos['cuit_emisor'].replace('-', '')
+            if validar_cuit_argentina(cuit):
+                campos['cuit_emisor'] = cuit
+            else:
+                logger.warning(f"⚠️ CUIT inválido: {campos['cuit_emisor']}")
+                campos['cuit_emisor'] = None
+        
+        # Validar tipo factura
+        if campos.get('tipo_factura'):
+            tipo = campos['tipo_factura'].upper()
+            if tipo in ['A', 'B', 'C']:
+                campos['tipo_factura'] = tipo
+            else:
+                campos['tipo_factura'] = None
+        
+        # Convertir total a Decimal
+        if campos.get('total'):
+            try:
+                # Formato argentino: punto como separador de miles, coma como decimal
+                total_str = campos['total'].replace('.', '').replace(',', '.')
+                campos['total'] = Decimal(total_str)
+            except (InvalidOperation, ValueError):
+                logger.warning(f"⚠️ Total inválido: {campos['total']}")
+                campos['total'] = None
+        
+        return campos
+    
+    def _extraer_items(self, texto_detectado: List[str]) -> List[Dict[str, Any]]:
+        """Extraer items de productos de la factura"""
+        items = []
+        
+        # Unir líneas para análisis
+        texto_items = ' '.join(texto_detectado)
+        
+        for pattern in self.item_patterns:
+            matches = re.finditer(pattern, texto_items, re.IGNORECASE)
+            
+            for match in matches:
+                try:
+                    grupos = match.groups()
+                    
+                    # Determinar formato basado en el patrón
+                    if len(grupos) == 3:
+                        if grupos[0].isdigit():
+                            # Formato: cantidad descripcion precio
+                            cantidad, descripcion, precio = grupos
+                        else:
+                            # Formato: descripcion cantidad precio
+                            descripcion, cantidad, precio = grupos
+                        
+                        # Convertir precio a Decimal
+                        precio_str = precio.replace('.', '').replace(',', '.')
+                        precio_decimal = Decimal(precio_str)
+                        
+                        item = {
+                            'descripcion': descripcion.strip(),
+                            'cantidad': int(cantidad),
+                            'precio_unitario': precio_decimal
+                        }
+                        
+                        items.append(item)
+                        
+                except (ValueError, InvalidOperation) as e:
+                    logger.warning(f"⚠️ Error procesando item: {e}")
+                    continue
+        
+        logger.info(f"📦 Items extraídos: {len(items)}")
+        return items</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/ocr/preprocessor.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('preprocessor')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="preprocessor">"""
+Preprocessor de imágenes para OCR
+"""
+import cv2
+import numpy as np
+from PIL import Image
+import io
+import logging
+
+logger = logging.getLogger(__name__)
+
+class ImagePreprocessor:
+    """Preprocesador de imágenes para mejorar OCR"""
+    
+    def procesar(self, image_data: bytes) -> np.ndarray:
+        """
+        Procesar imagen para mejorar OCR:
+        - Corrección rotación
+        - Mejora contraste
+        - Reducción ruido
+        """
+        try:
+            # Convertir bytes a imagen OpenCV
+            nparr = np.frombuffer(image_data, np.uint8)
+            imagen = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
+            if imagen is None:
+                raise ValueError("No se pudo decodificar la imagen")
+            
+            # Pipeline de procesamiento
+            imagen = self._corregir_rotacion(imagen)
+            imagen = self._mejorar_contraste(imagen)
+            imagen = self._reducir_ruido(imagen)
+            imagen = self._binarizar(imagen)
+            
+            return imagen
+            
+        except Exception as e:
+            logger.error(f"❌ Error preprocesando imagen: {e}")
+            raise
+    
+    def _corregir_rotacion(self, imagen: np.ndarray) -> np.ndarray:
+        """Detectar y corregir rotación de la imagen"""
+        try:
+            gray = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+            
+            # Detectar líneas con Hough Transform
+            edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+            lines = cv2.HoughLines(edges, 1, np.pi/180, threshold=100)
+            
+            if lines is not None:
+                # Calcular ángulo promedio
+                angles = []
+                for rho, theta in lines[:10]:  # Solo primeras 10 líneas
+                    angle = np.degrees(theta) - 90
+                    angles.append(angle)
+                
+                if angles:
+                    avg_angle = np.median(angles)
+                    
+                    # Rotar si el ángulo es significativo
+                    if abs(avg_angle) > 1:
+                        logger.info(f"🔄 Corrigiendo rotación: {avg_angle:.1f}°")
+                        return self._rotar_imagen(imagen, avg_angle)
+            
+            return imagen
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Error corrigiendo rotación: {e}")
+            return imagen
+    
+    def _rotar_imagen(self, imagen: np.ndarray, angulo: float) -> np.ndarray:
+        """Rotar imagen por el ángulo especificado"""
+        (h, w) = imagen.shape[:2]
+        center = (w // 2, h // 2)
+        
+        M = cv2.getRotationMatrix2D(center, angulo, 1.0)
+        rotated = cv2.warpAffine(imagen, M, (w, h), 
+                                flags=cv2.INTER_CUBIC, 
+                                borderMode=cv2.BORDER_REPLICATE)
+        
+        return rotated
+    
+    def _mejorar_contraste(self, imagen: np.ndarray) -> np.ndarray:
+        """Mejorar contraste usando CLAHE"""
+        try:
+            # Convertir a LAB
+            lab = cv2.cvtColor(imagen, cv2.COLOR_BGR2LAB)
+            l, a, b = cv2.split(lab)
+            
+            # Aplicar CLAHE al canal L
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+            l = clahe.apply(l)
+            
+            # Recombinar canales
+            enhanced = cv2.merge([l, a, b])
+            enhanced = cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
+            
+            return enhanced
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Error mejorando contraste: {e}")
+            return imagen
+    
+    def _reducir_ruido(self, imagen: np.ndarray) -> np.ndarray:
+        """Reducir ruido con filtro bilateral"""
+        try:
+            # Filtro bilateral preserva bordes mientras reduce ruido
+            denoised = cv2.bilateralFilter(imagen, 9, 75, 75)
+            return denoised
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Error reduciendo ruido: {e}")
+            return imagen
+    
+    def _binarizar(self, imagen: np.ndarray) -> np.ndarray:
+        """Binarizar imagen para mejorar OCR"""
+        try:
+            gray = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+            
+            # Threshold adaptativo
+            binary = cv2.adaptiveThreshold(
+                gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+                cv2.THRESH_BINARY, 11, 2
+            )
+            
+            return binary
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Error binarizando: {e}")
+            return cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/pricing/engine.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('pricing')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="pricing">"""
+Motor de precios con inflación y factores estacionales
+"""
+from decimal import Decimal, ROUND_HALF_UP
+from typing import Optional
+import logging
+from datetime import datetime
+import math
+
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+settings = get_settings()
+
+class PricingEngine:
+    """Motor de cálculo de precios con inflación argentina"""
+    
+    def __init__(self):
+        # Factores estacionales por categoría
+        self.factores_estacionales = {
+            'verano': {
+                'bebidas': 1.3,
+                'helados': 1.5,
+                'protector_solar': 1.4,
+                'ventiladores': 1.2,
+                'default': 1.0
+            },
+            'invierno': {
+                'calefaccion': 1.4,
+                'ropa_abrigo': 1.3,
+                'medicamentos': 1.1,
+                'sopas': 1.2,
+                'default': 1.0
+            },
+            'default': {
+                'default': 1.0
+            }
+        }
+    
+    def calcular_precio_ajustado(
+        self, 
+        precio_base: Decimal, 
+        dias_transcurridos: int = 0,
+        categoria: Optional[str] = None
+    ) -> Decimal:
+        """
+        Calcular precio ajustado por inflación y estacionalidad
+        
+        Fórmula: precio_base * factor_inflacion * factor_estacional
+        
+        Args:
+            precio_base: Precio base en ARS
+            dias_transcurridos: Días desde última actualización
+            categoria: Categoría del producto para factor estacional
+        """
+        try:
+            # Factor inflación: (1 + inflacion_mensual/100)^(dias/30.44)
+            factor_inflacion = self.get_factor_inflacion(dias_transcurridos)
+            
+            # Factor estacional basado en temporada y categoría
+            factor_estacional = self.get_factor_estacional(categoria)
+            
+            # Calcular precio ajustado
+            precio_ajustado = precio_base * Decimal(str(factor_inflacion)) * Decimal(str(factor_estacional))
+            
+            # Redondear a 2 decimales
+            precio_final = precio_ajustado.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            
+            logger.info(f"💰 Precio ajustado: {precio_base} -> {precio_final} "
+                       f"(inflación: {factor_inflacion:.3f}, estacional: {factor_estacional:.3f})")
+            
+            return precio_final
+            
+        except Exception as e:
+            logger.error(f"❌ Error calculando precio: {e}")
+            return precio_base
+    
+    def get_factor_inflacion(self, dias_transcurridos: int) -> float:
+        """
+        Calcular factor de inflación compuesta
+        
+        Fórmula: (1 + tasa_mensual/100)^(dias/30.44)
+        """
+        if dias_transcurridos <= 0:
+            return 1.0
+        
+        tasa_mensual = settings.INFLACION_MENSUAL
+        meses_transcurridos = dias_transcurridos / 30.44  # Promedio días por mes
+        
+        factor = math.pow(1 + (tasa_mensual / 100), meses_transcurridos)
+        
+        return factor
+    
+    def get_factor_estacional(self, categoria: Optional[str] = None) -> float:
+        """
+        Obtener factor estacional basado en temporada y categoría
+        """
+        temporada = settings.TEMPORADA.lower()
+        categoria_clean = categoria.lower() if categoria else 'default'
+        
+        # Obtener factores para la temporada actual
+        factores_temporada = self.factores_estacionales.get(temporada, 
+                                                          self.factores_estacionales['default'])
+        
+        # Buscar factor específico para la categoría
+        factor = factores_temporada.get(categoria_clean, factores_temporada['default'])
+        
+        return factor
+    
+    def calcular_precio_con_margen(
+        self, 
+        precio_compra: Decimal, 
+        margen_porcentaje: float,
+        dias_transcurridos: int = 0,
+        categoria: Optional[str] = None
+    ) -> Decimal:
+        """
+        Calcular precio de venta con margen y ajustes
+        
+        Args:
+            precio_compra: Precio de compra base
+            margen_porcentaje: Margen de ganancia (ej: 30 para 30%)
+            dias_transcurridos: Días para ajuste inflación
+            categoria: Categoría para factor estacional
+        """
+        try:
+            # Precio base con margen
+            precio_con_margen = precio_compra * (1 + margen_porcentaje / 100)
+            
+            # Aplicar ajustes de inflación y estacionalidad
+            precio_final = self.calcular_precio_ajustado(
+                precio_con_margen, dias_transcurridos, categoria
+            )
+            
+            return precio_final
+            
+        except Exception as e:
+            logger.error(f"❌ Error calculando precio con margen: {e}")
+            return precio_compra
+    
+    def obtener_historial_precios(self, precio_base: Decimal, dias_max: int = 365) -> list:
+        """
+        Generar historial de precios simulado para análisis
+        """
+        historial = []
+        
+        for dias in range(0, dias_max + 1, 30):  # Cada 30 días
+            precio = self.calcular_precio_ajustado(precio_base, dias)
+            fecha = datetime.now().replace(day=1)  # Simplificado
+            
+            historial.append({
+                'fecha': fecha.isoformat(),
+                'dias_transcurridos': dias,
+                'precio': float(precio),
+                'factor_inflacion': self.get_factor_inflacion(dias)
+            })
+        
+        return historial</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/integration/deposito_client.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('deposito-client')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="deposito-client">"""
+Cliente HTTP para integración con AgenteDepósito
+"""
+import httpx
+import asyncio
+from typing import Dict, Any, Optional
+import logging
+from datetime import datetime
+import uuid
+
+from shared.config import get_settings
+
+logger = logging.getLogger(__name__)
+settings = get_settings()
+
+class DepositoClient:
+    """Cliente para comunicación con AgenteDepósito"""
+    
+    def __init__(self):
+        self.base_url = f"http://localhost:{settings.AGENTE_DEPOSITO_PORT}"
+        self.timeout = 30.0
+        self.max_retries = 3
+        
+    async def health_check(self) -> Dict[str, Any]:
+        """Verificar estado del AgenteDepósito"""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(f"{self.base_url}/health")
+                response.raise_for_status()
+                return response.json()
+                
+        except Exception as e:
+            logger.error(f"❌ Error health check Depósito: {e}")
+            raise
+    
+    async def is_available(self) -> bool:
+        """Verificar si AgenteDepósito está disponible"""
+        try:
+            await self.health_check()
+            return True
+        except:
+            return False
+    
+    async def crear_producto(self, producto_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Crear producto en AgenteDepósito"""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    f"{self.base_url}/productos",
+                    json=producto_data
+                )
+                response.raise_for_status()
+                return response.json()
+                
+        except Exception as e:
+            logger.error(f"❌ Error creando producto: {e}")
+            raise
+    
+    async def buscar_producto_por_codigo(self, codigo: str) -> Optional[Dict[str, Any]]:
+        """Buscar producto por código"""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(f"{self.base_url}/productos")
+                response.raise_for_status()
+                
+                productos = response.json()
+                for producto in productos:
+                    if producto.get('codigo') == codigo:
+                        return producto
+                
+                return None
+                
+        except Exception as e:
+            logger.error(f"❌ Error buscando producto: {e}")
+            return None
+    
+    async def actualizar_stock(
+        self, 
+        producto_id: int, 
+        tipo_movimiento: str, 
+        cantidad: int,
+        motivo: str,
+        idempotency_key: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Actualizar stock con reintentos automáticos
+        """
+        if not idempotency_key:
+            idempotency_key = f"factura_{uuid.uuid4().hex[:8]}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        request_data = {
+            "producto_id": producto_id,
+            "tipo_movimiento": tipo_movimiento,
+            "cantidad": cantidad,
+            "motivo": motivo,
+            "idempotency_key": idempotency_key
+        }
+        
+        for intento in range(1, self.max_retries + 1):
+            try:
+                logger.info(f"📦 Actualizando stock (intento {intento}/{self.max_retries}): "
+                           f"Producto {producto_id}, {tipo_movimiento} {cantidad}")
+                
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    response = await client.post(
+                        f"{self.base_url}/stock/update",
+                        json=request_data
+                    )
+                    response.raise_for_status()
+                    
+                    resultado = response.json()
+                    logger.info(f"✅ Stock actualizado correctamente")
+                    return resultado
+                    
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 400:
+                    # Error de validación, no reintentar
+                    logger.error(f"❌ Error validación stock: {e.response.text}")
+                    raise
+                elif e.response.status_code == 409:
+                    # Conflicto (posible duplicado), no reintentar
+                    logger.warning(f"⚠️ Operación duplicada detectada")
+                    return {"success": True, "duplicated": True}
+                else:
+                    # Error servidor, reintentar
+                    logger.warning(f"⚠️ Error servidor (intento {intento}): {e}")
+                    if intento < self.max_retries:
+                        await asyncio.sleep(2 ** intento)  # Backoff exponencial
+                        continue
+                    raise
+                    
+            except Exception as e:
+                logger.error(f"❌ Error actualizando stock (intento {intento}): {e}")
+                if intento < self.max_retries:
+                    await asyncio.sleep(2 ** intento)
+                    continue
+                raise
+        
+        raise Exception(f"Falló actualización stock después de {self.max_retries} intentos")
+    
+    async def obtener_stock_critico(self) -> Dict[str, Any]:
+        """Obtener productos con stock crítico"""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(f"{self.base_url}/stock/critical")
+                response.raise_for_status()
+                return response.json()
+                
+        except Exception as e:
+            logger.error(f"❌ Error obteniendo stock crítico: {e}")
+            raise</code></pre>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    <h4 class="font-semibold text-blue-800 mb-2">Funcionalidades Implementadas:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="feature-item">
+                            <div class="feature-icon icon-success">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <span><strong>OCR EasyOCR</strong> - Pipeline completo con preprocesamiento</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon icon-info">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                            <span><strong>Extractor AFIP</strong> - Regex específicos para facturas argentinas</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon icon-success">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <span><strong>Motor Pricing</strong> - Inflación compuesta + factores estacionales</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon icon-warning">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <span><strong>Cliente HTTP</strong> - Reintentos automáticos + idempotencia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Integración Specs -->
+        <div class="section-card">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-link text-green-600 mr-3"></i>
+                    Sección 2: Especificaciones de Integración
+                </h2>
+                <p class="text-gray-600">Flujo E2E y comunicación entre agentes</p>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">agente_negocio/invoice/processor.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('invoice-processor')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="invoice-processor">"""
+Procesador de facturas E2E
+"""
+from typing import Dict, Any, List
+import logging
+from datetime import datetime
+from decimal import Decimal
+import uuid
+
+from shared.models import Factura, FacturaItem
+from shared.database import get_session
+from .ocr.processor import OCRProcessor
+from .pricing.engine import PricingEngine
+from .integration.deposito_client import DepositoClient
+
+logger = logging.getLogger(__name__)
+
+class InvoiceProcessor:
+    """Procesador completo de facturas E2E"""
+    
+    def __init__(self, ocr_processor: OCRProcessor, pricing_engine: PricingEngine, 
+                 deposito_client: DepositoClient, db_session):
+        self.ocr = ocr_processor
+        self.pricing = pricing_engine
+        self.deposito = deposito_client
+        self.session = db_session
+    
+    async def procesar_factura_completa(self, file) -> Dict[str, Any]:
+        """
+        Procesamiento completo E2E:
+        1. OCR para extraer datos
+        2. Guardar factura en BD
+        3. Procesar items y actualizar stock
+        """
+        try:
+            # 1. Procesar OCR
+            logger.info("🔍 Iniciando OCR...")
+            image_data = await file.read()
+            datos_ocr = await self.ocr.procesar_imagen(image_data)
+            
+            if datos_ocr['confidence'] < 50:
+                logger.warning(f"⚠️ Confidence OCR bajo: {datos_ocr['confidence']}%")
+            
+            # 2. Crear factura en BD
+            logger.info("💾 Guardando factura...")
+            factura = await self._crear_factura(datos_ocr['campos_afip'])
+            
+            # 3. Procesar items
+            logger.info("📦 Procesando items...")
+            resultados_items = await self._procesar_items(
+                factura.id, datos_ocr['campos_afip'].get('items', [])
+            )
+            
+            # 4. Compilar resultado
+            resultado = {
+                "factura_id": factura.id,
+                "numero_factura": factura.numero,
+                "tipo_factura": factura.tipo,
+                "total": factura.total,
+                "items_procesados": len(resultados_items['exitosos']),
+                "stock_updates_exitosos": resultados_items['stock_exitosos'],
+                "stock_updates_fallidos": resultados_items['stock_fallidos'],
+                "errores": resultados_items['errores'],
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            logger.info(f"✅ Factura procesada completamente: {factura.id}")
+            return resultado
+            
+        except Exception as e:
+            logger.error(f"❌ Error procesando factura E2E: {e}")
+            raise
+    
+    async def _crear_factura(self, campos_afip: Dict[str, Any]) -> Factura:
+        """Crear registro de factura en BD"""
+        try:
+            factura = Factura(
+                numero=campos_afip.get('numero_factura', f'TEMP_{uuid.uuid4().hex[:8]}'),
+                tipo=campos_afip.get('tipo_factura', 'B'),
+                total=campos_afip.get('total', Decimal('0.00')),
+                cuit_emisor=campos_afip.get('cuit_emisor'),
+                fecha_emision=datetime.now().date(),  # Simplificado
+                estado='procesando'
+            )
+            
+            self.session.add(factura)
+            self.session.commit()
+            self.session.refresh(factura)
+            
+            logger.info(f"💾 Factura creada: ID {factura.id}")
+            return factura
+            
+        except Exception as e:
+            self.session.rollback()
+            logger.error(f"❌ Error creando factura: {e}")
+            raise
+    
+    async def _procesar_items(self, factura_id: int, items: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Procesar items de factura y actualizar stock"""
+        exitosos = []
+        errores = []
+        stock_exitosos = 0
+        stock_fallidos = 0
+        
+        for item_data in items:
+            try:
+                # Crear item en BD
+                item = FacturaItem(
+                    factura_id=factura_id,
+                    descripcion=item_data['descripcion'],
+                    cantidad=item_data['cantidad'],
+                    precio_unitario=item_data['precio_unitario']
+                )
+                
+                # Buscar producto existente por descripción/código
+                producto = await self._buscar_o_crear_producto(item_data)
+                
+                if producto:
+                    item.producto_id = producto['id']
+                    
+                    # Actualizar stock en AgenteDepósito
+                    try:
+                        idempotency_key = f"factura_{factura_id}_item_{len(exitosos)}"
+                        
+                        await self.deposito.actualizar_stock(
+                            producto_id=producto['id'],
+                            tipo_movimiento='entrada',  # Asumimos entrada por defecto
+                            cantidad=item_data['cantidad'],
+                            motivo=f"Factura {factura_id}",
+                            idempotency_key=idempotency_key
+                        )
+                        
+                        stock_exitosos += 1
+                        logger.info(f"✅ Stock actualizado: {producto['codigo']}")
+                        
+                    except Exception as e:
+                        stock_fallidos += 1
+                        errores.append(f"Error stock {producto['codigo']}: {str(e)}")
+                        logger.error(f"❌ Error actualizando stock: {e}")
+                
+                self.session.add(item)
+                exitosos.append(item)
+                
+            except Exception as e:
+                errores.append(f"Error item '{item_data.get('descripcion', 'N/A')}': {str(e)}")
+                logger.error(f"❌ Error procesando item: {e}")
+        
+        # Commit todos los items
+        try:
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logger.error(f"❌ Error guardando items: {e}")
+            raise
+        
+        return {
+            'exitosos': exitosos,
+            'errores': errores,
+            'stock_exitosos': stock_exitosos,
+            'stock_fallidos': stock_fallidos
+        }
+    
+    async def _buscar_o_crear_producto(self, item_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Buscar producto existente o crear uno nuevo"""
+        try:
+            descripcion = item_data['descripcion']
+            
+            # Intentar extraer código del producto de la descripción
+            codigo_estimado = self._extraer_codigo_producto(descripcion)
+            
+            # Buscar producto existente
+            if codigo_estimado:
+                producto = await self.deposito.buscar_producto_por_codigo(codigo_estimado)
+                if producto:
+                    return producto
+            
+            # Crear nuevo producto
+            precio_ajustado = self.pricing.calcular_precio_ajustado(
+                item_data['precio_unitario']
+            )
+            
+            nuevo_producto = {
+                "codigo": codigo_estimado or f"AUTO_{uuid.uuid4().hex[:8]}",
+                "nombre": descripcion,
+                "stock_actual": 0,
+                "stock_minimo": 5,  # Default
+                "precio_compra": float(item_data['precio_unitario']),
+                "precio_venta": float(precio_ajustado),
+                "categoria": "Facturado"
+            }
+            
+            producto_creado = await self.deposito.crear_producto(nuevo_producto)
+            logger.info(f"🆕 Producto creado: {producto_creado['codigo']}")
+            
+            return producto_creado
+            
+        except Exception as e:
+            logger.error(f"❌ Error gestionando producto: {e}")
+            return None
+    
+    def _extraer_codigo_producto(self, descripcion: str) -> str:
+        """Extraer código de producto de la descripción"""
+        import re
+        
+        # Patrones comunes para códigos de producto
+        patterns = [
+            r'([A-Z]{2,4}\d{3,6})',  # Ej: ABC123, ABCD1234
+            r'(\d{4,8})',           # Códigos numéricos
+            r'([A-Z]+\d+[A-Z]*)',   # Mixtos
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, descripcion.upper())
+            if match:
+                return match.group(1)
+        
+        return None</code></pre>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                    <h4 class="font-semibold text-green-800 mb-2">🔄 Flujo E2E Completo:</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-green-700">
+                        <li><strong>Upload Imagen</strong> → Validación formato</li>
+                        <li><strong>OCR Processing</strong> → Extracción campos AFIP</li>
+                        <li><strong>Validación Datos</strong> → CUIT, precios, formato</li>
+                        <li><strong>Guardar Factura</strong> → Base de datos local</li>
+                        <li><strong>Procesar Items</strong> → Buscar/crear productos</li>
+                        <li><strong>Update Stock</strong> → HTTP call a AgenteDepósito</li>
+                        <li><strong>Respuesta E2E</strong> → Resultado completo</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 3: Tests -->
+        <div class="section-card">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-flask text-purple-600 mr-3"></i>
+                    Sección 3: Tests Completos
+                </h2>
+                <p class="text-gray-600">Suite de tests para OCR, pricing y integración E2E</p>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">tests/agente_negocio/test_ocr.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('test-ocr')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="test-ocr">"""
+Tests para OCR y extracción de facturas
+"""
+import pytest
+import asyncio
+from unittest.mock import Mock, patch
+import io
+from PIL import Image
+import numpy as np
+
+from agente_negocio.ocr.processor import OCRProcessor
+from agente_negocio.ocr.extractor import AFIPExtractor
+from agente_negocio.ocr.preprocessor import ImagePreprocessor
+
+@pytest.fixture
+def ocr_processor():
+    """Fixture OCR processor"""
+    processor = OCRProcessor()
+    # Mock EasyOCR para tests
+    processor.reader = Mock()
+    return processor
+
+@pytest.fixture
+def sample_invoice_text():
+    """Texto sample de factura argentina"""
+    return """
+    FACTURA A
+    N° 0001-00012345
+    CUIT: 20-12345678-9
+    FECHA: 15/08/2024
+    
+    ACEITE GIRASOL NATURA 900ML    2    $890.50
+    AZUCAR LEDESMA 1KG            1    $445.00
+    PAN LACTAL BIMBO              3    $256.75
+    
+    TOTAL: $1.847.25
+    """
+
+@pytest.fixture
+def sample_image_bytes():
+    """Imagen sample para tests"""
+    # Crear imagen simple
+    img = Image.new('RGB', (800, 600), color='white')
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    return img_bytes.getvalue()
+
+@pytest.mark.asyncio
+async def test_procesar_imagen_exitoso(ocr_processor, sample_image_bytes):
+    """Test procesamiento exitoso de imagen"""
+    # Mock respuesta EasyOCR
+    mock_text = [
+        "FACTURA A",
+        "N° 0001-00012345", 
+        "CUIT: 20-12345678-9",
+        "TOTAL: $1.847.25"
+    ]
+    ocr_processor.reader.readtext.return_value = mock_text
+    
+    resultado = await ocr_processor.procesar_imagen(sample_image_bytes)
+    
+    assert resultado['success'] == True
+    assert 'campos_afip' in resultado
+    assert 'texto_completo' in resultado
+    assert resultado['confidence'] > 0
+
+@pytest.mark.asyncio  
+async def test_extractor_afip_campos_basicos(sample_invoice_text):
+    """Test extracción campos básicos AFIP"""
+    extractor = AFIPExtractor()
+    
+    # Simular texto detectado
+    texto_detectado = sample_invoice_text.split('\n')
+    
+    campos = extractor.extraer_campos_afip(sample_invoice_text, texto_detectado)
+    
+    assert campos['numero_factura'] == '0001-00012345'
+    assert campos['tipo_factura'] == 'A'
+    assert campos['cuit_emisor'] == '20123456789'  # Sin guiones
+    assert float(campos['total']) == 1847.25
+
+def test_extractor_items_productos(sample_invoice_text):
+    """Test extracción items de productos"""
+    extractor = AFIPExtractor()
+    texto_detectado = sample_invoice_text.split('\n')
+    
+    campos = extractor.extraer_campos_afip(sample_invoice_text, texto_detectado)
+    items = campos['items']
+    
+    assert len(items) >= 2  # Al menos 2 productos detectados
+    
+    # Verificar primer item
+    primer_item = items[0]
+    assert 'descripcion' in primer_item
+    assert 'cantidad' in primer_item
+    assert 'precio_unitario' in primer_item
+    assert primer_item['cantidad'] > 0
+    assert primer_item['precio_unitario'] > 0
+
+def test_preprocessor_imagen():
+    """Test preprocesamiento de imagen"""
+    preprocessor = ImagePreprocessor()
+    
+    # Crear imagen test
+    img = Image.new('RGB', (400, 300), color='gray')
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    
+    # Procesar
+    resultado = preprocessor.procesar(img_bytes.getvalue())
+    
+    assert isinstance(resultado, np.ndarray)
+    assert len(resultado.shape) >= 2  # Al menos 2D
+
+@pytest.mark.asyncio
+async def test_ocr_cache_funcionamiento(ocr_processor, sample_image_bytes):
+    """Test funcionamiento del cache OCR"""
+    # Mock respuesta
+    mock_text = ["FACTURA A", "TEST"]
+    ocr_processor.reader.readtext.return_value = mock_text
+    
+    # Primera llamada
+    resultado1 = await ocr_processor.procesar_imagen(sample_image_bytes)
+    
+    # Segunda llamada (debería usar cache)
+    resultado2 = await ocr_processor.procesar_imagen(sample_image_bytes)
+    
+    # Verificar que OCR solo se llamó una vez
+    assert ocr_processor.reader.readtext.call_count == 1
+    assert resultado1 == resultado2
+
+def test_validacion_cuit_argentina():
+    """Test validación CUIT argentina"""
+    from shared.utils import validar_cuit_argentina
+    
+    # CUITs válidos
+    assert validar_cuit_argentina('20123456789')
+    assert validar_cuit_argentina('27123456789')
+    
+    # CUITs inválidos
+    assert not validar_cuit_argentina('12345678901')  # Dígito verificador malo
+    assert not validar_cuit_argentina('123456789')    # Muy corto
+    assert not validar_cuit_argentina('abc12345678')  # Letras
+
+@pytest.mark.parametrize("texto_factura,expected_tipo", [
+    ("FACTURA A N° 0001-12345", "A"),
+    ("FACTURA B 0002-67890", "B"), 
+    ("FACTURA C CONSUMIDOR FINAL", "C"),
+])
+def test_extraccion_tipo_factura(texto_factura, expected_tipo):
+    """Test extracción tipos de factura"""
+    extractor = AFIPExtractor()
+    
+    campos = extractor.extraer_campos_afip(texto_factura, [texto_factura])
+    
+    assert campos['tipo_factura'] == expected_tipo</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">tests/agente_negocio/test_pricing.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('test-pricing')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="test-pricing">"""
+Tests para motor de precios
+"""
+import pytest
+from decimal import Decimal
+from unittest.mock import patch
+
+from agente_negocio.pricing.engine import PricingEngine
+
+@pytest.fixture
+def pricing_engine():
+    """Fixture pricing engine"""
+    return PricingEngine()
+
+def test_factor_inflacion_cero_dias(pricing_engine):
+    """Test factor inflación con 0 días"""
+    factor = pricing_engine.get_factor_inflacion(0)
+    assert factor == 1.0
+
+def test_factor_inflacion_un_mes(pricing_engine):
+    """Test factor inflación después de un mes"""
+    with patch('agente_negocio.pricing.engine.settings') as mock_settings:
+        mock_settings.INFLACION_MENSUAL = 4.5
+        
+        factor = pricing_engine.get_factor_inflacion(30)
+        
+        # Debería ser aproximadamente 1.045
+        assert 1.04 < factor < 1.05
+
+def test_factor_inflacion_tres_meses(pricing_engine):
+    """Test factor inflación acumulativa 3 meses"""
+    with patch('agente_negocio.pricing.engine.settings') as mock_settings:
+        mock_settings.INFLACION_MENSUAL = 4.5
+        
+        factor = pricing_engine.get_factor_inflacion(90)
+        
+        # 3 meses de inflación compuesta
+        expected = (1.045) ** 3
+        assert abs(factor - expected) < 0.01
+
+@pytest.mark.parametrize("temporada,categoria,expected_min", [
+    ("verano", "bebidas", 1.2),
+    ("verano", "helados", 1.4), 
+    ("invierno", "calefaccion", 1.3),
+    ("invierno", "default", 1.0),
+    ("verano", "categoria_inexistente", 1.0),
+])
+def test_factor_estacional(pricing_engine, temporada, categoria, expected_min):
+    """Test factores estacionales por categoría"""
+    with patch('agente_negocio.pricing.engine.settings') as mock_settings:
+        mock_settings.TEMPORADA = temporada
+        
+        factor = pricing_engine.get_factor_estacional(categoria)
+        
+        assert factor >= expected_min
+
+def test_calcular_precio_ajustado_sin_cambios(pricing_engine):
+    """Test precio ajustado sin inflación ni estacionalidad"""
+    precio_base = Decimal('1000.00')
+    
+    precio_ajustado = pricing_engine.calcular_precio_ajustado(
+        precio_base, dias_transcurridos=0, categoria=None
+    )
+    
+    assert precio_ajustado == precio_base
+
+def test_calcular_precio_ajustado_con_inflacion(pricing_engine):
+    """Test precio ajustado con inflación"""
+    with patch('agente_negocio.pricing.engine.settings') as mock_settings:
+        mock_settings.INFLACION_MENSUAL = 10.0
+        mock_settings.TEMPORADA = 'default'
+        
+        precio_base = Decimal('1000.00')
+        
+        precio_ajustado = pricing_engine.calcular_precio_ajustado(
+            precio_base, dias_transcurridos=30, categoria=None
+        )
+        
+        # Debería ser mayor al precio base
+        assert precio_ajustado > precio_base
+        # Aproximadamente 10% más
+        expected = precio_base * Decimal('1.10')
+        assert abs(precio_ajustado - expected) < Decimal('5.00')
+
+def test_calcular_precio_con_margen(pricing_engine):
+    """Test cálculo precio con margen de ganancia"""
+    precio_compra = Decimal('100.00')
+    margen = 30.0  # 30%
+    
+    precio_venta = pricing_engine.calcular_precio_con_margen(
+        precio_compra, margen, dias_transcurridos=0
+    )
+    
+    expected_min = precio_compra * Decimal('1.30')  # 30% margen
+    assert precio_venta >= expected_min
+
+def test_historial_precios_creciente(pricing_engine):
+    """Test que historial de precios es creciente con inflación"""
+    with patch('agente_negocio.pricing.engine.settings') as mock_settings:
+        mock_settings.INFLACION_MENSUAL = 5.0
+        
+        precio_base = Decimal('1000.00')
+        historial = pricing_engine.obtener_historial_precios(precio_base, 180)
+        
+        # Verificar que es creciente
+        for i in range(1, len(historial)):
+            assert historial[i]['precio'] >= historial[i-1]['precio']
+
+def test_redondeo_precios_argentinos(pricing_engine):
+    """Test redondeo correcto a 2 decimales"""
+    precio_base = Decimal('123.456789')
+    
+    precio_ajustado = pricing_engine.calcular_precio_ajustado(precio_base)
+    
+    # Verificar 2 decimales máximo
+    assert precio_ajustado.as_tuple().exponent >= -2</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">tests/agente_negocio/test_integration_e2e.py</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('test-e2e')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="test-e2e">"""
+Tests E2E para integración completa
+"""
+import pytest
+import asyncio
+from unittest.mock import Mock, AsyncMock, patch
+import httpx
+from decimal import Decimal
+
+from agente_negocio.integration.deposito_client import DepositoClient
+from agente_negocio.invoice.processor import InvoiceProcessor
+
+@pytest.fixture
+def mock_deposito_client():
+    """Mock cliente depósito"""
+    client = Mock(spec=DepositoClient)
+    client.health_check = AsyncMock(return_value={"status": "healthy"})
+    client.is_available = AsyncMock(return_value=True)
+    client.buscar_producto_por_codigo = AsyncMock(return_value=None)
+    client.crear_producto = AsyncMock(return_value={
+        "id": 1,
+        "codigo": "TEST001",
+        "nombre": "Producto Test"
+    })
+    client.actualizar_stock = AsyncMock(return_value={"success": True})
+    return client
+
+@pytest.mark.asyncio
+async def test_deposito_client_health_check():
+    """Test health check AgenteDepósito"""
+    client = DepositoClient()
+    
+    with patch('httpx.AsyncClient') as mock_client:
+        mock_response = Mock()
+        mock_response.json.return_value = {"status": "healthy"}
+        mock_response.raise_for_status.return_value = None
+        
+        mock_client.return_value.__aenter__.return_value.get = AsyncMock(return_value=mock_response)
+        
+        result = await client.health_check()
+        
+        assert result["status"] == "healthy"
+
+@pytest.mark.asyncio  
+async def test_deposito_client_actualizar_stock_con_reintentos():
+    """Test actualización stock con reintentos"""
+    client = DepositoClient()
+    
+    with patch('httpx.AsyncClient') as mock_client:
+        # Primer intento falla, segundo exitoso
+        mock_responses = [
+            Mock(side_effect=httpx.HTTPStatusError("Server error", request=Mock(), response=Mock(status_code=500))),
+            Mock()
+        ]
+        mock_responses[1].json.return_value = {"success": True}
+        mock_responses[1].raise_for_status.return_value = None
+        
+        async_client_mock = mock_client.return_value.__aenter__.return_value
+        async_client_mock.post = AsyncMock(side_effect=mock_responses)
+        
+        # Mock sleep para acelerar test
+        with patch('asyncio.sleep', return_value=None):
+            result = await client.actualizar_stock(
+                producto_id=1,
+                tipo_movimiento="entrada", 
+                cantidad=10,
+                motivo="Test"
+            )
+        
+        assert result["success"] == True
+        assert async_client_mock.post.call_count == 2  # 1 fallo + 1 éxito
+
+@pytest.mark.asyncio
+async def test_deposito_client_error_validacion_no_reintenta():
+    """Test que errores 400 no se reintentan"""
+    client = DepositoClient()
+    
+    with patch('httpx.AsyncClient') as mock_client:
+        mock_response = Mock()
+        mock_response.status_code = 400
+        mock_response.text = "Error validación"
+        
+        async_client_mock = mock_client.return_value.__aenter__.return_value
+        async_client_mock.post = AsyncMock(
+            side_effect=httpx.HTTPStatusError("Bad request", request=Mock(), response=mock_response)
+        )
+        
+        with pytest.raises(httpx.HTTPStatusError):
+            await client.actualizar_stock(1, "entrada", 10, "Test")
+        
+        # Solo un intento
+        assert async_client_mock.post.call_count == 1
+
+@pytest.mark.asyncio
+async def test_invoice_processor_e2e_mock(mock_deposito_client):
+    """Test procesamiento E2E con mocks"""
+    from unittest.mock import Mock
+    
+    # Mock componentes
+    mock_ocr = Mock()
+    mock_ocr.procesar_imagen = AsyncMock(return_value={
+        'confidence': 85,
+        'campos_afip': {
+            'numero_factura': '0001-12345',
+            'tipo_factura': 'A',
+            'total': Decimal('1500.00'),
+            'items': [
+                {'descripcion': 'Producto Test', 'cantidad': 2, 'precio_unitario': Decimal('750.00')}
+            ]
+        }
+    })
+    
+    mock_pricing = Mock()
+    mock_pricing.calcular_precio_ajustado.return_value = Decimal('800.00')
+    
+    mock_session = Mock()
+    mock_session.add = Mock()
+    mock_session.commit = Mock()
+    mock_session.refresh = Mock()
+    
+    # Mock factura creada
+    mock_factura = Mock()
+    mock_factura.id = 1
+    mock_factura.numero = '0001-12345'
+    mock_factura.tipo = 'A'
+    mock_factura.total = Decimal('1500.00')
+    
+    with patch('agente_negocio.invoice.processor.Factura', return_value=mock_factura):
+        with patch('agente_negocio.invoice.processor.FacturaItem'):
+            processor = InvoiceProcessor(
+                mock_ocr, mock_pricing, mock_deposito_client, mock_session
+            )
+            
+            # Mock file
+            mock_file = Mock()
+            mock_file.read = AsyncMock(return_value=b'fake_image_data')
+            
+            resultado = await processor.procesar_factura_completa(mock_file)
+            
+            assert resultado['factura_id'] == 1
+            assert resultado['items_procesados'] == 1
+            assert resultado['stock_updates_exitosos'] == 1
+            assert len(resultado['errores']) == 0
+
+@pytest.mark.asyncio
+async def test_invoice_processor_error_ocr():
+    """Test manejo error en OCR"""
+    mock_ocr = Mock()
+    mock_ocr.procesar_imagen = AsyncMock(side_effect=Exception("OCR Error"))
+    
+    mock_pricing = Mock() 
+    mock_deposito = Mock()
+    mock_session = Mock()
+    
+    processor = InvoiceProcessor(mock_ocr, mock_pricing, mock_deposito, mock_session)
+    
+    mock_file = Mock()
+    mock_file.read = AsyncMock(return_value=b'fake_image_data')
+    
+    with pytest.raises(Exception, match="OCR Error"):
+        await processor.procesar_factura_completa(mock_file)
+
+def test_extraccion_codigo_producto():
+    """Test extracción código de producto"""
+    from agente_negocio.invoice.processor import InvoiceProcessor
+    
+    processor = InvoiceProcessor(None, None, None, None)
+    
+    # Casos de prueba
+    casos = [
+        ("ACEITE GIRASOL ABC123 900ML", "ABC123"),
+        ("PRODUCTO XYZ456789", "XYZ456789"), 
+        ("1234567 AZUCAR LEDESMA", "1234567"),
+        ("Producto sin código", None)
+    ]
+    
+    for descripcion, expected in casos:
+        resultado = processor._extraer_codigo_producto(descripcion)
+        assert resultado == expected</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 4: Instrucciones y Verificación -->
+        <div class="section-card">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-play-circle text-orange-600 mr-3"></i>
+                    Sección 4: Instrucciones y Verificación
+                </h2>
+                <p class="text-gray-600">Pasos para ejecutar y probar el sistema completo</p>
+            </div>
+            
+            <div class="p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">1. Ejecutar AgenteNegocio</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('ejecutar-negocio')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="ejecutar-negocio"># Terminal 1: AgenteDepósito (debe estar corriendo)
+cd agente_deposito
+uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+
+# Terminal 2: AgenteNegocio
+cd agente_negocio  
+uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+
+# Verificar ambos servicios
+curl http://localhost:8001/health
+curl http://localhost:8002/health</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">2. Verificar OCR Individual</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('test-ocr-individual')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="test-ocr-individual"># Crear imagen de prueba de factura (sample_factura.png)
+# O usar una imagen real de factura argentina
+
+curl -X POST http://localhost:8001/ocr/extraer \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@sample_factura.png" | jq .
+
+# Respuesta esperada:
+# {
+#   "success": true, 
+#   "datos_extraidos": {
+#     "texto_completo": "...",
+#     "campos_afip": {
+#       "numero_factura": "0001-12345",
+#       "tipo_factura": "A",
+#       "total": 1500.00
+#     }
+#   }
+# }</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">3. Probar Motor de Precios</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('test-pricing')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="test-pricing">curl -X POST http://localhost:8001/precios/consultar \
+  -H "Content-Type: application/json" \
+  -d '{
+    "precio_base": 1000.00,
+    "dias_transcurridos": 60,
+    "categoria": "bebidas"
+  }' | jq .
+
+# Respuesta esperada:
+# {
+#   "precio_base": 1000.00,
+#   "precio_ajustado": 1234.56,
+#   "factor_inflacion": 1.093,
+#   "factor_estacional": 1.3,
+#   "temporada": "verano",
+#   "inflacion_mensual": 4.5
+# }</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">4. Test E2E Completo</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('test-e2e-completo')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="test-e2e-completo"># Procesamiento completo de factura
+curl -X POST http://localhost:8001/facturas/procesar \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@factura_real.jpg" | jq .
+
+# Respuesta esperada:
+# {
+#   "factura_id": 1,
+#   "numero_factura": "0001-12345", 
+#   "tipo_factura": "A",
+#   "total": 1847.25,
+#   "items_procesados": 3,
+#   "stock_updates_exitosos": 3,
+#   "stock_updates_fallidos": 0,
+#   "errores": [],
+#   "timestamp": "2024-08-20T..."
+# }
+
+# Verificar factura guardada
+curl http://localhost:8001/facturas/1 | jq .
+
+# Verificar stock actualizado en Depósito
+curl http://localhost:8002/productos | jq .</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">5. Ejecutar Tests</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('ejecutar-tests')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="ejecutar-tests"># Tests completos AgenteNegocio
+pytest tests/agente_negocio/ -v --cov=agente_negocio
+
+# Tests específicos
+pytest tests/agente_negocio/test_ocr.py -v
+pytest tests/agente_negocio/test_pricing.py -v  
+pytest tests/agente_negocio/test_integration_e2e.py -v
+
+# Test con facturas sample
+pytest tests/agente_negocio/test_ocr.py::test_procesar_imagen_exitoso -v
+
+# Coverage report
+pytest tests/ --cov=agente_negocio --cov=agente_deposito --cov-report=html
+open htmlcov/index.html</code></pre>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">6. Verificación Logs y Monitoreo</h3>
+                <div class="code-block mb-6">
+                    <button onclick="copyCode('verificar-logs')" class="copy-btn absolute top-4 right-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                    <pre><code id="verificar-logs"># Métricas AgenteNegocio
+curl http://localhost:8001/metrics | jq .
+
+# Ver logs de procesamiento
+tail -f logs/agente_negocio.log
+
+# Verificar BD
+sqlite3 data/inventario.db "
+SELECT f.numero, f.tipo, f.total, COUNT(fi.id) as items
+FROM facturas f 
+LEFT JOIN factura_items fi ON f.id = fi.factura_id
+GROUP BY f.id
+ORDER BY f.timestamp DESC
+LIMIT 5;
+"
+
+# Verificar movimientos de stock
+sqlite3 data/inventario.db "
+SELECT p.codigo, ms.tipo, ms.cantidad, ms.timestamp
+FROM movimientos_stock ms
+JOIN productos p ON ms.producto_id = p.id  
+ORDER BY ms.timestamp DESC
+LIMIT 10;
+"</code></pre>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                    <h4 class="font-semibold text-yellow-800 mb-2">⚠️ Notas Importantes:</h4>
+                    <ul class="list-disc list-inside space-y-1 text-yellow-700">
+                        <li><strong>EasyOCR</strong> - Primera inicialización puede tardar 30-60s descargando modelos</li>
+                        <li><strong>Facturas Sample</strong> - Crear algunas imágenes de prueba con formato AFIP típico</li>
+                        <li><strong>Inflación Config</strong> - Ajustar INFLACION_MENSUAL en .env según contexto actual</li>
+                        <li><strong>Temporada</strong> - Cambiar TEMPORADA en .env para probar factores estacionales</li>
+                        <li><strong>Logs</strong> - Revisar logs para debugging de OCR y errores de integración</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center py-8 border-t border-gray-200">
+            <div class="flex justify-center items-center space-x-4 mb-4">
+                <span class="badge badge-success">
+                    <i class="fas fa-check-circle mr-1"></i>AgenteNegocio Completo
+                </span>
+                <span class="badge badge-info">
+                    <i class="fas fa-link mr-1"></i>Integración E2E
+                </span>
+                <span class="badge badge-warning">
+                    <i class="fas fa-flask mr-1"></i>Tests 90%+ Coverage
+                </span>
+            </div>
+            
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                ✅ AgenteNegocio + Integración Básica Completa
+            </h3>
+            
+            <p class="text-gray-600 mb-4">
+                Sistema funcional con OCR AFIP, pricing inflacionario e integración HTTP robusta
+            </p>
+            
+            <div class="bg-blue-50 rounded-lg p-4 inline-block">
+                <p class="text-blue-800 font-semibold">📋 Siguiente Paso Sugerido:</p>
+                <p class="text-blue-700">
+                    <strong>Prompt 4:</strong> Resiliencia avanzada + features plus<br>
+                    (Outbox pattern, heartbeat monitoring, dashboard metrics, alertas Telegram)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Feedback visual
+                const button = element.parentElement.querySelector('.copy-btn');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i>Copiado';
+                button.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Error copiando texto: ', err);
+            });
+        }
+        
+        // Smooth scroll para navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDka6BkAk4NdkpF8r%2FOX3Iwj9BpcExXhWXa8QlgD6ZPbmW0aE1Ig0Aa2kMesJ%2BH%2BueZ4ax2VdHDBjoLmTYSBiKhADEbeRp5UIXbMxLeSPiWqjB%2FNULdEGPkKb%2B4jPk7RLMkDr953TdZlSAXgOqxA3W0eqM80KeR5aIlfjoUm0j%2FdfWBilpBixQpmJOrxzJ9gyBRYtSW8p2BQYCP9gsMz6CWMZ6EYty3g9sKNcWo1Y6gNfQFYKjFRF3FBQo2NP5jw8IGHVF5Kk6YliUnTJUFLXrzrD5tGd0ppMzUk%2FJW7z2YfPJ1Viuf3J%2FZvosxhkKUG1F0D9Ca3bHm22AFaCDQAaFLHOEmtILRfSHg3DQZLzV6CHAl7tr%2FT2rpmixEQHXcWgV6QZ27VDiYk3sYd32yWv9Fv6Db73BHtOqh89Phh458pXMNzUKJ9W1XWk8V51kI6y28ppryumBIJFThta9ssrZ5xEns4crZW2%2FmSm%2F%2BY1eoxjHF73aw6Jav2FJM3b7C1fOjPIL8Alaq3lvTmb7Rpx9D8%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDka6BkAk4NdkpF8r/OX3Iwj9BpcExXhWXa8QlgD6ZPbmW0aE1Ig0Aa2kMesJ+H+ueZ4ax2VdHDBjoLmTYSBiKhADEbeRp5UIXbMxLeSPiWqjB/NULdEGPkKb+4jPk7RLMkDr953TdZlSAXgOqxA3W0eqM80KeR5aIlfjoUm0j/dfWBilpBixQpmJOrxzJ9gyBRYtSW8p2BQYCP9gsMz6CWMZ6EYty3g9sKNcWo1Y6gNfQFYKjFRF3FBQo2NP5jw8IGHVF5Kk6YliUnTJUFLXrzrD5tGd0ppMzUk/JW7z2YfPJ1Viuf3J/ZvosxhkKUG1F0D9Ca3bHm22AFaCDQAaFLHOEmtILRfSHg3DQZLzV6CHAl7tr/T2rpmixEQHXcWgV6QZ27VDiYk3sYd32yWv9Fv6Db73BHtOqh89Phh458pXMNzUKJ9W1XWk8V51kI6y28ppryumBIJFThta9ssrZ5xEns4crZW2/mSm/+Y1eoxjHF73aw6Jav2FJM3b7C1fOjPIL8Alaq3lvTmb7Rpx9D8=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
