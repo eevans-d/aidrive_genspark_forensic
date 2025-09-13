@@ -179,54 +179,64 @@ def parsear_precio_argentino(precio_str: str) -> Optional[float]:
         # Asumir formato estándar (punto como decimal)
         precio_normalizado = precio_limpio.replace(".", "", precio_limpio.count(".") - 1)
 
-    try:
-        return float(precio_normalizado)
-    except ValueError:
-        return None
 
-
-def calcular_inflacion_acumulada(inflacion_mensual: float, 
-                                meses: int) -> float:
     """
-    Calcula inflación acumulada para N meses
+    Funciones utilitarias compartidas para el sistema multiagente.
+    Incluye helpers para carga y guardado de archivos JSON.
+    """
 
+    # Imports principales
+    import os
+    import json
+    from typing import Any, Dict, List
+
+    def load_json_file(filepath: str) -> Any:
+        """
+        Carga un archivo JSON y devuelve su contenido.
+        """
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def save_json_file(filepath: str, data: Any) -> None:
+        """
+        Guarda datos en un archivo JSON con formato legible.
+        """
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def calcular_inflacion_acumulada(meses: int, inflacion_mensual: float) -> float:
+    """
+    Calcula la inflación acumulada en porcentaje.
     Args:
-        inflacion_mensual: Inflación mensual en porcentaje
-        meses: Número de meses
-
+        meses (int): Cantidad de meses.
+        inflacion_mensual (float): Inflación mensual en porcentaje.
     Returns:
-        float: Inflación acumulada en porcentaje
+        float: Inflación acumulada en porcentaje.
     """
     if meses <= 0:
         return 0.0
-
     factor_acumulado = (1 + inflacion_mensual / 100) ** meses
     return (factor_acumulado - 1) * 100
+
 
 
 def calcular_precio_con_inflacion(precio_base: float,
                                  dias_transcurridos: int,
                                  inflacion_mensual: float) -> float:
     """
-    Calcula precio ajustado por inflación
-
+    Calcula el precio ajustado por inflación.
     Args:
-        precio_base: Precio original
-        dias_transcurridos: Días desde la compra
-        inflacion_mensual: Inflación mensual en porcentaje
-
+        precio_base (float): Precio original.
+        dias_transcurridos (int): Días desde la compra.
+        inflacion_mensual (float): Inflación mensual en porcentaje.
     Returns:
-        float: Precio ajustado
+        float: Precio ajustado.
     """
     if dias_transcurridos <= 0:
         return precio_base
-
-    # Convertir a inflación diaria
     inflacion_diaria = (1 + inflacion_mensual / 100) ** (1 / 30.44) - 1
-
-    # Aplicar inflación
     factor_inflacion = (1 + inflacion_diaria) ** dias_transcurridos
-
     return precio_base * factor_inflacion
 
 

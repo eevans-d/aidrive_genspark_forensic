@@ -134,37 +134,18 @@ class ReorderEngineIntegrated:
             cached_data = self.redis_client.get(cache_key)
             if cached_data:
                 return pd.read_json(cached_data)
-        except:
-            pass
+        except Exception as e:
+            self.logger.warning(f"Error cargando cache: {e}")
 
-        # En producción, esto vendría de tu base de datos
-        # Aquí generamos datos de ejemplo
-        productos_ejemplo = []
-        categorias = ['Alimentos', 'Bebidas', 'Limpieza', 'Cuidado Personal', 'Tecnología']
+        """
+        Motor de reordenamiento inteligente para inventario retail.
+        Analiza el inventario y recomienda productos a reordenar según umbral configurado.
 
-        np.random.seed(42)  # Para resultados consistentes
-        for i in range(50):
-            producto = {
-                'codigo': f'PROD_{i:03d}',
-                'nombre': f'Producto {i}',
-                'categoria': np.random.choice(categorias),
-                'stock_actual': np.random.randint(0, 100),
-                'stock_minimo': np.random.randint(10, 25),
-                'stock_maximo': np.random.randint(50, 150),
-                'precio_compra': round(np.random.uniform(50, 500) * 1.045, 2),  # Inflación Argentina
-                'precio_venta': round(np.random.uniform(80, 800), 2),
-                'demanda_promedio_diaria': round(np.random.uniform(1, 15), 2),
-                'lead_time_dias': np.random.randint(1, 7),
-                'ultimo_pedido': (datetime.now() - timedelta(days=np.random.randint(1, 30))).strftime('%Y-%m-%d'),
-                'proveedor': f'Proveedor_{np.random.randint(1, 10)}'
-            }
-            productos_ejemplo.append(producto)
-
-        df_inventario = pd.DataFrame(productos_ejemplo)
-
-        # Cachear por 1 hora
+        """
+        # Aquí iría la lógica real de carga de inventario desde base de datos si no hay cache
+        # Por ahora, devolvemos un DataFrame vacío para evitar errores
+        df_inventario = pd.DataFrame([])
         self.redis_client.setex(cache_key, 3600, df_inventario.to_json())
-
         return df_inventario
 
     def _generar_compras_diarias(self, inventario_df: pd.DataFrame, fecha_target: datetime) -> List[Dict]:

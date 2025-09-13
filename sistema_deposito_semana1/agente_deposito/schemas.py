@@ -25,6 +25,27 @@ class EstadoMovimiento(str, Enum):
     CONFIRMADO = "CONFIRMADO"
     ANULADO = "ANULADO"
 
+# Response models faltantes
+class StockMovementsResponse(BaseModel):
+    movimientos: List[dict]
+    total: int
+    page: int
+    size: int
+    pages: int
+
+class StockCriticoResponse(BaseModel):
+    productos_criticos: List[dict]
+    total: int
+
+class StockSummaryResponse(BaseModel):
+    resumen: dict
+    metricas: dict
+
+class HealthResponse(BaseModel):
+    status: str
+    timestamp: datetime
+    service: str
+
 # Schemas base
 class ProductoBase(BaseModel):
     codigo: str = Field(..., min_length=3, max_length=50)

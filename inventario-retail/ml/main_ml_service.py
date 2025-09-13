@@ -352,6 +352,7 @@ async def predict(
 @app.post("/train", response_model=Dict[str, Any])
 async def train(
     request: ModelTrainingRequest,
+    background_tasks: BackgroundTasks,
     current_user: dict = Depends(require_role(ML_ROLE))
 ):
     """Train a new model"""
@@ -591,12 +592,12 @@ async def metrics(current_user: dict = Depends(require_role(ML_ROLE))):
         )
 
 @app.post("/data/upload")
-async def upload_data(current_user: dict = Depends(require_role(ML_ROLE))):
+async def upload_data(request: dict, current_user: dict = Depends(require_role(ML_ROLE))):
     """Upload training data"""
     try:
         # Save data to file
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = request.filename or f"uploaded_data_{timestamp}.csv"
+        filename = request.get("filename") or f"uploaded_data_{timestamp}.csv"
 
         if not filename.endswith('.csv'):
             filename += '.csv'
@@ -604,7 +605,7 @@ async def upload_data(current_user: dict = Depends(require_role(ML_ROLE))):
         data_path = Path(ML_SERVICE_CONFIG["data_path"]) / filename
 
         # Convert to DataFrame and save
-        df = pd.DataFrame(request.data)
+        df = pd.DataFrame(request.get("data", []))
         df.to_csv(data_path, index=False)
 
         return {

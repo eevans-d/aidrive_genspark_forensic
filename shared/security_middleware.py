@@ -1,57 +1,64 @@
+
 """
-Middleware de seguridad para todos los servicios
+Middleware de seguridad centralizado para todos los servicios.
+Incluye rate limiting, logging y headers de seguridad.
 """
 
-from fastapi import Request, HTTPException, status
-from fastapi.responses import JSONResponse
 import time
+import logging
 import redis
 from typing import Dict, Any
-import logging
+from fastapi import Request, HTTPException, status
+from fastapi.responses import JSONResponse
 
 logger = logging.getLogger(__name__)
 
-# Rate limiting con Redis
+# Inicialización de cliente Redis para rate limiting
 try:
     redis_client = redis.Redis(host='localhost', port=6379, db=1, decode_responses=True)
-    redis_client.ping()  # Test connection
-except:
+    redis_client.ping()  # Test conexión
+except Exception:
     redis_client = None
     logger.warning("Redis no disponible - rate limiting deshabilitado")
 
+
 class SecurityMiddleware:
-    """Middleware de seguridad centralizado"""
-    
+    """
+    Middleware de seguridad centralizado.
+    Incluye rate limiting por IP y headers de seguridad.
+    """
     def __init__(self):
         self.rate_limit_requests = 100  # requests por minuto
         self.rate_limit_window = 60     # segundos
-    
+
     async def rate_limit_check(self, request: Request) -> bool:
-        """Verificar rate limiting por IP"""
+        """
+        Verifica el rate limiting por IP usando Redis.
+        Permite la request si Redis no está disponible o ante error.
+        """
         if not redis_client:
-            return True  # Si Redis no está disponible, permitir requests
-            
+            return True
+
         client_ip = request.client.host
         key = f"rate_limit:{client_ip}"
-        
+
         try:
             current_requests = redis_client.get(key)
             if current_requests is None:
                 redis_client.setex(key, self.rate_limit_window, 1)
                 return True
-            
             if int(current_requests) >= self.rate_limit_requests:
                 return False
-            
             redis_client.incr(key)
             return True
-            
         except Exception as e:
             logger.error(f"Error en rate limiting: {e}")
-            return True  # En caso de error, permitir request
-    
+            return True
+
     async def security_headers(self, response) -> None:
-        """Agregar headers de seguridad"""
+        """
+        Agrega headers de seguridad a la respuesta.
+        """
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"

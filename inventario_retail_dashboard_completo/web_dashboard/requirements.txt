@@ -4,6 +4,7 @@
 # Framework web
 Flask==2.3.3
 Flask-SocketIO==5.3.6
+Flask-CORS==4.0.0
 
 # Base de datos
 psycopg2-binary==2.9.7

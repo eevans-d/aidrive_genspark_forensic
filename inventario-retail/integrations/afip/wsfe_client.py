@@ -1,23 +1,29 @@
+
 """
 Cliente AFIP WSFE (Web Services Facturación Electrónica)
-Implementación completa para validación y generación de CAE/CAI
+Validación y generación de CAE/CAI para facturación electrónica argentina.
 """
+
+import os
+import logging
 import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
-import logging
 from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass
 import hashlib
 import base64
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class AFIPCredentials:
-    """Credenciales AFIP para autenticación"""
+    """
+    Credenciales AFIP para autenticación y acceso a servicios WSFE.
+    """
     cuit: str
     certificate_path: str
     private_key_path: str
@@ -25,13 +31,19 @@ class AFIPCredentials:
 
     @property
     def base_url(self) -> str:
+        """
+        Retorna la URL base según el entorno.
+        """
         if self.environment == "production":
             return "https://servicios1.afip.gov.ar/wsfev1"
         return "https://wswhomo.afip.gov.ar/wsfev1"
 
+
 @dataclass
 class FacturaElectronica:
-    """Estructura de factura electrónica AFIP"""
+    """
+    Estructura de factura electrónica AFIP.
+    """
     tipo_cbte: int  # 1=A, 6=B, 11=C
     punto_venta: int
     numero: int
@@ -48,7 +60,10 @@ class FacturaElectronica:
     moneda_ctz: float = 1.0
 
 class AFIPWSFEClient:
-    """Cliente AFIP WSFE para facturación electrónica"""
+    """
+    Cliente AFIP WSFE para facturación electrónica.
+    Métodos para autenticación, generación y validación de CAE/CAI.
+    """
 
     def __init__(self, credentials: AFIPCredentials):
         self.credentials = credentials
@@ -57,7 +72,9 @@ class AFIPWSFEClient:
         self.token_expiry = None
 
     def _load_certificate(self) -> str:
-        """Cargar certificado AFIP desde archivo"""
+        """
+        Carga el certificado AFIP desde archivo.
+        """
         try:
             with open(self.credentials.certificate_path, 'r') as f:
                 cert_content = f.read()

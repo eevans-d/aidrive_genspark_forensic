@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 import json
 import uuid
 
-from ..database import get_db
+# from ..database import get_db  # TODO: Fix import path
 
 class OutboxMessage:
     """

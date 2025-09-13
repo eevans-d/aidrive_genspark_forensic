@@ -166,31 +166,32 @@ def api_productos_search():
 
     try:
         conn = get_db_connection()
-        if conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT codigo, nombre, precio_venta, stock_actual 
-                FROM productos 
-                WHERE nombre ILIKE %s OR codigo ILIKE %s 
-                LIMIT 10
-            """, (f'%{query}%', f'%{query}%'))
-
-            productos = []
-            for row in cursor.fetchall():
-                productos.append({
-                    'codigo': row[0],
-                    'nombre': row[1],
-                    'precio': f"${row[2]:,.2f}",
-                    'stock': row[3]
-                })
-
-            cursor.close()
-            conn.close()
-            return jsonify(productos)
+        # Búsqueda de productos
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM productos WHERE nombre ILIKE %s LIMIT 10", (f"%{query}%",))
+        productos = cursor.fetchall()
+        return jsonify([{"id": p[0], "nombre": p[1], "codigo": p[2]} for p in productos])
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"Error búsqueda productos: {e}")
+        return jsonify([]), 500
 
-    return jsonify([])
+        @app.route("/")
+        def index():
+            """
+            Renderiza la página principal del dashboard.
+            """
+            return render_template("index.html")
+
+        @app.route("/api/inventario", methods=["GET"])
+        def get_inventario():
+            """
+            Endpoint para obtener el inventario simulado.
+            """
+            inventario = [
+                {"codigo": "A001", "nombre": "Producto A", "stock": 12},
+                {"codigo": "B002", "nombre": "Producto B", "stock": 5}
+            ]
+            return jsonify(inventario)
 
 @app.route('/api/upload-factura', methods=['POST'])
 def api_upload_factura():

@@ -25,7 +25,8 @@ from .schemas import (
     ClienteCreate, ClienteUpdate, ClienteResponse,
     ProveedorCreate, ProveedorResponse,
     PaginatedResponse, ErrorResponse, SuccessResponse,
-    ProductoStockCritico, ResumenStock
+    ProductoStockCritico, ResumenStock,
+    StockMovementsResponse, StockCriticoResponse, StockSummaryResponse, HealthResponse
 )
 from .stock_manager import (
     stock_manager, StockManagerError, InsufficientStockError, 
@@ -449,6 +450,12 @@ async def get_stock_movements(
     producto_id: Optional[int] = Query(None, description="ID del producto (opcional)"),
     dias: int = Query(30, ge=1, le=365, description="Días hacia atrás"),
     limit: int = Query(100, ge=1, le=500, description="Límite de resultados"),
+    usuario: Optional[str] = Query(None, description="Usuario que realizó el movimiento"),
+    fecha_desde: Optional[datetime] = Query(None, description="Fecha desde"),
+    fecha_hasta: Optional[datetime] = Query(None, description="Fecha hasta"),
+    documento_referencia: Optional[str] = Query(None, description="Documento de referencia"),
+    page: int = Query(1, ge=1, description="Página"),
+    size: int = Query(100, ge=1, le=500, description="Tamaño de página"),
     db: Session = Depends(get_database_session),
     current_user: dict = Depends(require_role(DEPOSITO_ROLE))
 ):

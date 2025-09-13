@@ -49,6 +49,13 @@ black==23.11.0
 isort==5.12.0
 flake8==6.1.0
 
+# Dependencias recién instaladas
+aiofiles==23.2.1
+cryptography==41.0.7
+flask==3.0.0
+flask-cors==4.0.0
+flask-socketio==5.3.6
+
 # Producción
 gunicorn==21.2.0
 redis==5.0.1

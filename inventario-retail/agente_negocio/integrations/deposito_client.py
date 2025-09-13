@@ -1,33 +1,48 @@
+
 """
-Cliente HTTP para comunicación con AgenteDepósito
+Cliente para integración con Agente Depósito.
+Provee métodos para verificar conectividad y operaciones remotas: búsqueda/creación de productos, consulta y actualización de stock.
 """
+
+# Imports principales
 import httpx
 import logging
 from typing import Dict, Optional
 from shared.config import get_settings
 
+# Inicialización de logger y settings
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
+
 class DepositoClient:
     def __init__(self):
+        """
+        Inicializa el cliente con el endpoint y timeout configurados.
+        """
         self.base_url = settings.AGENTE_DEPOSITO_URL
         self.timeout = settings.HTTP_TIMEOUT_SECONDS
 
+
     async def health_check(self) -> bool:
-        """Verificar conectividad con AgenteDepósito"""
+        """
+        Verifica la conectividad con el Agente Depósito.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.get(f"{self.base_url}/health")
                 return response.status_code == 200
-        except:
+        except Exception as e:
+            logger.error(f"Error health_check: {e}")
             return False
 
+
     async def buscar_o_crear_producto(self, item: Dict) -> Dict:
-        """Buscar producto o crear si no existe"""
+        """
+        Busca un producto por código o lo crea si no existe.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                # Simular búsqueda/creación
                 producto_data = {
                     "codigo": item["codigo"],
                     "nombre": f"Producto {item['codigo']}",
@@ -36,13 +51,10 @@ class DepositoClient:
                     "stock_actual": 0,
                     "stock_minimo": 5
                 }
-
-                # Intentar crear producto
                 response = await client.post(
                     f"{self.base_url}/productos",
                     json=producto_data
                 )
-
                 if response.status_code in [200, 201]:
                     return response.json()
                 else:
@@ -51,15 +63,17 @@ class DepositoClient:
                         f"{self.base_url}/productos",
                         params={"codigo": item["codigo"]}
                     )
-                    productos = search_response.json()["productos"]
+                    productos = search_response.json().get("productos", [])
                     return productos[0] if productos else None
-
         except Exception as e:
             logger.error(f"Error buscando/creando producto: {e}")
             raise
 
+
     async def get_producto_by_codigo(self, codigo: str) -> Optional[Dict]:
-        """Obtener producto específico por código para PricingEngine"""
+        """
+        Obtiene un producto específico por código para PricingEngine.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.get(
@@ -70,13 +84,15 @@ class DepositoClient:
                     productos = response.json().get("productos", [])
                     return productos[0] if productos else None
                 return None
-
         except Exception as e:
             logger.error(f"Error obteniendo producto {codigo}: {e}")
             return None
 
+
     async def actualizar_stock(self, stock_data: Dict) -> Dict:
-        """Actualizar stock en AgenteDepósito"""
+        """
+        Actualiza el stock en Agente Depósito.
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
@@ -85,7 +101,6 @@ class DepositoClient:
                 )
                 response.raise_for_status()
                 return response.json()
-
         except Exception as e:
             logger.error(f"Error actualizando stock: {e}")
             raise

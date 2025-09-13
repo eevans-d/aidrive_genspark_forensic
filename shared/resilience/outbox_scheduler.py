@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Optional
 
 from .outbox_consumer import OutboxConsumer
-from ..config import get_settings
+# from ..config import get_settings  # TODO: Fix import path
 
 logger = logging.getLogger(__name__)
 settings = get_settings()

@@ -1,12 +1,14 @@
+
 """
 Agente de Negocio - FastAPI Complete Application
-Production-ready invoice processing system with OCR, pricing, and integration capabilities.
+Procesamiento de facturas con OCR, pricing y capacidades de integración.
 """
-import asyncio
-import logging
+
 import os
-import tempfile
 import time
+import logging
+import asyncio
+import tempfile
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
 from pathlib import Path
@@ -19,16 +21,16 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import uvicorn
 
-# Import business modules
-from src.ocr.preprocessor import ImagePreprocessor
-from src.ocr.processor import OCRProcessor  
-from src.ocr.extractor import InvoiceExtractor
-from src.pricing.calculator import PricingCalculator
-from src.pricing.cache import PricingCache
-from src.integration.deposito_client import DepositoClient
+# Importación de módulos de negocio
+from ocr.preprocessor import ImagePreprocessor
+from ocr.processor import OCRProcessor
+from ocr.extractor import InvoiceExtractor
+from pricing.engine import PricingCalculator
+from pricing.engine import PricingCache
+from integrations.deposito_client import DepositoClient
 from shared.auth import require_role, NEGOCIO_ROLE
 
-# Configure logging
+# Configuración de logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -40,24 +42,29 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Pydantic models
+
 class InvoiceProcessRequest(BaseModel):
-    """Request model for invoice processing"""
+    """
+    Modelo de request para procesamiento de facturas.
+    """
     deposito_endpoint: Optional[str] = Field(
-        default="http://agente-deposito:8001", 
-        description="Agente Depósito endpoint"
+        default="http://agente-deposito:8001",
+        description="Endpoint de Agente Depósito"
     )
     update_stock: Optional[bool] = Field(
-        default=True, 
-        description="Whether to update stock in Agente Depósito"
+        default=True,
+        description="Actualizar stock en Agente Depósito"
     )
     inflation_rate: Optional[float] = Field(
-        default=0.045, 
-        description="Annual inflation rate (default 4.5%)"
+        default=0.045,
+        description="Tasa anual de inflación (por defecto 4.5%)"
     )
 
 class PriceConsultRequest(BaseModel):
-    """Request model for price consultation"""
-    product_name: str = Field(..., description="Product name to consult price")
+    """
+    Modelo de request para consulta de precios.
+    """
+    product_name: str = Field(..., description="Nombre de producto a consultar precio")
     base_price: float = Field(..., gt=0, description="Base price")
     inflation_rate: Optional[float] = Field(
         default=0.045, 

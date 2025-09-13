@@ -9,8 +9,8 @@ from typing import Dict, List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from shared.database import get_db
-from shared.models import OutboxEvent
+# from shared.database import get_db  # TODO: Fix import path
+# from shared.models import OutboxEvent  # TODO: Fix import path
 
 logger = logging.getLogger(__name__)
 

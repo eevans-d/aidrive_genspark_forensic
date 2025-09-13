@@ -1,0 +1,209 @@
+# Core Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+gunicorn==21.2.0
+starlette==0.27.0
+
+# Database & ORM
+sqlalchemy==2.0.23
+alembic==1.12.1
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+
+# Data Validation & Serialization
+pydantic==2.5.0
+pydantic-settings==2.0.3
+pydantic[email]==2.5.0
+
+# Cache & Session
+redis
+hiredis==2.2.3
+aioredis==2.0.1
+
+# HTTP Client
+httpx==0.25.2
+requests==2.31.0
+aiohttp==3.9.0
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+cryptography
+
+# OCR & Computer Vision
+easyocr==1.7.0
+opencv-python-headless==4.8.1.78
+pillow
+pytesseract==0.3.10
+
+# Machine Learning & Data Science
+scikit-learn==1.3.2
+pandas==2.1.4
+numpy
+scipy==1.11.4
+joblib==1.3.2
+xgboost==2.0.2
+lightgbm==4.1.0
+
+# Task Scheduling
+apscheduler==3.10.4
+celery[redis]==5.3.4
+kombu==5.3.4
+
+# Logging & Monitoring
+loguru==0.7.2
+prometheus-client==0.19.0
+structlog==23.2.0
+
+# File Processing
+python-magic==0.4.27
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+reportlab==4.0.7
+PyPDF2==3.0.1
+
+# Configuration & Environment
+python-dotenv==1.0.0
+click==8.1.7
+typer==0.9.0
+
+# Date & Time
+python-dateutil==2.8.2
+pytz==2023.3.post1
+
+# Networking & Email
+dnspython==2.4.2
+email-validator==2.1.0
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+httpx==0.25.2
+factory-boy==3.3.0
+faker==20.1.0
+
+# Code Quality
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+mypy==1.7.1
+pre-commit==3.6.0
+
+# Documentation
+mkdocs==1.5.3
+mkdocs-material==9.4.8
+
+# Monitoring & Health Checks
+psutil==5.9.6
+py-cpuinfo==9.0.0
+
+# Additional Utilities
+tqdm==4.66.1
+rich==13.7.0
+tabulate==0.9.0
+pyyaml==6.0.1
+jinja2==3.1.2
+marshmallow==3.20.1
+
+# Production Server
+gevent==23.9.1
+eventlet==0.33.3
+
+# Image Processing (additional)
+imageio==2.31.6
+scikit-image==0.22.0
+
+# Async Support
+asyncio-mqtt==0.16.1
+aiofiles==23.2.1
+
+# Database Connection Pooling
+sqlalchemy[asyncio]==2.0.23
+greenlet==3.0.1
+
+# API Documentation
+openapi-spec-validator==0.7.1
+
+# Timezone Support
+zoneinfo==0.2.1; python_version < "3.9"
+
+# XML Processing
+lxml==4.9.3
+xmltodict==0.13.0
+
+# JSON Processing
+orjson==3.9.10
+ujson==5.8.0
+
+# SSL/TLS Support
+pyopenssl==23.3.0
+certifi==2023.11.17
+
+# Development Tools
+ipython==8.17.2
+jupyter==1.0.0
+notebook==7.0.6
+
+# Environment Management
+virtualenv==20.24.7
+pip-tools==7.3.0
+
+# Process Management
+supervisor==4.2.5
+
+# Container Health Checks
+docker==6.1.3
+
+# Rate Limiting
+slowapi==0.1.9
+limits==3.6.0
+
+# Message Queue
+pika==1.3.2
+kombu==5.3.4
+
+# GraphQL (optional)
+strawberry-graphql[fastapi]
+
+# WebSocket Support
+websockets==12.0
+python-socketio==5.10.0
+
+# Background Tasks
+rq==1.15.1
+dramatiq[redis]==1.14.2
+
+# Template Engine
+mako==1.3.0
+
+# Unit Conversion
+pint==0.22
+
+# Time Series
+arrow==1.3.0
+
+# File Watching
+watchdog==3.0.0
+
+# Caching
+cachetools==5.3.2
+diskcache==5.6.3
+
+# Internationalization
+babel==2.13.1
+
+# Data Visualization (optional for reports)
+matplotlib==3.8.2
+seaborn==0.13.0
+plotly==5.17.0
+
+# Export Formats
+fpdf2==2.7.6
+weasyprint==60.2
+
+# Health & Metrics
+healthcheck==1.3.3
+statsd==4.0.1
