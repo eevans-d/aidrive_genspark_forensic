@@ -7,6 +7,7 @@ Aplicación Flask principal con integración completa ML, OCR, Cache
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session
 from flask_socketio import SocketIO, emit
 from shared.security_headers import apply_flask_security
+from shared.config import validate_env_vars
 import os
 import json
 import redis
@@ -27,7 +28,8 @@ logger = logging.getLogger(__name__)
 
 # Configuración Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'inventario-retail-argentino-2025'
+validate_env_vars(["DASHBOARD_SECRET_KEY", "CORS_ORIGINS"])  # fail-fast
+app.config['SECRET_KEY'] = os.getenv('DASHBOARD_SECRET_KEY')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 

@@ -14,6 +14,7 @@ from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from shared.security_headers import apply_fastapi_security
 from shared.errors import register_fastapi_error_handlers
+from shared.config import validate_env_vars
 import os
 
 # Configuración de rutas y entorno
@@ -33,6 +34,10 @@ settings = get_settings()
 # Inicialización de la aplicación FastAPI
 app = FastAPI(title="AgenteNegocio - OCR & Pricing", version="1.0.0")
 register_fastapi_error_handlers(app)
+validate_env_vars([
+    "JWT_SECRET_KEY",
+    "CORS_ORIGINS",
+])
 # CORS seguro por entorno
 _cors_origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
 _cors_methods = [m.strip() for m in os.getenv("CORS_METHODS", "GET,POST,PUT,DELETE,OPTIONS").split(",") if m.strip()]

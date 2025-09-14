@@ -22,6 +22,7 @@ from shared.auth import require_role, DEPOSITO_ROLE
 from shared.models import Producto, MovimientoStock
 from shared.config import get_settings, setup_logging
 from shared.errors import register_fastapi_error_handlers
+from shared.config import validate_env_vars
 from shared.utils import formateador, obtener_factor_estacional
 
 from .stock_manager import StockManager, StockUpdateRequest
@@ -48,6 +49,10 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 register_fastapi_error_handlers(app)
+validate_env_vars([
+    "JWT_SECRET_KEY",
+    "CORS_ORIGINS",
+])
 
 # Middlewares
 app.add_middleware(

@@ -17,6 +17,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Request, status
 from shared.errors import register_fastapi_error_handlers
+from shared.config import validate_env_vars
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -193,6 +194,10 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 register_fastapi_error_handlers(app)
+validate_env_vars([
+    "JWT_SECRET_KEY",
+    "CORS_ORIGINS",
+])
 
 # CORS middleware
 app.add_middleware(

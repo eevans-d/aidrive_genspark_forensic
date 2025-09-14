@@ -899,11 +899,13 @@ if __name__ == "__main__":
 
     async def ejemplo_uso():
         # Crear cliente MercadoLibre
+        # Cargar credenciales desde variables de entorno para evitar hardcodear secretos
+        import os
         credentials = MLCredentials(
-            app_id="1234567890123456",
-            client_secret="AbCdEfGhIjKlMnOpQrStUvWxYz",
-            access_token="APP_USR-1234567890123456-abcdef-ghijklmnopqrstuvwxyz123456-987654321",
-            refresh_token="TG-abcdef1234567890abcdef1234567890abcdef12"
+            app_id=os.getenv("ML_APP_ID", ""),
+            client_secret=os.getenv("ML_CLIENT_SECRET", ""),
+            access_token=os.getenv("ML_ACCESS_TOKEN", ""),
+            refresh_token=os.getenv("ML_REFRESH_TOKEN", "")
         )
 
         from integrations.ecommerce.mercadolibre_client import MercadoLibreClient

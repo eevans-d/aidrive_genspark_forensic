@@ -10,6 +10,7 @@ import os
 from shared.errors import register_fastapi_error_handlers
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from shared.config import validate_env_vars
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_, or_, func
 from typing import List, Optional
@@ -60,6 +61,10 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 register_fastapi_error_handlers(app)
+validate_env_vars([
+    "JWT_SECRET_KEY",
+    "CORS_ORIGINS",
+])
 
 # Configurar CORS
 app.add_middleware(
