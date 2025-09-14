@@ -67,7 +67,57 @@ Sistema robusto y modular para gestión de inventario, compras, ML y dashboard w
 - Rate limiting y headers de seguridad
 - Logging centralizado y manejo global de errores
 
-## 📝 Contacto y Soporte
+## � Observabilidad (/metrics)
+Todos los servicios exponen métricas Prometheus en el endpoint `/metrics`. Úsalo para monitoreo (latencia, conteo de peticiones, errores por ruta y método, etc.).
+
+Servicios con métricas habilitadas:
+- Agente Depósito (FastAPI) → `http://<host>:<puerto-agente-deposito>/metrics`
+- Agente Negocio (FastAPI) → `http://<host>:<puerto-agente-negocio>/metrics`
+- Servicio ML (FastAPI) → `http://<host>:<puerto-ml>/metrics`
+- Dashboard Web (Flask) → `http://<host>:<puerto-dashboard>/metrics`
+
+Notas:
+- Los puertos pueden variar según despliegue. Ejemplos frecuentes: 8001 (depósito), 8002 (negocio), 8003 (ml), 5000-5001 (dashboards). Ajusta según tus `.env` o `docker-compose`.
+- El endpoint devuelve texto en formato Prometheus exposition (Content-Type: text/plain; version=0.0.4).
+
+### Prometheus: ejemplo de scrape_config
+Añade jobs por servicio en tu `prometheus.yml`:
+
+```yaml
+scrape_configs:
+   - job_name: 'agente_deposito'
+      static_configs:
+         - targets: ['localhost:8001']   # ajusta host/puerto
+
+   - job_name: 'agente_negocio'
+      static_configs:
+         - targets: ['localhost:8002']
+
+   - job_name: 'ml_service'
+      static_configs:
+         - targets: ['localhost:8003']
+
+   - job_name: 'dashboard_web'
+      metrics_path: /metrics
+      static_configs:
+         - targets: ['localhost:5000']
+```
+
+Para entornos Docker, puedes usar los nombres de servicio de Compose como targets (p. ej., `agente_deposito:8001`).
+
+### Verificación rápida con curl
+Ejemplos (ajusta puertos):
+
+```bash
+curl -s http://localhost:8001/metrics | head
+curl -s http://localhost:8002/metrics | head
+curl -s http://localhost:8003/metrics | head
+curl -s http://localhost:5000/metrics | head
+```
+
+Si ves series como `http_request_total` y `http_request_duration_seconds_bucket`, la integración está activa.
+
+## �📝 Contacto y Soporte
 - Email: soporte@inventarioretail.com
 - Issues: GitHub Issues
 
