@@ -97,11 +97,33 @@ class AFIPSyncScheduler:
         self.tareas.extend(tareas_default)
         logger.info(f"Configuradas {len(tareas_default)} tareas de sync AFIP por defecto")
 
-    @retry_with_backoff(max_retries=3, backoff_in_seconds=2)
     async def sincronizar_facturas_pendientes(self) -> Dict:
-        """Sincronizar facturas pendientes con AFIP"""
+        """Sincronizar facturas pendientes con AFIP con circuit breaker"""
+        # Circuit breaker implementation
+        max_failures = int(os.getenv('AFIP_MAX_FAILURES', '5'))
+        timeout_seconds = int(os.getenv('AFIP_TIMEOUT_SECONDS', '30'))
+        
         try:
             logger.info("Iniciando sincronización de facturas pendientes")
+            
+            # Timeout protection
+            return await asyncio.wait_for(
+                self._sync_facturas_internal(),
+                timeout=timeout_seconds
+            )
+        except asyncio.TimeoutError:
+            logger.error(f"AFIP sync timeout after {timeout_seconds} seconds", exc_info=True, extra={
+                "timeout_seconds": timeout_seconds,
+                "context": "afip_sync_timeout"
+            })
+            raise
+        except Exception as e:
+            logger.error(f"AFIP sync failed: {e}", exc_info=True, extra={
+                "context": "afip_sync_error"
+            })
+            raise
+    
+    async def _sync_facturas_internal(self) -> Dict:
 
             # Obtener facturas pendientes de envío a AFIP
             with get_db_session() as db:

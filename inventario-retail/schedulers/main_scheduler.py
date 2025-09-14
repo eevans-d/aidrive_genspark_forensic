@@ -7,6 +7,7 @@ import asyncio
 import logging
 import signal
 import sys
+import threading
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from pathlib import Path
@@ -30,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class SchedulerOrchestrator:
-    """Main scheduler orchestrator"""
+    """Main scheduler orchestrator with thread safety"""
 
     def __init__(self):
         self.backup_scheduler = BackupScheduler()
@@ -40,6 +41,10 @@ class SchedulerOrchestrator:
 
         self.is_running = False
         self.start_time = None
+        
+        # Thread safety for scheduler state
+        self._lock = threading.Lock()
+        self._shutdown_event = threading.Event()
 
         # Setup signal handlers for graceful shutdown
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -66,17 +71,20 @@ class SchedulerOrchestrator:
             logger.warning(f"Failed to add default backup config: {e}")
 
     def start_all_schedulers(self):
-        """Start all schedulers"""
+        """Start all schedulers with thread safety"""
+        with self._lock:
+            if self.is_running:
+                logger.warning("Schedulers already running, ignoring start request")
+                return
+                
         try:
-            self.is_running = True
-            self.start_time = datetime.now()
-
             logger.info("Starting all schedulers...")
 
-            # Initialize default configurations
-            self.initialize_default_configs()
+            with self._lock:
+                self.is_running = True
+                self.start_time = datetime.now()
+                self._shutdown_event.clear()
 
-            # Start individual schedulers
             self.backup_scheduler.start_scheduler()
             self.maintenance_scheduler.start_scheduler()
             self.report_scheduler.start_scheduler()
@@ -85,11 +93,20 @@ class SchedulerOrchestrator:
             logger.info("All schedulers started successfully")
 
         except Exception as e:
-            logger.error(f"Failed to start schedulers: {e}")
+            logger.error(f"Failed to start schedulers: {e}", exc_info=True, extra={
+                "context": "scheduler_startup",
+                "is_running": self.is_running,
+                "start_time": self.start_time
+            })
             raise
 
     def stop_all_schedulers(self):
-        """Stop all schedulers"""
+        """Stop all schedulers with thread safety"""
+        with self._lock:
+            if not self.is_running:
+                logger.warning("Schedulers not running, ignoring stop request")
+                return
+                
         try:
             logger.info("Stopping all schedulers...")
 
@@ -98,12 +115,18 @@ class SchedulerOrchestrator:
             self.report_scheduler.stop_scheduler()
             self.health_monitor.stop_monitoring()
 
-            self.is_running = False
+            with self._lock:
+                self.is_running = False
+                self._shutdown_event.set()
 
             logger.info("All schedulers stopped successfully")
 
         except Exception as e:
-            logger.error(f"Error stopping schedulers: {e}")
+            logger.error(f"Error stopping schedulers: {e}", exc_info=True, extra={
+                "context": "scheduler_shutdown",
+                "is_running": self.is_running,
+                "uptime": (datetime.now() - self.start_time).total_seconds() if self.start_time else None
+            })
 
     def get_system_status(self) -> Dict[str, Any]:
         """Get comprehensive system status"""

@@ -155,7 +155,10 @@ class BackupMetadata:
                 conn.commit()
 
         except Exception as e:
-            logger.error(f"Failed to initialize backup metadata database: {e}")
+            logger.error(f"Failed to initialize backup metadata database: {e}", exc_info=True, extra={
+                "metadata_file": self.metadata_file,
+                "context": "backup_metadata_init"
+            })
             raise
 
     def save_backup_result(self, result: BackupResult):
@@ -184,7 +187,11 @@ class BackupMetadata:
                 conn.commit()
 
         except Exception as e:
-            logger.error(f"Failed to save backup result: {e}")
+            logger.error(f"Failed to save backup result: {e}", exc_info=True, extra={
+                "backup_id": result.backup_id,
+                "config_name": result.config_name,
+                "context": "backup_result_save"
+            })
 
     def get_backup_history(self, config_name: str = None, limit: int = 100) -> List[BackupResult]:
         """Get backup history"""
@@ -307,7 +314,12 @@ class BackupEngine:
             result.status = BackupStatus.FAILED
             result.error_message = str(e)
             result.end_time = datetime.now()
-            logger.error(f"Backup '{config.name}' failed: {e}")
+            logger.error(f"Backup '{config.name}' failed: {e}", exc_info=True, extra={
+                "config_name": config.name,
+                "backup_type": config.backup_type.value,
+                "backup_id": result.backup_id,
+                "context": "backup_execution"
+            })
 
         finally:
             # Save result to metadata
@@ -394,9 +406,28 @@ class BackupEngine:
         return backup_dir
 
     async def full_backup(self, config: BackupConfig, backup_dir: Path, result: BackupResult):
-        """Execute full backup"""
+        """Execute full backup with timeout protection"""
         logger.info("Executing full backup")
+        
+        # Timeout protection para operaciones de backup
+        BACKUP_TIMEOUT = int(os.getenv('BACKUP_TIMEOUT_SECONDS', '3600'))  # 1 hour default
 
+        try:
+            await asyncio.wait_for(
+                self._execute_full_backup_internal(config, backup_dir, result),
+                timeout=BACKUP_TIMEOUT
+            )
+        except asyncio.TimeoutError:
+            logger.error(f"Full backup timed out after {BACKUP_TIMEOUT} seconds", extra={
+                "config_name": config.name,
+                "backup_id": result.backup_id,
+                "timeout_seconds": BACKUP_TIMEOUT,
+                "context": "backup_timeout"
+            })
+            raise
+    
+    async def _execute_full_backup_internal(self, config: BackupConfig, backup_dir: Path, result: BackupResult):
+        """Internal full backup execution"""
         for source_path_str in config.source_paths:
             source_path = Path(source_path_str)
 
@@ -707,7 +738,7 @@ class BackupEngine:
             logger.error(f"Failed to cleanup old backups: {e}")
 
 class BackupScheduler:
-    """Backup scheduler with cron-like scheduling"""
+    """Backup scheduler with cron-like scheduling and resource management"""
 
     def __init__(self):
         self.backup_engine = BackupEngine()
@@ -715,6 +746,11 @@ class BackupScheduler:
         self.running_backups: Dict[str, asyncio.Task] = {}
         self.scheduler_active = False
         self.scheduler_thread = None
+        
+        # Resource management and thread safety
+        self._scheduler_lock = threading.Lock()
+        self._max_concurrent_backups = int(os.getenv('MAX_CONCURRENT_BACKUPS', '2'))
+        self._backup_semaphore = asyncio.Semaphore(self._max_concurrent_backups)
 
     def add_config(self, config: BackupConfig):
         """Add backup configuration"""
