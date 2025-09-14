@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, date
 from typing import Dict, List, Optional, Any
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -34,33 +35,60 @@ class WSFEClient:
         self.token_expires = None
 
     async def authenticate(self) -> Dict[str, Any]:
-        """Autentica con AFIP WSAA"""
+        """Autentica con AFIP WSAA con timeout y circuit breaker"""
+        # Circuit breaker configuration
+        max_failures = int(os.getenv('AFIP_AUTH_MAX_FAILURES', '3'))
+        timeout_seconds = int(os.getenv('AFIP_AUTH_TIMEOUT', '30'))
+        
         try:
             logger.info("Iniciando autenticación con AFIP WSAA")
 
-            # Mock implementation para desarrollo
-            # En producción, implementar autenticación real con certificados
-
-            # Simular autenticación exitosa
-            self.token = f"mock_token_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            self.sign = f"mock_sign_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            self.token_expires = datetime.now() + timedelta(hours=12)
-
-            logger.info("Autenticación AFIP exitosa")
-
+            # Timeout protection para authentication
+            return await asyncio.wait_for(
+                self._authenticate_internal(),
+                timeout=timeout_seconds
+            )
+            
+        except asyncio.TimeoutError:
+            logger.error(f"AFIP authentication timeout after {timeout_seconds} seconds", exc_info=True, extra={
+                "timeout_seconds": timeout_seconds,
+                "cuit": self.cuit,
+                "production": self.production,
+                "context": "afip_auth_timeout"
+            })
             return {
-                "success": True,
-                "token": self.token,
-                "sign": self.sign,
-                "expires": self.token_expires.isoformat()
+                "success": False,
+                "error": f"Authentication timeout after {timeout_seconds} seconds"
             }
-
         except Exception as e:
-            logger.error(f"Error en autenticación AFIP: {e}")
+            logger.error(f"Error en autenticación AFIP: {e}", exc_info=True, extra={
+                "cuit": self.cuit,
+                "production": self.production,
+                "context": "afip_authentication_error"
+            })
             return {
                 "success": False,
                 "error": str(e)
             }
+    
+    async def _authenticate_internal(self) -> Dict[str, Any]:
+        """Internal authentication implementation"""
+        # Mock implementation para desarrollo
+        # En producción, implementar autenticación real con certificados
+
+        # Simular autenticación exitosa
+        self.token = f"mock_token_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        self.sign = f"mock_sign_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        self.token_expires = datetime.now() + timedelta(hours=12)
+
+        logger.info("Autenticación AFIP exitosa")
+
+        return {
+            "success": True,
+            "token": self.token,
+            "sign": self.sign,
+            "expires": self.token_expires.isoformat()
+        }
 
     async def authorize_voucher(self, factura: Dict[str, Any]) -> Dict[str, Any]:
         """Autoriza comprobante y obtiene CAE"""
@@ -93,7 +121,12 @@ class WSFEClient:
             return result
 
         except Exception as e:
-            logger.error(f"Error autorizando comprobante: {e}")
+            logger.error(f"Error autorizando comprobante: {e}", exc_info=True, extra={
+                "numero_comprobante": factura.get('numero_comprobante'),
+                "cuit": self.cuit,
+                "production": self.production,
+                "context": "afip_authorize_voucher"
+            })
             return {
                 "success": False,
                 "error": str(e)

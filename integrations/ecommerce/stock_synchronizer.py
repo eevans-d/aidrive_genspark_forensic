@@ -5,6 +5,7 @@ Maneja actualizaciones bidireccionales con detección de conflictos
 import asyncio
 import aiohttp
 import logging
+import os
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
@@ -101,7 +102,7 @@ class MLStockSynchronizer:
                 await asyncio.sleep(60)  # Esperar 1 minuto antes de reintentar
 
     async def sync_stock(self) -> Dict[str, Any]:
-        """Ejecuta sincronización completa de stock"""
+        """Ejecuta sincronización completa de stock con timeout protection"""
         if self.is_syncing:
             logger.warning("Sincronización ya en progreso, saltando")
             return {"status": "skipped", "reason": "sync_in_progress"}
@@ -112,34 +113,35 @@ class MLStockSynchronizer:
         try:
             logger.info("Iniciando sincronización de stock")
 
-            # 1. Cargar registros locales y de ML
-            local_records = await self._load_local_stock()
-            ml_records = await self._load_ml_stock()
-
-            # 2. Detectar conflictos
-            conflicts = await self._detect_conflicts(local_records, ml_records)
-
-            # 3. Resolver conflictos
-            resolved_records = await self._resolve_conflicts(conflicts, local_records, ml_records)
-
-            # 4. Ejecutar sincronización según dirección
-            sync_results = await self._execute_sync(resolved_records)
-
-            # 5. Actualizar estadísticas
-            self._update_sync_stats(sync_results, conflicts, start_time)
-
+            # Timeout protection para toda la sincronización
+            sync_timeout = int(os.getenv('STOCK_SYNC_TIMEOUT_SECONDS', '300'))  # 5 minutes default
+            
+            result = await asyncio.wait_for(
+                self._sync_stock_internal(),
+                timeout=sync_timeout
+            )
+            
             logger.info(f"Sincronización completada en {datetime.now() - start_time}")
+            return result
 
+        except asyncio.TimeoutError:
+            logger.error(f"Stock sync timeout after {sync_timeout} seconds", exc_info=True, extra={
+                "sync_timeout": sync_timeout,
+                "sync_direction": self.sync_direction.value,
+                "batch_size": self.batch_size,
+                "context": "stock_sync_timeout"
+            })
             return {
-                "status": "success",
-                "duration_seconds": (datetime.now() - start_time).total_seconds(),
-                "records_processed": len(resolved_records),
-                "conflicts_detected": len(conflicts),
-                "sync_results": sync_results
+                "status": "timeout",
+                "error": f"Sync timeout after {sync_timeout} seconds",
+                "duration_seconds": (datetime.now() - start_time).total_seconds()
             }
-
         except Exception as e:
-            logger.error(f"Error en sincronización: {e}")
+            logger.error(f"Error en sincronización: {e}", exc_info=True, extra={
+                "sync_direction": self.sync_direction.value,
+                "batch_size": self.batch_size,
+                "context": "stock_sync_error"
+            })
             return {
                 "status": "error",
                 "error": str(e),
@@ -147,6 +149,34 @@ class MLStockSynchronizer:
             }
         finally:
             self.is_syncing = False
+    
+    async def _sync_stock_internal(self) -> Dict[str, Any]:
+        """Internal sync implementation"""
+        start_time = datetime.now()
+        
+        # 1. Cargar registros locales y de ML
+        local_records = await self._load_local_stock()
+        ml_records = await self._load_ml_stock()
+
+        # 2. Detectar conflictos
+        conflicts = await self._detect_conflicts(local_records, ml_records)
+
+        # 3. Resolver conflictos
+        resolved_records = await self._resolve_conflicts(conflicts, local_records, ml_records)
+
+        # 4. Ejecutar sincronización según dirección
+        sync_results = await self._execute_sync(resolved_records)
+
+        # 5. Actualizar estadísticas
+        self._update_sync_stats(sync_results, conflicts, start_time)
+
+        return {
+            "status": "success",
+            "duration_seconds": (datetime.now() - start_time).total_seconds(),
+            "records_processed": len(resolved_records),
+            "conflicts_detected": len(conflicts),
+            "sync_results": sync_results
+        }
 
     async def _load_local_stock(self) -> Dict[str, StockRecord]:
         """Carga registros de stock del sistema local"""
@@ -196,7 +226,9 @@ class MLStockSynchronizer:
             return records
 
         except Exception as e:
-            logger.error(f"Error cargando stock local: {e}")
+            logger.error(f"Error cargando stock local: {e}", exc_info=True, extra={
+                "context": "load_local_stock_error"
+            })
             return {}
 
     async def _load_ml_stock(self) -> Dict[str, StockRecord]:
