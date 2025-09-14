@@ -32,6 +32,8 @@ from .stock_manager import (
     stock_manager, StockManagerError, InsufficientStockError, 
     ProductoNotFoundError
 )
+
+import os
 from shared.auth import require_role, DEPOSITO_ROLE
 
 # Configurar logging
@@ -39,7 +41,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/home/user/logs/api.log'),
+    logging.FileHandler(os.getenv('LOG_PATH', 'logs/api.log')),
         logging.StreamHandler()
     ]
 )

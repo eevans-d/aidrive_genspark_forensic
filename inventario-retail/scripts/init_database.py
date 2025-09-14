@@ -22,13 +22,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from agente_deposito.database import db_manager, init_database
 from agente_deposito.models import Producto, MovimientoStock, Proveedor, Cliente
+import os
 
 # Configurar logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/home/user/logs/init_database.log'),
+    logging.FileHandler(os.getenv('LOG_PATH', 'logs/init_database.log')),
         logging.StreamHandler()
     ]
 )

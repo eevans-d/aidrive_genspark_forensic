@@ -3,6 +3,7 @@ Sistema de automatización y schedulers para integraciones
 Maneja tareas programadas de AFIP, MercadoLibre y compliance fiscal
 """
 import asyncio
+import os
 import schedule
 import time
 from datetime import datetime, timedelta, time as dt_time
@@ -23,7 +24,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('scheduler.log'),
+    logging.FileHandler(os.getenv('LOG_PATH', 'logs/scheduler.log')),
         logging.StreamHandler(sys.stdout)
     ]
 )

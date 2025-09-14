@@ -31,11 +31,12 @@ from integrations.deposito_client import DepositoClient
 from shared.auth import require_role, NEGOCIO_ROLE
 
 # Configuración de logging
+import os
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("agente_negocio.log"),
+    logging.FileHandler(os.getenv('LOG_PATH', 'logs/agente_negocio.log')),
         logging.StreamHandler()
     ]
 )
