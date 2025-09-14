@@ -70,7 +70,7 @@ app.add_middleware(
 
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["localhost", "127.0.0.1", "*"]  # En producción ser más restrictivo
+    allowed_hosts=os.getenv('CORS_ORIGINS', 'http://localhost,http://127.0.0.1').split(',')
 )
 
 # Manager de stock

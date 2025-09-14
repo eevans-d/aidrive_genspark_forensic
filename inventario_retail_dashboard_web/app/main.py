@@ -1,51 +1,4 @@
-...existing code...
-# Definición de la app Flask
-app = Flask(__name__)
-
-# Métricas Prometheus
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-REQUEST_COUNT = Counter('dashboard_requests_total', 'Total de requests', ['method', 'endpoint', 'http_status'])
-REQUEST_LATENCY = Histogram('dashboard_request_latency_seconds', 'Latencia de requests', ['endpoint'])
-
-# Middleware para logging y métricas
-@app.before_request
-def before_request_metrics():
-    request._start_time = datetime.now()
-
-@app.after_request
-def after_request_metrics(response):
-    process_time = (datetime.now() - getattr(request, '_start_time', datetime.now())).total_seconds()
-    REQUEST_COUNT.labels(request.method, request.path, response.status_code).inc()
-    REQUEST_LATENCY.labels(request.path).observe(process_time)
-    return response
-
-# Endpoint /metrics Prometheus
-@app.route("/metrics")
-def metrics():
-    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
-...existing code...
-
-# Métricas Prometheus
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-REQUEST_COUNT = Counter('dashboard_requests_total', 'Total de requests', ['method', 'endpoint', 'http_status'])
-REQUEST_LATENCY = Histogram('dashboard_request_latency_seconds', 'Latencia de requests', ['endpoint'])
-
-# Middleware para logging y métricas
-@app.before_request
-def before_request_metrics():
-    request._start_time = datetime.now()
-
-@app.after_request
-def after_request_metrics(response):
-    process_time = (datetime.now() - getattr(request, '_start_time', datetime.now())).total_seconds()
-    REQUEST_COUNT.labels(request.method, request.path, response.status_code).inc()
-    REQUEST_LATENCY.labels(request.path).observe(process_time)
-    return response
-
-# Endpoint /metrics Prometheus
-@app.route("/metrics")
-def metrics():
-    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+ 
 """
 Dashboard Web Interactivo - Sistema Inventario Retail Argentino
 Aplicación Flask principal con integración completa ML, OCR, Cache
@@ -108,22 +61,25 @@ socketio = SocketIO(app, cors_allowed_origins=_cors_origins or None)
 # Security headers
 apply_flask_security(app)
 
-# Redis para cache y sessions
-redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+# Redis client for real-time data
+redis_client = redis.Redis(
+    host=os.getenv('REDIS_HOST', 'localhost'), 
+    port=int(os.getenv('REDIS_PORT', '6379')), 
+    db=int(os.getenv('REDIS_DB', '0')), 
+    decode_responses=True
+)
 
-# URLs APIs backend (integracion con sistema existente)
-API_URLS = {
-    'deposito': 'http://localhost:8000',
-    'negocio': 'http://localhost:8001', 
-    'ml': 'http://localhost:8002',
-    'scheduler': 'http://localhost:8003'
+# Service URLs - Production-ready configuration
+SERVICE_URLS = {
+    'deposito': os.getenv('DEPOSITO_SERVICE_URL', 'http://localhost:8000'),
+    'negocio': os.getenv('NEGOCIO_SERVICE_URL', 'http://localhost:8001'), 
+    'ml': os.getenv('ML_SERVICE_URL', 'http://localhost:8002'),
+    'scheduler': os.getenv('SCHEDULER_SERVICE_URL', 'http://localhost:8003')
 }
 
-# Usuarios básicos (para uso interno)
-USERS = {
-    'admin': generate_password_hash('admin123'),
-    'empleado': generate_password_hash('emp123'),
-    'gerente': generate_password_hash('ger123')
+# Simple user storage (replace with proper DB in production)
+users = {
+    'admin': generate_password_hash(os.getenv('ADMIN_PASSWORD', 'changeme-admin-password'))
 }
 
 def check_auth():
@@ -148,7 +104,7 @@ def get_api_data(endpoint, api='deposito'):
             logger.error("No hay token JWT disponible")
             return None
             
-        url = f"{API_URLS[api]}{endpoint}"
+        url = f"{SERVICE_URLS[api]}{endpoint}"
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.get(url, headers=headers, timeout=10)
         if response.status_code == 200:
@@ -166,7 +122,7 @@ def post_api_data(endpoint, data, api='deposito'):
             logger.error("No hay token JWT disponible")
             return None
             
-        url = f"{API_URLS[api]}{endpoint}"
+        url = f"{SERVICE_URLS[api]}{endpoint}"
         headers = {'Authorization': f'Bearer {token}'}
         response = requests.post(url, json=data, headers=headers, timeout=30)
         if response.status_code in [200, 201]:
@@ -183,7 +139,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if username in USERS and check_password_hash(USERS[username], password):
+        if username in users and check_password_hash(users[username], password):
             session['user'] = username
             session['login_time'] = datetime.now().isoformat()
             flash(f'Bienvenido {username}!', 'success')
@@ -309,7 +265,7 @@ def upload_factura():
         with open(filepath, 'rb') as f:
             files = {'factura': f}
             try:
-                response = requests.post(f"{API_URLS['negocio']}/procesar-factura-avanzado",
+                response = requests.post(f"{SERVICE_URLS['negocio']}/procesar-factura-avanzado",
                                        files=files, timeout=30)
                 if response.status_code == 200:
                     resultado = response.json()
@@ -458,4 +414,5 @@ if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # Ejecutar aplicación
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    socketio.run(app, debug=debug_mode, host='0.0.0.0', port=int(os.getenv('FLASK_PORT', '5000')))

@@ -1,28 +1,4 @@
-from fastapi import Response
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-# Métricas Prometheus
-REQUEST_COUNT = Counter('ml_service_requests_total', 'Total de requests', ['method', 'endpoint', 'http_status'])
-REQUEST_LATENCY = Histogram('ml_service_request_latency_seconds', 'Latencia de requests', ['endpoint'])
-# Middleware para logging y métricas
-@app.middleware("http")
-async def log_requests(request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-
-    # Prometheus metrics
-    REQUEST_COUNT.labels(request.method, request.url.path, response.status_code).inc()
-    REQUEST_LATENCY.labels(request.url.path).observe(process_time)
-
-    logger.info(
-        f"{request.method} {request.url.path} - Status: {response.status_code} - Time: {process_time:.3f}s"
-    )
-    return response
-
-# Endpoint /metrics Prometheus
-@app.get("/metrics")
-def metrics():
-    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+ 
 """
 Main ML Service - Complete Independent ML Service on Port 8003
 Integrates predictor, model manager, and cache manager with FastAPI
@@ -123,7 +99,7 @@ ML_SERVICE_CONFIG = {
     "models_path": "models",
     "data_path": "data",
     "cache_type": os.getenv("CACHE_TYPE", "memory"),  # redis, memory, hybrid
-    "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
+    "redis_url": os.getenv("REDIS_URL", f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}"),
     "cache_ttl": int(os.getenv("CACHE_TTL", "3600")),
     "max_cache_memory_mb": int(os.getenv("MAX_CACHE_MEMORY_MB", "100")),
     "enable_monitoring": os.getenv("ENABLE_MONITORING", "true").lower() == "true",
