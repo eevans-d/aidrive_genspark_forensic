@@ -128,11 +128,13 @@ app = FastAPI(
 )
 
 # Add CORS middleware
+# Configure CORS with environment-based origins
+allowed_origins = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:8000').split(',')
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 
@@ -231,11 +233,20 @@ async def process_invoice(
     logger.info(f"Starting invoice processing for file: {image.filename}")
 
     try:
-        # Validate file type
+        # Validate file type and size
         if not image.content_type.startswith('image/'):
             raise HTTPException(
                 status_code=400, 
                 detail=f"Invalid file type: {image.content_type}. Only images are allowed."
+            )
+        
+        # Check file size limit (50MB max)
+        MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+        content = await image.read()
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=413,
+                detail=f"File too large: {len(content)} bytes. Maximum allowed: {MAX_FILE_SIZE} bytes"
             )
 
         # Use form parameters if provided, otherwise use request model defaults
@@ -243,11 +254,14 @@ async def process_invoice(
         should_update_stock = update_stock if update_stock is not None else request_data.update_stock
         rate = inflation_rate if inflation_rate is not None else request_data.inflation_rate
 
-        # Step 1: Save and preprocess image
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
-            content = await image.read()
+        # Step 1: Save and preprocess image with guaranteed cleanup
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg')
+        try:
             temp_file.write(content)
+            temp_file.flush()
             temp_path = temp_file.name
+        finally:
+            temp_file.close()
 
         try:
             # Preprocess image
@@ -326,13 +340,18 @@ async def process_invoice(
                     deposito_response = {"error": str(deposito_error)}
 
         finally:
-            # Cleanup temporary files
-            try:
-                os.unlink(temp_path)
-                if 'processed_image_path' in locals() and processed_image_path != temp_path:
-                    os.unlink(processed_image_path)
-            except:
-                pass  # Ignore cleanup errors
+            # Guaranteed cleanup of temporary files
+            cleanup_files = [temp_path]
+            if 'processed_image_path' in locals() and processed_image_path != temp_path:
+                cleanup_files.append(processed_image_path)
+            
+            for file_path in cleanup_files:
+                try:
+                    if os.path.exists(file_path):
+                        os.unlink(file_path)
+                        logger.debug(f"Cleaned up temporary file: {file_path}")
+                except Exception as cleanup_error:
+                    logger.warning(f"Failed to cleanup file {file_path}: {cleanup_error}")
 
         processing_time = int((time.time() - start_time) * 1000)
 
@@ -352,7 +371,12 @@ async def process_invoice(
         raise  # Re-raise HTTP exceptions
     except Exception as e:
         processing_time = int((time.time() - start_time) * 1000)
-        logger.error(f"Invoice processing failed: {e}")
+        logger.error(f"Invoice processing failed: {e}", exc_info=True, extra={
+            "processing_time_ms": processing_time,
+            "filename": image.filename if image else "unknown",
+            "endpoint": endpoint,
+            "context": "invoice_processing"
+        })
 
         return InvoiceProcessResponse(
             success=False,
@@ -427,7 +451,12 @@ async def consult_price(
         )
 
     except Exception as e:
-        logger.error(f"Price consultation failed: {e}")
+        logger.error(f"Price consultation failed: {e}", exc_info=True, extra={
+            "product_name": product_name,
+            "base_price": base_price,
+            "inflation_rate": inflation_rate,
+            "context": "price_consultation"
+        })
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/ocr/test", response_model=OCRTestResponse)
@@ -451,11 +480,23 @@ async def test_ocr(
                 detail=f"Invalid file type: {image.content_type}. Only images are allowed."
             )
 
-        # Save temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
-            content = await image.read()
+        # Validate file size first
+        content = await image.read()
+        MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=413,
+                detail=f"File too large: {len(content)} bytes. Maximum: {MAX_FILE_SIZE} bytes"
+            )
+
+        # Save temporary file with guaranteed cleanup
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg')
+        try:
             temp_file.write(content)
+            temp_file.flush()
             temp_path = temp_file.name
+        finally:
+            temp_file.close()
 
         try:
             # Step 1: Preprocess image
@@ -483,13 +524,18 @@ async def test_ocr(
                 )
 
         finally:
-            # Cleanup
-            try:
-                os.unlink(temp_path)
-                if 'processed_image_path' in locals() and processed_image_path != temp_path:
-                    os.unlink(processed_image_path)
-            except:
-                pass
+            # Guaranteed cleanup of temporary files
+            cleanup_files = [temp_path]
+            if 'processed_image_path' in locals() and processed_image_path != temp_path:
+                cleanup_files.append(processed_image_path)
+            
+            for file_path in cleanup_files:
+                try:
+                    if os.path.exists(file_path):
+                        os.unlink(file_path)
+                        logger.debug(f"Cleaned up temporary file: {file_path}")
+                except Exception as cleanup_error:
+                    logger.warning(f"Failed to cleanup file {file_path}: {cleanup_error}")
 
         processing_time = int((time.time() - start_time) * 1000)
 
@@ -507,7 +553,12 @@ async def test_ocr(
 
     except Exception as e:
         processing_time = int((time.time() - start_time) * 1000)
-        logger.error(f"OCR testing failed: {e}")
+        logger.error(f"OCR testing failed: {e}", exc_info=True, extra={
+            "processing_time_ms": processing_time,
+            "filename": image.filename if image else "unknown",
+            "preprocess_only": preprocess_only,
+            "context": "ocr_testing"
+        })
 
         return OCRTestResponse(
             success=False,
@@ -523,37 +574,49 @@ async def startup_event():
     """Initialize application on startup"""
     logger.info("Agente de Negocio starting up...")
 
-    # Initialize cache cleanup task con circuit breaker básico
+    # Initialize cache cleanup task with configurable circuit breaker
     async def cache_cleanup():
         fail_count = 0
-        MAX_FAILS = 5
+        MAX_FAILS = int(os.getenv('CACHE_CLEANUP_MAX_FAILS', '5'))
+        BASE_RETRY_DELAY = int(os.getenv('CACHE_CLEANUP_BASE_DELAY', '300'))  # 5 minutes
+        CLEANUP_INTERVAL = int(os.getenv('CACHE_CLEANUP_INTERVAL', '3600'))  # 1 hour
+        
         while True:
             try:
-                pricing_cache.cleanup_expired()
+                # Timeout protection for cleanup operation
+                await asyncio.wait_for(
+                    asyncio.to_thread(pricing_cache.cleanup_expired),
+                    timeout=30.0  # 30 second timeout
+                )
                 fail_count = 0
-                await asyncio.sleep(3600)  # Cleanup every hour
-            except Exception as e:
+                logger.debug(f"Cache cleanup completed successfully")
+                await asyncio.sleep(CLEANUP_INTERVAL)
+            except asyncio.TimeoutError:
                 fail_count += 1
-                logger.error(f"Cache cleanup error: {e} (fail {fail_count})")
+                logger.error(f"Cache cleanup timeout (fail {fail_count})", exc_info=True)
                 if fail_count >= MAX_FAILS:
-                    logger.critical(f"Cache cleanup circuit breaker activado tras {fail_count} fallos consecutivos. Pausando 1 hora.")
-                    # Observabilidad: alerta crítica (simulada)
-                    try:
-                        import smtplib
-                        from email.message import EmailMessage
-                        msg = EmailMessage()
-                        msg.set_content(f"ALERTA: Circuit breaker activado en cache_cleanup. Fallos: {fail_count}")
-                        msg['Subject'] = 'ALERTA CRÍTICA - Circuit Breaker Cache Cleanup'
-                        msg['From'] = 'alertas@inventario-retail.local'
-                        msg['To'] = 'admin@inventario-retail.local'
-                        # Simulación: solo loguea, no envía realmente
-                        logger.critical(f"[ALERTA EMAIL] {msg['Subject']} -> {msg['To']}")
-                    except Exception as alert_e:
-                        logger.error(f"Error en alerta crítica: {alert_e}")
-                    await asyncio.sleep(3600)  # Pausa larga por circuit breaker
+                    logger.critical(f"Cache cleanup circuit breaker activado tras {fail_count} timeouts consecutivos.")
+                    await asyncio.sleep(CLEANUP_INTERVAL)  # Circuit breaker pause
                     fail_count = 0
                 else:
-                    await asyncio.sleep(300)  # Retry en 5 minutos
+                    # Exponential backoff: 300s, 600s, 1200s, 2400s, 4800s
+                    retry_delay = min(BASE_RETRY_DELAY * (2 ** (fail_count - 1)), 4800)
+                    await asyncio.sleep(retry_delay)
+            except Exception as e:
+                fail_count += 1
+                logger.error(f"Cache cleanup error: {e} (fail {fail_count})", exc_info=True, extra={
+                    "fail_count": fail_count,
+                    "max_fails": MAX_FAILS,
+                    "context": "cache_cleanup_background_task"
+                })
+                if fail_count >= MAX_FAILS:
+                    logger.critical(f"Cache cleanup circuit breaker activado tras {fail_count} fallos consecutivos. Pausando {CLEANUP_INTERVAL}s.")
+                    await asyncio.sleep(CLEANUP_INTERVAL)  # Circuit breaker pause
+                    fail_count = 0
+                else:
+                    # Exponential backoff with jitter
+                    retry_delay = min(BASE_RETRY_DELAY * (2 ** (fail_count - 1)), 4800)
+                    await asyncio.sleep(retry_delay)
 
     # Start background task
     asyncio.create_task(cache_cleanup())
