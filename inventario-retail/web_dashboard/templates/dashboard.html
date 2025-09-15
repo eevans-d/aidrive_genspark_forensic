@@ -12,6 +12,48 @@
     </div>
 </div>
 
+{% if stock_alerts and stock_alerts|length > 0 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-danger" role="alert">
+            <strong>¡ALERTA DE STOCK CRÍTICO!</strong> Hay productos con stock bajo o agotado:
+        </div>
+        <table class="table table-bordered table-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Proveedor</th>
+                    <th>Stock Actual</th>
+                    <th>Stock Mínimo</th>
+                    <th>Precio Venta</th>
+                    <th>Nivel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in stock_alerts %}
+                <tr class="{% if prod.nivel_alerta == 'critico' %}table-danger{% elif prod.nivel_alerta == 'bajo' %}table-warning{% endif %}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ prod.producto }}</td>
+                    <td>{{ prod.proveedor }}</td>
+                    <td>{{ prod.stock_actual }}</td>
+                    <td>{{ prod.stock_minimo }}</td>
+                    <td>${{ prod.precio_venta }}</td>
+                    <td>
+                        {% if prod.nivel_alerta == 'critico' %}
+                            <span class="badge bg-danger">Agotado</span>
+                        {% elif prod.nivel_alerta == 'bajo' %}
+                            <span class="badge bg-warning text-dark">Bajo</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
 <!-- Métricas principales -->
 <div class="row mb-4">
     <div class="col-lg-3 col-md-6 mb-3">
@@ -375,5 +417,18 @@
             initProvidersChart();
         }, 500);
     });
+    
+    {% if tiene_critico %}
+        window.onload = function() {
+            var audio = document.getElementById('alertaSonora');
+            if (audio) {
+                audio.play();
+            }
+        };
+    {% endif %}
 </script>
+
+{% if tiene_critico %}
+<audio id="alertaSonora" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b6b1b2e7.mp3" preload="auto"></audio>
+{% endif %}
 {% endblock %}
