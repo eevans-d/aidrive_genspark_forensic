@@ -1,0 +1,754 @@
+{
+  "total_tests": 18,
+  "successful_tests": 18,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "test_results": [
+    {
+      "test_name": "Estado de la API",
+      "endpoint": "/",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "mensaje": "API Sistema Mini Market",
+        "version": "1.0.0",
+        "estado": "activo",
+        "proveedores_configurados": 12,
+        "timestamp": "2025-09-15T04:47:21.659075"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Health Check",
+      "endpoint": "/health",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "sistema": "Mini Market API",
+        "timestamp": "2025-09-15T04:47:21.663212",
+        "componentes": {
+          "api": "ok",
+          "base_datos": "ok",
+          "logica_proveedores": "ok"
+        },
+        "metricas": {
+          "proveedores_configurados": 12,
+          "proveedores_en_bd": 12
+        },
+        "status": "healthy"
+      },
+      "error": null
+    },
+    {
+      "test_name": "Listar Proveedores",
+      "endpoint": "/proveedores",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "total_proveedores": 12,
+        "proveedores": [
+          {
+            "codigo": "BC",
+            "nombre": "Bodega Cedeira",
+            "categorias": [
+              "vino",
+              "fernet",
+              "whisky",
+              "vodka",
+              "ron",
+              "licor",
+              "champagne",
+              "bebida alcoholica"
+            ],
+            "marcas_directas": [
+              "bodega cedeira"
+            ],
+            "marcas_distribuidas": [],
+            "exclude_keywords": [
+              "cerveza",
+              "beer"
+            ]
+          },
+          {
+            "codigo": "CO",
+            "nombre": "Coca Cola",
+            "categorias": [
+              "gaseosa",
+              "bebida sin alcohol"
+            ],
+            "marcas_directas": [
+              "coca-cola",
+              "coca cola",
+              "cocacola"
+            ],
+            "marcas_distribuidas": [
+              "sprite",
+              "fanta",
+              "aquarius",
+              "ades",
+              "cepita",
+              "monster",
+              "schweppes"
+            ],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "Q",
+            "nombre": "Quilmes",
+            "categorias": [
+              "cerveza",
+              "beer"
+            ],
+            "marcas_directas": [
+              "quilmes"
+            ],
+            "marcas_distribuidas": [
+              "brahma",
+              "stella artois",
+              "andes",
+              "corona",
+              "gatorade",
+              "glaciar",
+              "pepsi",
+              "7up",
+              "paso de los toros",
+              "eco de los andes",
+              "red bull"
+            ],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "FA",
+            "nombre": "Fargo",
+            "categorias": [
+              "panificado",
+              "pan",
+              "congelado"
+            ],
+            "marcas_directas": [
+              "fargo"
+            ],
+            "marcas_distribuidas": [
+              "levite",
+              "baggio",
+              "natura",
+              "luchetti",
+              "matarazzo",
+              "don vicente",
+              "cabrales",
+              "arlistan",
+              "barfy",
+              "friar",
+              "granja del sol",
+              "veggies",
+              "mccain",
+              "paulina",
+              "ilolay",
+              "jet food",
+              "paladini",
+              "fela"
+            ],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "LS",
+            "nombre": "La Serenísima",
+            "categorias": [
+              "lacteo",
+              "leche",
+              "yogur",
+              "queso"
+            ],
+            "marcas_directas": [
+              "la serenisima",
+              "la serenísima"
+            ],
+            "marcas_distribuidas": [
+              "yogurisimo",
+              "yogurísimo",
+              "ser",
+              "casancrem",
+              "finlandia",
+              "cremon",
+              "cindor"
+            ],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "ACE",
+            "nombre": "Aceitumar (MDP)",
+            "categorias": [
+              "fruto seco",
+              "semilla",
+              "snack",
+              "aceite gourmet",
+              "especia",
+              "salsa",
+              "conserva"
+            ],
+            "marcas_directas": [
+              "aceitumar"
+            ],
+            "marcas_distribuidas": [
+              "chocolart",
+              "cris-jor",
+              "laur",
+              "tau delta",
+              "cumana",
+              "zoraida",
+              "el ruedo",
+              "contraviento",
+              "sakanashi",
+              "shun yuan",
+              "healthy boy",
+              "marvavic",
+              "la delfina"
+            ],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "TER",
+            "nombre": "Terrabusi (Mondelez)",
+            "categorias": [
+              "galletita",
+              "chocolate",
+              "golosina",
+              "chicle",
+              "alfajor"
+            ],
+            "marcas_directas": [
+              "terrabusi"
+            ],
+            "marcas_distribuidas": [
+              "oreo",
+              "pepitos",
+              "milka",
+              "beldent",
+              "infinit",
+              "rhodesia",
+              "tita"
+            ],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "LV",
+            "nombre": "La Virginia",
+            "categorias": [
+              "cafe",
+              "té",
+              "te",
+              "yerba mate",
+              "infusion"
+            ],
+            "marcas_directas": [
+              "la virginia"
+            ],
+            "marcas_distribuidas": [],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "FR",
+            "nombre": "Frutas y Verduras (Bicho)",
+            "categorias": [
+              "fruta",
+              "verdura",
+              "fresco",
+              "banana",
+              "tomate",
+              "manzana",
+              "lechuga"
+            ],
+            "marcas_directas": [
+              "bicho"
+            ],
+            "marcas_distribuidas": [],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "MU",
+            "nombre": "Multienvase (MDP)",
+            "categorias": [
+              "envase",
+              "descartable",
+              "vaso plastico",
+              "plato descartable"
+            ],
+            "marcas_directas": [
+              "multienvase"
+            ],
+            "marcas_distribuidas": [],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "GA",
+            "nombre": "Galletitera (MDP)",
+            "categorias": [
+              "galleteria artesanal",
+              "panaderia local"
+            ],
+            "marcas_directas": [
+              "galletitera"
+            ],
+            "marcas_distribuidas": [],
+            "exclude_keywords": []
+          },
+          {
+            "codigo": "MAX",
+            "nombre": "Maxiconsumo",
+            "categorias": [
+              "mayorista",
+              "general"
+            ],
+            "marcas_directas": [
+              "maxiconsumo"
+            ],
+            "marcas_distribuidas": [],
+            "exclude_keywords": []
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "test_name": "Asignar proveedor: Coca Cola",
+      "endpoint": "/asignar-proveedor",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "producto": "Coca Cola",
+        "categoria": null,
+        "proveedor_asignado": {
+          "codigo": "CO",
+          "nombre": "Coca Cola",
+          "confianza": 0.95,
+          "tipo_match": "direct"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Asignar proveedor: Galletitas Oreo",
+      "endpoint": "/asignar-proveedor",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "producto": "Galletitas Oreo",
+        "categoria": null,
+        "proveedor_asignado": {
+          "codigo": "TER",
+          "nombre": "Terrabusi (Mondelez)",
+          "confianza": 0.9,
+          "tipo_match": "submarca"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Asignar proveedor: Vino tinto",
+      "endpoint": "/asignar-proveedor",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "producto": "Vino tinto",
+        "categoria": "bebida alcoholica",
+        "proveedor_asignado": {
+          "codigo": "BC",
+          "nombre": "Bodega Cedeira",
+          "confianza": 0.8,
+          "tipo_match": "categoria"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Asignar proveedor: Banana",
+      "endpoint": "/asignar-proveedor",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "producto": "Banana",
+        "categoria": "fruta",
+        "proveedor_asignado": {
+          "codigo": "FR",
+          "nombre": "Frutas y Verduras (Bicho)",
+          "confianza": 0.8,
+          "tipo_match": "categoria"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Comando: Pedir Coca Cola x 6",
+      "endpoint": "/comando-natural",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Pedir Coca Cola x 6",
+        "usuario": "test_api",
+        "pedido_id": 5,
+        "proveedor": {
+          "codigo": "CO",
+          "nombre": "Coca Cola",
+          "confidence": 0.95,
+          "match_type": "direct"
+        },
+        "producto": "coca cola",
+        "cantidad": 6
+      },
+      "error": null
+    },
+    {
+      "test_name": "Comando: Falta Sprite lima limón",
+      "endpoint": "/comando-natural",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Falta Sprite lima limón",
+        "usuario": "test_api",
+        "pedido_id": 6,
+        "proveedor": {
+          "codigo": "CO",
+          "nombre": "Coca Cola",
+          "confidence": 0.9,
+          "match_type": "submarca"
+        },
+        "producto": "sprite lima limón",
+        "cantidad": 1
+      },
+      "error": null
+    },
+    {
+      "test_name": "Comando: Anotar Salchichas Paladini x 3",
+      "endpoint": "/comando-natural",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Anotar Salchichas Paladini x 3",
+        "usuario": "test_api",
+        "pedido_id": 7,
+        "proveedor": {
+          "codigo": "FA",
+          "nombre": "Fargo",
+          "confidence": 0.9,
+          "match_type": "submarca"
+        },
+        "producto": "salchichas paladini",
+        "cantidad": 3
+      },
+      "error": null
+    },
+    {
+      "test_name": "Comando: Necesito bananas x 5",
+      "endpoint": "/comando-natural",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Necesito bananas x 5",
+        "usuario": "test_api",
+        "pedido_id": 8,
+        "proveedor": {
+          "codigo": "FR",
+          "nombre": "Frutas y Verduras (Bicho)",
+          "confidence": 0.8,
+          "match_type": "categoria"
+        },
+        "producto": "bananas",
+        "cantidad": 5
+      },
+      "error": null
+    },
+    {
+      "test_name": "Stock: Dejé 4 bananas del ecuador",
+      "endpoint": "/comando-stock",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Dejé 4 bananas del ecuador",
+        "usuario": "test_api",
+        "movimiento_id": 7,
+        "operacion": "entrada",
+        "producto": "bananas",
+        "cantidad": 4,
+        "proveedor_sugerido": {
+          "codigo": "FR",
+          "nombre": "Frutas y Verduras (Bicho)",
+          "confidence": 0.8
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Stock: Ingreso 12 Coca Cola del distribuidor",
+      "endpoint": "/comando-stock",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Ingreso 12 Coca Cola del distribuidor",
+        "usuario": "test_api",
+        "movimiento_id": 8,
+        "operacion": "entrada",
+        "producto": "Coca Cola",
+        "cantidad": 12,
+        "proveedor_sugerido": {
+          "codigo": "CO",
+          "nombre": "Coca Cola",
+          "confidence": 0.95
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Stock: Saqué 6 productos para el kiosco",
+      "endpoint": "/comando-stock",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "comando_original": "Saqué 6 productos para el kiosco",
+        "usuario": "test_api",
+        "movimiento_id": 9,
+        "operacion": "salida",
+        "producto": "productos",
+        "cantidad": 6,
+        "proveedor_sugerido": null
+      },
+      "error": null
+    },
+    {
+      "test_name": "Procesar Factura OCR",
+      "endpoint": "/procesar-factura-ocr",
+      "method": "POST",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "usuario": "test_api",
+        "factura_id": 2,
+        "productos_procesados": 3,
+        "enhanced_result": {
+          "factura_numero": "F001-TEST-API-001",
+          "proveedor_original": "DISTRIBUIDOR API TEST",
+          "productos": [
+            {
+              "descripcion": "Coca Cola 2.5L",
+              "precio": 450.0,
+              "cantidad": 2,
+              "proveedor_sugerido": {
+                "codigo": "CO",
+                "nombre": "Coca Cola",
+                "confidence": 0.95,
+                "match_type": "direct"
+              }
+            },
+            {
+              "descripcion": "Galletitas Oreo",
+              "precio": 380.0,
+              "cantidad": 1,
+              "proveedor_sugerido": {
+                "codigo": "TER",
+                "nombre": "Terrabusi (Mondelez)",
+                "confidence": 0.9,
+                "match_type": "submarca"
+              }
+            },
+            {
+              "descripcion": "Banana ecuador kg",
+              "precio": 280.0,
+              "cantidad": 3,
+              "proveedor_sugerido": {
+                "codigo": "FR",
+                "nombre": "Frutas y Verduras (Bicho)",
+                "confidence": 0.8,
+                "match_type": "categoria"
+              }
+            }
+          ],
+          "total": 1390.0,
+          "fecha_factura": null
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "Resumen de Pedidos",
+      "endpoint": "/resumen-pedidos?dias=7",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "periodo_dias": 7,
+        "pedidos_por_proveedor": [
+          {
+            "codigo": "CO",
+            "nombre": "Coca Cola",
+            "total_pedidos": 4,
+            "total_productos": 14,
+            "productos": [
+              "coca cola (x6)",
+              "sprite lima limón (x1)",
+              "coca cola (x6)",
+              "sprite lima limón (x1)"
+            ]
+          },
+          {
+            "codigo": "FA",
+            "nombre": "Fargo",
+            "total_pedidos": 2,
+            "total_productos": 6,
+            "productos": [
+              "salchichas paladini (x3)",
+              "salchichas paladini (x3)"
+            ]
+          },
+          {
+            "codigo": "FR",
+            "nombre": "Frutas y Verduras (Bicho)",
+            "total_pedidos": 2,
+            "total_productos": 10,
+            "productos": [
+              "bananas (x5)",
+              "bananas (x5)"
+            ]
+          }
+        ],
+        "movimientos_stock": [
+          {
+            "tipo": "entrada",
+            "cantidad_movimientos": 10,
+            "total_productos": 44
+          },
+          {
+            "tipo": "salida",
+            "cantidad_movimientos": 2,
+            "total_productos": 12
+          }
+        ],
+        "total_proveedores_activos": 3
+      },
+      "error": null
+    },
+    {
+      "test_name": "Stock Bajo",
+      "endpoint": "/stock-bajo?limite=10",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "productos_stock_bajo": [
+          {
+            "producto": "productos",
+            "stock_actual": -12,
+            "ultima_modificacion": "2025-09-15 04:47:21",
+            "proveedor_sugerido": {
+              "codigo": "MAX",
+              "nombre": "Maxiconsumo",
+              "confianza": 0.5
+            }
+          },
+          {
+            "producto": "Galletitas Oreo",
+            "stock_actual": 2,
+            "ultima_modificacion": "2025-09-15 04:47:21",
+            "proveedor_sugerido": {
+              "codigo": "TER",
+              "nombre": "Terrabusi (Mondelez)",
+              "confianza": 0.9
+            }
+          },
+          {
+            "producto": "Coca Cola 2.5L",
+            "stock_actual": 4,
+            "ultima_modificacion": "2025-09-15 04:47:21",
+            "proveedor_sugerido": {
+              "codigo": "CO",
+              "nombre": "Coca Cola",
+              "confianza": 0.95
+            }
+          },
+          {
+            "producto": "Banana ecuador kg",
+            "stock_actual": 6,
+            "ultima_modificacion": "2025-09-15 04:47:21",
+            "proveedor_sugerido": {
+              "codigo": "FR",
+              "nombre": "Frutas y Verduras (Bicho)",
+              "confianza": 0.8
+            }
+          },
+          {
+            "producto": "bananas",
+            "stock_actual": 8,
+            "ultima_modificacion": "2025-09-15 04:47:21",
+            "proveedor_sugerido": {
+              "codigo": "FR",
+              "nombre": "Frutas y Verduras (Bicho)",
+              "confianza": 0.8
+            }
+          }
+        ],
+        "total_productos": 5,
+        "limite_aplicado": 10
+      },
+      "error": null
+    },
+    {
+      "test_name": "Pedidos por Proveedor",
+      "endpoint": "/pedidos-por-proveedor",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "pedidos_por_proveedor": {},
+        "total_proveedores": 0,
+        "total_productos": 0
+      },
+      "error": null
+    }
+  ]
+}

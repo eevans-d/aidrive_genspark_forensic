@@ -30,6 +30,9 @@ from pricing.engine import PricingCache
 from integrations.deposito_client import DepositoClient
 from shared.auth import require_role, NEGOCIO_ROLE
 
+# Importar nueva lógica de proveedores Mini Market
+from provider_logic import MiniMarketProviderLogic, enhance_ocr_with_provider_logic, StockCommands
+
 # Configuración de logging
 import os
 logging.basicConfig(
@@ -155,6 +158,9 @@ async def log_requests(request, call_next):
 # Initialize business modules
 image_preprocessor = ImagePreprocessor()
 ocr_processor = OCRProcessor()
+
+# Inicializar lógica de proveedores Mini Market
+provider_logic = MiniMarketProviderLogic()
 invoice_extractor = InvoiceExtractor()
 pricing_calculator = PricingCalculator()
 pricing_cache = PricingCache()
@@ -621,6 +627,148 @@ async def startup_event():
     # Start background task
     asyncio.create_task(cache_cleanup())
     logger.info("Agente de Negocio startup completed")
+
+# === NUEVOS ENDPOINTS MINI MARKET ===
+
+@app.post("/pedidos/registrar")
+async def registrar_pedido_natural(
+    comando: str = Form(..., description="Comando natural: 'Pedir producto x cantidad'"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """Registra pedido usando comando en lenguaje natural"""
+    try:
+        resultado = provider_logic.procesar_comando_natural(comando)
+        return JSONResponse(content=resultado)
+    except Exception as e:
+        logger.error(f"Error registrando pedido: {e}", exc_info=True)
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.get("/pedidos/por-proveedor")
+async def obtener_pedidos_por_proveedor(
+    proveedor: Optional[str] = None,
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """Obtiene pedidos agrupados por proveedor"""
+    try:
+        resultado = provider_logic.obtener_pedidos_por_proveedor(proveedor)
+        return JSONResponse(content=resultado)
+    except Exception as e:
+        logger.error(f"Error obteniendo pedidos: {e}", exc_info=True)
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.post("/stock/comando")
+async def procesar_comando_stock(
+    comando: str = Form(..., description="Comando de stock: 'Dejé 4 productos del proveedor X'"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """Procesa comandos de stock para el depósito"""
+    try:
+        resultado = StockCommands.procesar_comando_stock(comando, provider_logic)
+        return JSONResponse(content=resultado)
+    except Exception as e:
+        logger.error(f"Error procesando comando stock: {e}", exc_info=True)
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.post("/ocr/procesar-con-proveedores")
+async def procesar_factura_con_proveedores(
+    image: UploadFile = File(..., description="Factura image"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """Procesa factura con OCR y asigna proveedores automáticamente"""
+    start_time = time.time()
+    try:
+        # Procesar con OCR normal
+        temp_path = None
+        try:
+            # Crear archivo temporal usando tempfile
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg')
+            temp_path = temp_file.name
+            
+            # Escribir contenido del archivo
+            content = await image.read()
+            temp_file.write(content)
+            temp_file.close()
+            
+            # Validar tamaño de archivo
+            MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+            if len(content) > MAX_FILE_SIZE:
+                raise HTTPException(413, f"Archivo muy grande: {len(content)} bytes")
+            
+            # Procesar OCR
+            ocr_result = await asyncio.to_thread(
+                invoice_extractor.extract_from_image, temp_path
+            )
+            
+            # Mejorar con lógica de proveedores
+            enhanced_result = enhance_ocr_with_provider_logic(ocr_result, provider_logic)
+            
+            return JSONResponse(content={
+                "success": True,
+                "mensaje": "Factura procesada exitosamente con asignación de proveedores",
+                "datos_extraidos": enhanced_result,
+                "processing_time_ms": int((time.time() - start_time) * 1000)
+            })
+            
+        finally:
+            if temp_path and os.path.exists(temp_path):
+                try:
+                    os.unlink(temp_path)
+                except Exception as cleanup_error:
+                    logger.warning(f"Error limpiando archivo temporal: {cleanup_error}")
+                    
+    except Exception as e:
+        logger.error(f"Error procesando factura con proveedores: {e}", exc_info=True)
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.get("/proveedores/lista")
+async def obtener_lista_proveedores(
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """Obtiene lista completa de proveedores Mini Market"""
+    try:
+        proveedores = {}
+        for code, provider in provider_logic.PROVIDERS.items():
+            proveedores[code] = {
+                "codigo": code,
+                "nombre": provider['name'],
+                "categorias": provider.get('categorias', []),
+                "marcas_directas": provider.get('marcas_directas', []),
+                "marcas_distribuidas": provider.get('marcas_distribuidas', [])
+            }
+        
+        return JSONResponse(content={
+            "success": True,
+            "proveedores": proveedores,
+            "total": len(proveedores)
+        })
+    except Exception as e:
+        logger.error(f"Error obteniendo proveedores: {e}", exc_info=True)
+        raise HTTPException(500, f"Error interno: {str(e)}")
+
+@app.post("/proveedores/asignar")
+async def asignar_proveedor_producto(
+    producto: str = Form(..., description="Nombre del producto"),
+    categoria: Optional[str] = Form(None, description="Categoría del producto"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """Asigna proveedor a un producto específico"""
+    try:
+        provider_match = provider_logic.asignar_proveedor(producto, categoria)
+        
+        return JSONResponse(content={
+            "success": True,
+            "producto": producto,
+            "categoria": categoria,
+            "proveedor_asignado": {
+                "codigo": provider_match.provider_code,
+                "nombre": provider_match.provider_name,
+                "confidence": provider_match.confidence,
+                "match_type": provider_match.match_type
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error asignando proveedor: {e}", exc_info=True)
+        raise HTTPException(500, f"Error interno: {str(e)}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
