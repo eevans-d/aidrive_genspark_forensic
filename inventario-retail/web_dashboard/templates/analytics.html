@@ -37,7 +37,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-sm">
+                    <table class="table table-sm" id="topProductsTable">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -46,17 +46,17 @@
                                 <th>Pedidos</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for product in top_products[:10] %}
-                            <tr>
-                                <td>{{ loop.index }}</td>
-                                <td>{{ product.producto }}</td>
-                                <td><span class="badge bg-success">{{ product.cantidad_total }}</span></td>
-                                <td><span class="badge bg-info">{{ product.pedidos }}</span></td>
-                            </tr>
-                            {% endfor %}
+                        <tbody id="topProductsTableBody">
+                            <!-- JS render -->
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div id="topProductsPaginationInfo" class="small text-muted"></div>
+                        <div>
+                            <button class="btn btn-sm btn-secondary me-1" id="topProductsPrev">Anterior</button>
+                            <button class="btn btn-sm btn-secondary" id="topProductsNext">Siguiente</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,16 +165,59 @@
 
 {% block scripts %}
 <script>
-    // Gráfico de top productos
+    // --- Paginación Top Productos ---
+    const topProductsData = JSON.parse('{{ top_products|tojson|escapejs }}');
+    const pageSize = 5;
+    let currentPage = 1;
+
+    function renderTopProductsTable() {
+        const tbody = document.getElementById('topProductsTableBody');
+        const info = document.getElementById('topProductsPaginationInfo');
+        tbody.innerHTML = '';
+        if (!topProductsData || topProductsData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Sin datos</td></tr>';
+            info.textContent = '';
+            return;
+        }
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(start + pageSize, topProductsData.length);
+        for (let i = start; i < end; i++) {
+            const p = topProductsData[i];
+            tbody.innerHTML += `<tr>
+                <td>${i + 1}</td>
+                <td>${p.producto}</td>
+                <td><span class='badge bg-success'>${p.cantidad_total}</span></td>
+                <td><span class='badge bg-info'>${p.pedidos}</span></td>
+            </tr>`;
+        }
+        info.textContent = `Mostrando ${start + 1}-${end} de ${topProductsData.length}`;
+        document.getElementById('topProductsPrev').disabled = currentPage === 1;
+        document.getElementById('topProductsNext').disabled = end >= topProductsData.length;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        renderTopProductsTable();
+        document.getElementById('topProductsPrev').onclick = function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTopProductsTable();
+            }
+        };
+        document.getElementById('topProductsNext').onclick = function() {
+            if ((currentPage * pageSize) < topProductsData.length) {
+                currentPage++;
+                renderTopProductsTable();
+            }
+        };
+    });
+
+    // Gráfico de top productos (mantener)
     async function initTopProductsChart() {
-        const topProducts = {{ top_products[:5]|tojson }};
-        
+        const topProducts = topProductsData.slice(0, 5);
         if (!topProducts || topProducts.length === 0) return;
-        
         const labels = topProducts.map(p => p.producto.substring(0, 20) + '...');
         const values = topProducts.map(p => p.cantidad_total);
         const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
-        
         const ctx = document.getElementById('topProductsChart').getContext('2d');
         new Chart(ctx, {
             type: 'doughnut',
@@ -204,7 +247,7 @@
     
     // Gráfico de tendencias
     async function initTrendsChart() {
-        const trends = {{ trends.pedidos_mensuales|tojson }};
+    const trends = JSON.parse('{{ trends.pedidos_mensuales|tojson|escapejs }}');
         
         if (!trends || trends.length === 0) return;
         

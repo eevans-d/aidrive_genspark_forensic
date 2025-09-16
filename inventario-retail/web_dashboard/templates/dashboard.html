@@ -18,7 +18,8 @@
         <div class="alert alert-danger" role="alert">
             <strong>¡ALERTA DE STOCK CRÍTICO!</strong> Hay productos con stock bajo o agotado:
         </div>
-        <table class="table table-bordered table-sm">
+        <div class="table-responsive">
+        <table class="table table-bordered table-sm" id="tablaStockAlertas">
             <thead class="table-light">
                 <tr>
                     <th>#</th>
@@ -50,8 +51,40 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
+        <nav>
+          <ul class="pagination justify-content-center" id="paginacionStockAlertas"></ul>
+        </nav>
     </div>
 </div>
+<script>
+(function(){
+  // Paginación simple para tabla de alertas
+  const filasPorPagina = 10;
+  const tabla = document.getElementById('tablaStockAlertas');
+  if (!tabla) return;
+  const tbody = tabla.querySelector('tbody');
+  const filas = Array.from(tbody.children);
+  const totalPaginas = Math.ceil(filas.length / filasPorPagina);
+  const paginacion = document.getElementById('paginacionStockAlertas');
+  if (totalPaginas <= 1) return;
+  let paginaActual = 1;
+  function mostrarPagina(n) {
+    paginaActual = n;
+    filas.forEach((tr, i) => {
+      tr.style.display = (i >= (n-1)*filasPorPagina && i < n*filasPorPagina) ? '' : 'none';
+    });
+    paginacion.innerHTML = '';
+    for (let i = 1; i <= totalPaginas; i++) {
+      paginacion.innerHTML += `<li class="page-item${i===paginaActual?' active':''}"><a class="page-link" href="#">${i}</a></li>`;
+    }
+    Array.from(paginacion.querySelectorAll('a')).forEach((a, idx) => {
+      a.onclick = e => { e.preventDefault(); mostrarPagina(idx+1); };
+    });
+  }
+  mostrarPagina(1);
+})();
+</script>
 {% endif %}
 
 <!-- Métricas principales -->
@@ -171,21 +204,15 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span>Base de Datos:</span>
-                    <span class="status-badge status-active">
-                        <i class="fas fa-check-circle"></i> Conectado
-                    </span>
+                    <span class="status-badge badge rounded-pill px-3 py-2 fs-6" id="badgeDb">Cargando...</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span>API Sistema:</span>
-                    <span class="status-badge status-active">
-                        <i class="fas fa-check-circle"></i> Activo
-                    </span>
+                    <span class="status-badge badge rounded-pill px-3 py-2 fs-6" id="badgeApi">Cargando...</span>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <span>OCR Procesamiento:</span>
-                    <span class="status-badge status-active">
-                        <i class="fas fa-check-circle"></i> Operativo
-                    </span>
+                    <span class="status-badge badge rounded-pill px-3 py-2 fs-6" id="badgeOcr">Cargando...</span>
                 </div>
             </div>
         </div>
@@ -574,4 +601,53 @@
 </script>
 <!-- Audio de alerta (se reproduce según flags JS) -->
 <audio id="alertaSonora" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12b6b1b2e7.mp3" preload="auto" style="display:none"></audio>
+
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080; min-width: 300px;">
+  <div id="toastContainer"></div>
+</div>
+
+<script>
+// Toast notification system
+function showToast(message, type = 'info', delay = 4000) {
+  const toastId = `toast-${Date.now()}`;
+  const color = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : type === 'warning' ? 'bg-warning text-dark' : 'bg-info';
+  const icon = type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-triangle' : type === 'warning' ? 'fa-exclamation-circle' : 'fa-info-circle';
+  const toastHtml = `
+    <div id="${toastId}" class="toast align-items-center text-white ${color}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="${delay}">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="fas ${icon} me-2"></i> ${message}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>`;
+  const container = document.getElementById('toastContainer');
+  container.insertAdjacentHTML('beforeend', toastHtml);
+  const toastEl = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+  toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+}
+
+// Ejemplo: notificación al cargar dashboard si hay stock crítico
+(function(){
+  const flags = document.getElementById('dashboardFlags');
+  if (flags && flags.dataset.tieneCritico === '1') {
+    showToast('¡Hay productos con stock crítico o agotado!', 'danger', 6000);
+  }
+})();
+</script>
+
+<!-- Badge de alerta en cabecera si hay críticos -->
+<script>
+(function(){
+  const flags = document.getElementById('dashboardFlags');
+  if (flags && flags.dataset.tieneCritico === '1') {
+    const h1 = document.querySelector('h1.display-4');
+    if (h1 && !document.getElementById('badgeAlertaStock')) {
+      h1.insertAdjacentHTML('beforeend', ' <span id="badgeAlertaStock" class="badge bg-danger ms-2">ALERTA STOCK</span>');
+    }
+  }
+})();
+</script>
 {% endblock %}

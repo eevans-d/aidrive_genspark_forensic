@@ -24,6 +24,8 @@ from typing import Dict, List, Any, Optional
 import math
 from pathlib import Path
 import os
+import threading
+import time
 
 # Importar lógica del Mini Market
 import sys
@@ -59,32 +61,51 @@ db_manager = MiniMarketDatabaseManager(db_path) if MiniMarketDatabaseManager els
 
 class DashboardAnalytics:
     """Clase para análisis y métricas del dashboard"""
-    
     def __init__(self, db_manager):
         self.db_manager = db_manager
-    
+        # Cache en memoria: {clave: (valor, timestamp)}
+        self._cache = {}
+        self._cache_lock = threading.Lock()
+        self._cache_ttl = {
+            'dashboard_summary': 30,  # segundos
+            'stock_by_provider': 30,
+            'weekly_sales': 30
+        }
+
+    def _get_cache(self, key):
+        with self._cache_lock:
+            v = self._cache.get(key)
+            if v:
+                value, ts = v
+                ttl = self._cache_ttl.get(key, 30)
+                if time.time() - ts < ttl:
+                    return value
+                else:
+                    del self._cache[key]
+        return None
+
+    def _set_cache(self, key, value):
+        with self._cache_lock:
+            self._cache[key] = (value, time.time())
+
     def get_dashboard_summary(self) -> Dict[str, Any]:
-        """Obtiene resumen general para el dashboard"""
+        cache = self._get_cache('dashboard_summary')
+        if cache:
+            return cache
         try:
             with self.db_manager.get_connection() as conn:
                 cursor = conn.cursor()
-                
                 # Métricas básicas
                 cursor.execute("SELECT COUNT(*) FROM proveedores WHERE activo = 1")
                 total_proveedores = cursor.fetchone()[0]
-                
                 cursor.execute("SELECT COUNT(DISTINCT pedido_id) FROM detalle_pedidos")
                 total_pedidos = cursor.fetchone()[0]
-                
                 cursor.execute("SELECT SUM(cantidad) FROM detalle_pedidos")
                 total_productos_pedidos = cursor.fetchone()[0] or 0
-                
                 cursor.execute("SELECT COUNT(*) FROM movimientos_stock")
                 total_movimientos = cursor.fetchone()[0]
-                
                 cursor.execute("SELECT COUNT(*) FROM facturas_ocr WHERE procesado = 1")
                 facturas_procesadas = cursor.fetchone()[0]
-                
                 # Pedidos últimos 30 días
                 cursor.execute("""
                     SELECT COUNT(DISTINCT p.id) 
@@ -92,7 +113,6 @@ class DashboardAnalytics:
                     WHERE p.fecha_pedido >= datetime('now', '-30 days')
                 """)
                 pedidos_mes = cursor.fetchone()[0]
-                
                 # Stock movements últimos 7 días
                 cursor.execute("""
                     SELECT COUNT(*) 
@@ -100,7 +120,6 @@ class DashboardAnalytics:
                     WHERE fecha_movimiento >= datetime('now', '-7 days')
                 """)
                 movimientos_semana = cursor.fetchone()[0]
-                
                 # Proveedor más activo
                 cursor.execute("""
                     SELECT pr.nombre, COUNT(p.id) as total
@@ -114,8 +133,7 @@ class DashboardAnalytics:
                 proveedor_top = cursor.fetchone()
                 proveedor_top_nombre = proveedor_top[0] if proveedor_top else "N/A"
                 proveedor_top_pedidos = proveedor_top[1] if proveedor_top else 0
-                
-                return {
+                result = {
                     "total_proveedores": total_proveedores,
                     "total_pedidos": total_pedidos,
                     "total_productos_pedidos": total_productos_pedidos,
@@ -128,7 +146,8 @@ class DashboardAnalytics:
                         "pedidos": proveedor_top_pedidos
                     }
                 }
-                
+                self._set_cache('dashboard_summary', result)
+                return result
         except Exception as e:
             return {
                 "error": f"Error obteniendo resumen: {str(e)}",
@@ -141,7 +160,7 @@ class DashboardAnalytics:
                 "movimientos_semana": 0,
                 "proveedor_top": {"nombre": "N/A", "pedidos": 0}
             }
-    
+
     def get_provider_stats(self) -> List[Dict[str, Any]]:
         """Obtiene estadísticas por proveedor"""
         try:
@@ -267,6 +286,58 @@ class DashboardAnalytics:
                 
         except Exception as e:
             return [{"error": f"Error obteniendo top productos: {str(e)}"}]
+        def get_top_products(self, limit: int = 10, start_date: str = None, end_date: str = None, proveedor: str = None) -> List[Dict[str, Any]]:
+            """Obtiene productos más pedidos con filtros opcionales y cachea el resultado"""
+            cache_key = f"top_products:{limit}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
+            cache = self._get_cache(cache_key)
+            if cache:
+                return cache
+            try:
+                with self.db_manager.get_connection() as conn:
+                    cursor = conn.cursor()
+                    where_conditions = []
+                    params = []
+                    if start_date:
+                        where_conditions.append("p.fecha_pedido >= ?")
+                        params.append(start_date)
+                    if end_date:
+                        where_conditions.append("p.fecha_pedido <= ?")
+                        params.append(end_date)
+                    if proveedor:
+                        where_conditions.append("(pr.nombre LIKE ? OR pr.codigo LIKE ?)")
+                        params.extend([f"%{proveedor}%", f"%{proveedor}%"])
+                    where_clause = ""
+                    if where_conditions:
+                        where_clause = "WHERE " + " AND ".join(where_conditions)
+                    params.append(limit)
+                    cursor.execute(f"""
+                        SELECT 
+                            dp.producto_nombre,
+                            SUM(dp.cantidad) as total_cantidad,
+                            COUNT(DISTINCT dp.pedido_id) as pedidos_count,
+                            pr.nombre as proveedor_principal
+                        FROM detalle_pedidos dp
+                        LEFT JOIN pedidos p ON dp.pedido_id = p.id
+                        LEFT JOIN proveedores pr ON p.proveedor_id = pr.id
+                        {where_clause}
+                        GROUP BY dp.producto_nombre
+                        ORDER BY total_cantidad DESC
+                        LIMIT ?
+                    """, params)
+                    results = cursor.fetchall()
+                    data = [
+                        {
+                            "producto": row[0],
+                            "cantidad_total": row[1],
+                            "pedidos": row[2],
+                            "proveedor": row[3] or "N/A"
+                        }
+                        for row in results
+                    ]
+                    self._set_cache(cache_key, data)
+                    return data
+            except Exception as e:
+                return [{"error": f"Error obteniendo top productos: {str(e)}"}]
     
     def get_monthly_trends(self, months: int = 6, start_date: str = None, end_date: str = None, proveedor: str = None) -> Dict[str, Any]:
         """Obtiene tendencias mensuales con filtros opcionales"""
@@ -371,17 +442,107 @@ class DashboardAnalytics:
                 "pedidos_mensuales": [],
                 "movimientos_mensuales": []
             }
+        def get_monthly_trends(self, months: int = 6, start_date: str = None, end_date: str = None, proveedor: str = None) -> Dict[str, Any]:
+            """Obtiene tendencias mensuales con filtros opcionales y cachea el resultado"""
+            cache_key = f"monthly_trends:{months}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
+            cache = self._get_cache(cache_key)
+            if cache:
+                return cache
+            try:
+                with self.db_manager.get_connection() as conn:
+                    cursor = conn.cursor()
+                    where_conditions = []
+                    params = []
+                    if start_date:
+                        where_conditions.append("fecha_pedido >= ?")
+                        params.append(start_date)
+                    elif not end_date:
+                        where_conditions.append("fecha_pedido >= datetime('now', '-{} months')".format(months))
+                    if end_date:
+                        where_conditions.append("fecha_pedido <= ?")
+                        params.append(end_date)
+                    if proveedor:
+                        where_conditions.append("proveedor_id IN (SELECT id FROM proveedores WHERE nombre LIKE ? OR codigo LIKE ?)")
+                        params.extend([f"%{proveedor}%", f"%{proveedor}%"])
+                    where_clause = ""
+                    if where_conditions:
+                        where_clause = "WHERE " + " AND ".join(where_conditions)
+                    # Pedidos por mes
+                    cursor.execute(f"""
+                        SELECT 
+                            strftime('%Y-%m', fecha_pedido) as mes,
+                            COUNT(DISTINCT id) as pedidos,
+                            COUNT(DISTINCT proveedor_id) as proveedores_activos
+                        FROM pedidos
+                        {where_clause}
+                        GROUP BY strftime('%Y-%m', fecha_pedido)
+                        ORDER BY mes
+                    """, params)
+                    pedidos_mensuales = cursor.fetchall()
+                    # Movimientos por mes con filtros similares
+                    mov_where_conditions = []
+                    mov_params = []
+                    if start_date:
+                        mov_where_conditions.append("fecha_movimiento >= ?")
+                        mov_params.append(start_date)
+                    elif not end_date:
+                        mov_where_conditions.append("fecha_movimiento >= datetime('now', '-{} months')".format(months))
+                    if end_date:
+                        mov_where_conditions.append("fecha_movimiento <= ?")
+                        mov_params.append(end_date)
+                    if proveedor:
+                        mov_where_conditions.append("proveedor_id IN (SELECT id FROM proveedores WHERE nombre LIKE ? OR codigo LIKE ?)")
+                        mov_params.extend([f"%{proveedor}%", f"%{proveedor}%"])
+                    mov_where_clause = ""
+                    if mov_where_conditions:
+                        mov_where_clause = "WHERE " + " AND ".join(mov_where_conditions)
+                    cursor.execute(f"""
+                        SELECT 
+                            strftime('%Y-%m', fecha_movimiento) as mes,
+                            tipo_movimiento,
+                            COUNT(*) as movimientos,
+                            SUM(cantidad) as productos
+                        FROM movimientos_stock
+                        {mov_where_clause}
+                        GROUP BY strftime('%Y-%m', fecha_movimiento), tipo_movimiento
+                        ORDER BY mes, tipo_movimiento
+                    """, mov_params)
+                    movimientos_mensuales = cursor.fetchall()
+                    result = {
+                        "pedidos_mensuales": [
+                            {
+                                "mes": row[0],
+                                "pedidos": row[1],
+                                "proveedores_activos": row[2]
+                            }
+                            for row in pedidos_mensuales
+                        ],
+                        "movimientos_mensuales": [
+                            {
+                                "mes": row[0],
+                                "tipo": row[1],
+                                "movimientos": row[2],
+                                "productos": row[3]
+                            }
+                            for row in movimientos_mensuales
+                        ]
+                    }
+                    self._set_cache(cache_key, result)
+                    return result
+            except Exception as e:
+                return {
+                    "error": f"Error obteniendo tendencias: {str(e)}",
+                    "pedidos_mensuales": [],
+                    "movimientos_mensuales": []
+                }
 
     def get_stock_by_provider(self, limit: int = 10) -> List[Dict[str, Any]]:
-        """Calcula stock total por proveedor.
-        Estrategia:
-        - Intentar derivar stock neto desde movimientos_stock (ingreso - egreso) por proveedor.
-        - Si no hay datos o falla la consulta, caer al volumen de productos pedidos por proveedor como proxy.
-        """
+        cache = self._get_cache('stock_by_provider')
+        if cache:
+            return cache
         try:
             with self.db_manager.get_connection() as conn:
                 cursor = conn.cursor()
-                # Intento principal: neto de movimientos por proveedor
                 cursor.execute(
                     """
                     SELECT 
@@ -403,28 +564,29 @@ class DashboardAnalytics:
                 results = [
                     {"codigo": r[0], "nombre": r[1], "stock_total": r[2]} for r in rows
                 ]
-                # Si todo cero y sin señal, usar fallback
                 if not results or all((item["stock_total"] or 0) == 0 for item in results):
                     raise ValueError("Sin movimientos de stock suficientes, usando fallback")
+                self._set_cache('stock_by_provider', results)
                 return results
         except Exception:
-            # Fallback: usar total_productos (volumen pedido) como aproximación
             try:
                 providers = self.get_provider_stats()
                 if isinstance(providers, list) and providers and not providers[0].get("error"):
                     sorted_list = sorted(providers, key=lambda x: x.get("total_productos", 0), reverse=True)[:limit]
-                    return [
+                    results = [
                         {"codigo": p.get("codigo"), "nombre": p.get("nombre"), "stock_total": p.get("total_productos", 0)}
                         for p in sorted_list
                     ]
+                    self._set_cache('stock_by_provider', results)
+                    return results
                 return []
             except Exception as e2:
                 return [{"error": f"Error obteniendo stock por proveedor: {str(e2)}"}]
 
     def get_weekly_sales(self, weeks: int = 8) -> List[Dict[str, Any]]:
-        """Obtiene evolución semanal de ventas/pedidos de las últimas N semanas.
-        Retorna lista ordenada por semana con campos: semana (YYYY-WW), pedidos, productos
-        """
+        cache = self._get_cache('weekly_sales')
+        if cache:
+            return cache
         try:
             days = max(1, int(weeks)) * 7
             with self.db_manager.get_connection() as conn:
@@ -443,9 +605,11 @@ class DashboardAnalytics:
                     """
                 )
                 rows = cursor.fetchall()
-                return [
+                result = [
                     {"semana": r[0], "pedidos": r[1], "productos": r[2]} for r in rows
                 ]
+                self._set_cache('weekly_sales', result)
+                return result
         except Exception as e:
             return [{"error": f"Error obteniendo ventas semanales: {str(e)}"}]
 
