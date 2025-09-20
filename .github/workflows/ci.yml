@@ -160,6 +160,9 @@ jobs:
             set -euo pipefail
             export IMAGE_TAG=latest
             export DASHBOARD_API_KEY='${{ secrets.STAGING_DASHBOARD_API_KEY }}'
+            if [ -n "${{ secrets.STAGING_DASHBOARD_UI_API_KEY }}" ]; then
+              export DASHBOARD_UI_API_KEY='${{ secrets.STAGING_DASHBOARD_UI_API_KEY }}'
+            fi
             cd ~/minimarket-deploy/deploy/compose
             echo ${{ secrets.STAGING_GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose -f docker-compose.dashboard.yml pull
@@ -196,6 +199,9 @@ jobs:
             set -euo pipefail
             export IMAGE_TAG='${{ steps.vars.outputs.tag }}'
             export DASHBOARD_API_KEY='${{ secrets.PROD_DASHBOARD_API_KEY }}'
+            if [ -n "${{ secrets.PROD_DASHBOARD_UI_API_KEY }}" ]; then
+              export DASHBOARD_UI_API_KEY='${{ secrets.PROD_DASHBOARD_UI_API_KEY }}'
+            fi
             cd ~/minimarket-deploy/deploy/compose
             echo ${{ secrets.PROD_GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose -f docker-compose.dashboard.yml pull
