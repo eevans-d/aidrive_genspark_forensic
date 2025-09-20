@@ -164,10 +164,10 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Content-Security-Policy"] = (
         "default-src 'self' https:; "
         "img-src 'self' data: https:; "
-        "style-src 'self' 'unsafe-inline' https:; "
-        "script-src 'self' 'unsafe-inline' https:; "
+        "style-src 'self' 'unsafe-inline' https: https://cdn.jsdelivr.net; "
+        "script-src 'self' 'unsafe-inline' https: https://cdn.jsdelivr.net; "
         "connect-src 'self' https:; "
-        "font-src 'self' https: data:"
+        "font-src 'self' https: data: https://cdn.jsdelivr.net"
     )
     if os.getenv("DASHBOARD_ENABLE_HSTS", "false").lower() == "true":
         response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
@@ -208,6 +208,15 @@ def clamp_int(value: int, min_v: int, max_v: int) -> int:
     except Exception:
         iv = min_v
     return max(min_v, min(iv, max_v))
+
+
+def _get_ui_api_key() -> str:
+    """API key opcional para inyectar en el HTML del dashboard.
+
+    Configure "DASHBOARD_UI_API_KEY" si desea que el frontend envíe X-API-Key
+    en las llamadas a /api/*. No use la misma clave de backend.
+    """
+    return os.getenv("DASHBOARD_UI_API_KEY", "")
 
 # API Key opcional para proteger /api*. Si DASHBOARD_API_KEY está seteada, se exige X-API-Key.
 def verify_api_key(x_api_key: Optional[str] = Header(default=None)):
@@ -882,12 +891,14 @@ async def dashboard_home(request: Request):
             "title": "Mini Market Dashboard",
             "summary": summary,
             "stock_alerts": stock_alerts,
-            "tiene_critico": tiene_critico
+            "tiene_critico": tiene_critico,
+            "dashboard_api_key": _get_ui_api_key()
         })
     except Exception as e:
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "error": f"Error cargando dashboard: {str(e)}"
+            "error": f"Error cargando dashboard: {str(e)}",
+            "dashboard_api_key": _get_ui_api_key()
         })
 
 
@@ -899,12 +910,14 @@ async def providers_dashboard(request: Request):
         return templates.TemplateResponse("providers.html", {
             "request": request,
             "title": "Proveedores - Mini Market Dashboard",
-            "providers": provider_stats
+            "providers": provider_stats,
+            "dashboard_api_key": _get_ui_api_key()
         })
     except Exception as e:
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "error": f"Error cargando proveedores: {str(e)}"
+            "error": f"Error cargando proveedores: {str(e)}",
+            "dashboard_api_key": _get_ui_api_key()
         })
 
 
@@ -921,12 +934,14 @@ async def analytics_dashboard(request: Request, start_date: str = None, end_date
             "request": request,
             "title": "Analytics - Mini Market Dashboard",
             "trends": trends,
-            "top_products": top_products
+            "top_products": top_products,
+            "dashboard_api_key": _get_ui_api_key()
         })
     except Exception as e:
         return templates.TemplateResponse("error.html", {
             "request": request,
-            "error": f"Error cargando analytics: {str(e)}"
+            "error": f"Error cargando analytics: {str(e)}",
+            "dashboard_api_key": _get_ui_api_key()
         })
 
 

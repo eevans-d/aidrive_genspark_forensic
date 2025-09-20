@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS (pinned + SRI) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     
-    <!-- Chart.js (defer para mejorar el rendimiento de carga) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <!-- Chart.js (pinned 4.5.0, defer) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js" defer></script>
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome (pinned 6.5.2) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- API key meta para llamadas a /api/* -->
+    <meta name="x-api-key" content="{{ dashboard_api_key or '' }}">
     
     <!-- Custom CSS -->
     <style>
@@ -185,8 +188,8 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS (pinned + SRI) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     
     <!-- Custom JavaScript -->
     <script>
@@ -229,7 +232,12 @@
         // Cargar datos via AJAX
         async function loadData(url) {
             try {
-                const response = await fetch(url);
+                const headers = {};
+                const apiKeyMeta = document.querySelector('meta[name="x-api-key"]');
+                if (apiKeyMeta && apiKeyMeta.content) {
+                    headers['X-API-Key'] = apiKeyMeta.content;
+                }
+                const response = await fetch(url, { headers });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 return await response.json();
             } catch (error) {
