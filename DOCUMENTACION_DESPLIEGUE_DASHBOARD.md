@@ -9,6 +9,7 @@ Guía para ejecutar el dashboard en desarrollo y producción.
 
 ## Variables de entorno clave
 - `DASHBOARD_API_KEY` (requerida para /api y /metrics)
+- `DASHBOARD_UI_API_KEY` (opcional; el frontend la inyecta y envía como `X-API-Key` en fetch a `/api/*`)
 - `DASHBOARD_ALLOWED_HOSTS` (e.g., `example.com,localhost`)
 - `DASHBOARD_FORCE_HTTPS` (`true|false`) → añade HTTPSRedirectMiddleware
 - `DASHBOARD_ENABLE_HSTS` (`true|false`) → Strict-Transport-Security
@@ -59,6 +60,20 @@ curl -H 'X-API-Key: $DASHBOARD_API_KEY' http://localhost:8080/metrics | head
 Notas:
 - El volumen `dashboard_db` persiste la base SQLite en `/app/inventario-retail/agente_negocio` (ruta donde el dashboard espera `minimarket_inventory.db`).
 - Ajusta puertos y variables según tu entorno; puedes mapear volumes a rutas del host si prefieres administrar backups allí.
+
+### Frontend y API Key (DASHBOARD_UI_API_KEY)
+Si defines `DASHBOARD_UI_API_KEY`, el dashboard insertará una meta en el HTML y los `fetch` de la UI enviarán `X-API-Key` automáticamente.
+
+Ejemplo en Docker Compose (`deploy/compose/.env.dashboard`):
+
+```bash
+DASHBOARD_API_KEY=backend-secret
+DASHBOARD_UI_API_KEY=frontend-secret
+```
+
+Pruebas rápidas:
+- Abrir http://localhost:8080/ y verificar en Network que las solicitudes a `/api/summary` incluyen `X-API-Key`.
+- Si no defines `DASHBOARD_UI_API_KEY`, las llamadas desde UI a `/api/*` fallarán con 401.
 
 ## Seguridad
 - Definir obligatoriamente `DASHBOARD_API_KEY` antes de exponer `/api/*` y `/metrics`.
