@@ -85,6 +85,24 @@ Secretos necesarios (staging):
 Verificación automática previa:
 - El job `staging-secrets-check` valida que los secretos críticos (`STAGING_HOST`, `STAGING_USER`, `STAGING_KEY`, `STAGING_GHCR_TOKEN`, `STAGING_DASHBOARD_API_KEY`) estén presentes. Si falta alguno, el job de `Deploy to Staging` se omite y en el summary del workflow verás la lista de faltantes.
 
+### Estado actual de secretos (Go-Live Plan)
+| Secreto | Uso | Estado | Notas |
+|---------|-----|--------|-------|
+| STAGING_HOST | Host SSH VM | PENDIENTE | Añadir con `gh secret set` |
+| STAGING_USER | Usuario SSH | PENDIENTE | Debe tener permisos docker |
+| STAGING_KEY | Clave privada SSH | PENDIENTE | Formato PEM sin passphrase |
+| STAGING_GHCR_TOKEN | Pull GHCR | PENDIENTE | Token con scope read:packages |
+| STAGING_DASHBOARD_API_KEY | API Key runtime | PENDIENTE | Generar y rotar cada 30d |
+| STAGING_DASHBOARD_UI_API_KEY (opcional) | API Key UI | PENDIENTE | Solo si frontend llama /api/* |
+
+Para cargarlos rápidamente:
+```bash
+./scripts/rotate_dashboard_api_key.sh -r eevans-d/aidrive_genspark_forensic --print-only
+# Después usar gh para setear HOST/USER/KEY/GHCR.
+```
+
+Una vez cargados, el job `staging-secrets-check` mostrará ✅ y habilitará el deploy.
+
 ## 7) Troubleshooting rápido
 - Ver logs del contenedor:
   ```bash
