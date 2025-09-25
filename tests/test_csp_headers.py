@@ -67,3 +67,16 @@ def test_csp_snapshot_policy():
         import difflib
         diff = '\n'.join(difflib.unified_diff(expected_csp.split(), csp.split(), fromfile='expected', tofile='actual', lineterm=''))
         raise AssertionError(f"La política CSP ha cambiado. Actualiza el snapshot si es intencional. Diff:\n{diff}")
+
+
+def test_hsts_header_when_enabled(monkeypatch):
+    """Verifica que Strict-Transport-Security se añade cuando se activa el flag.
+
+    El middleware revisa la variable de entorno en cada request, por lo que basta
+    con definirla antes del GET. No validamos el header si no está activado aquí; ese
+    caso se cubre indirectamente por ausencia en otros tests.
+    """
+    monkeypatch.setenv("DASHBOARD_ENABLE_HSTS", "true")
+    r = client.get("/")
+    hsts = r.headers.get("strict-transport-security")
+    assert hsts is not None and "max-age=" in hsts

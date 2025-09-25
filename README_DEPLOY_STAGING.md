@@ -64,6 +64,15 @@ curl -H "X-API-Key: $DASHBOARD_API_KEY" http://localhost:8080/metrics | head
 
 Si definiste `DASHBOARD_UI_API_KEY`, abre http://localhost:8080 y verifica en la consola de red del navegador que las peticiones a `/api/summary` incluyen `X-API-Key`.
 
+Seguridad (headers):
+- La política CSP está fijada por test snapshot. Cambios requieren actualizar el test y justificar en `DOCUMENTACION_CI_CD.md`.
+- Si exportas el dashboard detrás de HTTPS y quieres HSTS añade en tu `.env.dashboard`:
+  ```bash
+  DASHBOARD_ENABLE_HSTS=true
+  DASHBOARD_FORCE_HTTPS=true
+  ```
+  Existe un test que verifica que el header `Strict-Transport-Security` aparece cuando `DASHBOARD_ENABLE_HSTS=true`.
+
 ## 6) Despliegue automático por CI (opcional)
 El workflow `.github/workflows/ci.yml` copia `deploy/compose/*` a `~/minimarket-deploy` y ejecuta `docker compose up -d` por SSH cuando hay push a `master` y existen secretos de staging.
 
