@@ -160,14 +160,24 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-    # Nota: hay scripts inline en templates; por ahora permitir 'unsafe-inline' y https. Se puede endurecer con nonces en el futuro.
+    # CSP endurecida: se eliminaron scripts y estilos inline migrándolos a archivos estáticos.
+    # Ajustar si se añaden nuevos CDNs. Preferir SRI para recursos externos.
     response.headers["Content-Security-Policy"] = (
-        "default-src 'self' https:; "
-        "img-src 'self' data: https:; "
-        "style-src 'self' 'unsafe-inline' https: https://cdn.jsdelivr.net; "
-        "script-src 'self' 'unsafe-inline' https: https://cdn.jsdelivr.net; "
-        "connect-src 'self' https:; "
-        "font-src 'self' https: data: https://cdn.jsdelivr.net"
+        "default-src 'self'; "
+        # Imágenes: permitir self, data para favicons/base64, y HTTPS genérico mínimo (o enumerar dominios específicos)
+        "img-src 'self' data: https://cdn.jsdelivr.net https://cdn.pixabay.com; "
+        # Styles: self + CDN usado (bootstrap, fontawesome) + Google Fonts si se añadiera
+        "style-src 'self' https://cdn.jsdelivr.net; "
+        # Scripts: self + jsdelivr (Chart.js, Bootstrap) únicamente
+        "script-src 'self' https://cdn.jsdelivr.net; "
+        # Fuentes: self + jsdelivr (FontAwesome) + data: para incrustadas
+        "font-src 'self' https://cdn.jsdelivr.net data:; "
+        # Conexiones XHR/fetch
+        "connect-src 'self'; "
+        # Objetos/plugins deshabilitados
+        "object-src 'none'; "
+        # No permitir inline event handlers ni base-uri externa
+        "base-uri 'self'; frame-ancestors 'none'"
     )
     if os.getenv("DASHBOARD_ENABLE_HSTS", "false").lower() == "true":
         response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
@@ -440,33 +450,28 @@ class DashboardAnalytics:
         except Exception as e:
             return [{"error": f"Error obteniendo timeline: {str(e)}"}]
     
-    def get_top_products(self, limit: int = 10, start_date: str = None, end_date: str = None, proveedor: str = None) -> List[Dict[str, Any]]:
-        """Obtiene productos más pedidos con filtros opcionales"""
+    def get_top_products(self, limit: int = 10, start_date: Optional[str] = None, end_date: Optional[str] = None, proveedor: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Obtiene productos más pedidos con filtros opcionales (cacheado)."""
+        cache_key = f"top_products:{limit}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
+        cache = self._get_cache(cache_key)
+        if cache:
+            return cache
         try:
             with self.db_manager.get_connection() as conn:
                 cursor = conn.cursor()
-                
-                where_conditions = []
-                params = []
-                
+                where_conditions: List[str] = []
+                params: List[Any] = []
                 if start_date:
                     where_conditions.append("p.fecha_pedido >= ?")
                     params.append(start_date)
-                
                 if end_date:
                     where_conditions.append("p.fecha_pedido <= ?")
                     params.append(end_date)
-                
                 if proveedor:
                     where_conditions.append("(pr.nombre LIKE ? OR pr.codigo LIKE ?)")
                     params.extend([f"%{proveedor}%", f"%{proveedor}%"])
-                
-                where_clause = ""
-                if where_conditions:
-                    where_clause = "WHERE " + " AND ".join(where_conditions)
-                
+                where_clause = "WHERE " + " AND ".join(where_conditions) if where_conditions else ""
                 params.append(limit)
-                
                 cursor.execute(f"""
                     SELECT 
                         dp.producto_nombre,
@@ -481,74 +486,22 @@ class DashboardAnalytics:
                     ORDER BY total_cantidad DESC
                     LIMIT ?
                 """, params)
-                
-                results = cursor.fetchall()
-                return [
+                rows = cursor.fetchall()
+                data = [
                     {
-                        "producto": row[0],
-                        "cantidad_total": row[1],
-                        "pedidos": row[2],
-                        "proveedor": row[3] or "N/A"
+                        "producto": r[0],
+                        "cantidad_total": r[1],
+                        "pedidos": r[2],
+                        "proveedor": r[3] or "N/A"
                     }
-                    for row in results
+                    for r in rows
                 ]
-                
+                self._set_cache(cache_key, data)
+                return data
         except Exception as e:
             return [{"error": f"Error obteniendo top productos: {str(e)}"}]
-        def get_top_products(self, limit: int = 10, start_date: str = None, end_date: str = None, proveedor: str = None) -> List[Dict[str, Any]]:
-            """Obtiene productos más pedidos con filtros opcionales y cachea el resultado"""
-            cache_key = f"top_products:{limit}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
-            cache = self._get_cache(cache_key)
-            if cache:
-                return cache
-            try:
-                with self.db_manager.get_connection() as conn:
-                    cursor = conn.cursor()
-                    where_conditions = []
-                    params = []
-                    if start_date:
-                        where_conditions.append("p.fecha_pedido >= ?")
-                        params.append(start_date)
-                    if end_date:
-                        where_conditions.append("p.fecha_pedido <= ?")
-                        params.append(end_date)
-                    if proveedor:
-                        where_conditions.append("(pr.nombre LIKE ? OR pr.codigo LIKE ?)")
-                        params.extend([f"%{proveedor}%", f"%{proveedor}%"])
-                    where_clause = ""
-                    if where_conditions:
-                        where_clause = "WHERE " + " AND ".join(where_conditions)
-                    params.append(limit)
-                    cursor.execute(f"""
-                        SELECT 
-                            dp.producto_nombre,
-                            SUM(dp.cantidad) as total_cantidad,
-                            COUNT(DISTINCT dp.pedido_id) as pedidos_count,
-                            pr.nombre as proveedor_principal
-                        FROM detalle_pedidos dp
-                        LEFT JOIN pedidos p ON dp.pedido_id = p.id
-                        LEFT JOIN proveedores pr ON p.proveedor_id = pr.id
-                        {where_clause}
-                        GROUP BY dp.producto_nombre
-                        ORDER BY total_cantidad DESC
-                        LIMIT ?
-                    """, params)
-                    results = cursor.fetchall()
-                    data = [
-                        {
-                            "producto": row[0],
-                            "cantidad_total": row[1],
-                            "pedidos": row[2],
-                            "proveedor": row[3] or "N/A"
-                        }
-                        for row in results
-                    ]
-                    self._set_cache(cache_key, data)
-                    return data
-            except Exception as e:
-                return [{"error": f"Error obteniendo top productos: {str(e)}"}]
     
-    def get_monthly_trends(self, months: int = 6, start_date: str = None, end_date: str = None, proveedor: str = None) -> Dict[str, Any]:
+    def get_monthly_trends(self, months: int = 6, start_date: Optional[str] = None, end_date: Optional[str] = None, proveedor: Optional[str] = None) -> Dict[str, Any]:
         """Obtiene tendencias mensuales con filtros opcionales"""
         try:
             with self.db_manager.get_connection() as conn:
@@ -651,99 +604,35 @@ class DashboardAnalytics:
                 "pedidos_mensuales": [],
                 "movimientos_mensuales": []
             }
-        def get_monthly_trends(self, months: int = 6, start_date: str = None, end_date: str = None, proveedor: str = None) -> Dict[str, Any]:
-            """Obtiene tendencias mensuales con filtros opcionales y cachea el resultado"""
+        def get_monthly_trends_cached(self, months: int, start_date: Optional[str], end_date: Optional[str], proveedor: Optional[str]) -> Dict[str, Any]:
             cache_key = f"monthly_trends:{months}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
             cache = self._get_cache(cache_key)
             if cache:
                 return cache
-            try:
-                with self.db_manager.get_connection() as conn:
-                    cursor = conn.cursor()
-                    where_conditions = []
-                    params = []
-                    if start_date:
-                        where_conditions.append("fecha_pedido >= ?")
-                        params.append(start_date)
-                    elif not end_date:
-                        where_conditions.append("fecha_pedido >= datetime('now', '-{} months')".format(months))
-                    if end_date:
-                        where_conditions.append("fecha_pedido <= ?")
-                        params.append(end_date)
-                    if proveedor:
-                        where_conditions.append("proveedor_id IN (SELECT id FROM proveedores WHERE nombre LIKE ? OR codigo LIKE ?)")
-                        params.extend([f"%{proveedor}%", f"%{proveedor}%"])
-                    where_clause = ""
-                    if where_conditions:
-                        where_clause = "WHERE " + " AND ".join(where_conditions)
-                    # Pedidos por mes
-                    cursor.execute(f"""
-                        SELECT 
-                            strftime('%Y-%m', fecha_pedido) as mes,
-                            COUNT(DISTINCT id) as pedidos,
-                            COUNT(DISTINCT proveedor_id) as proveedores_activos
-                        FROM pedidos
-                        {where_clause}
-                        GROUP BY strftime('%Y-%m', fecha_pedido)
-                        ORDER BY mes
-                    """, params)
-                    pedidos_mensuales = cursor.fetchall()
-                    # Movimientos por mes con filtros similares
-                    mov_where_conditions = []
-                    mov_params = []
-                    if start_date:
-                        mov_where_conditions.append("fecha_movimiento >= ?")
-                        mov_params.append(start_date)
-                    elif not end_date:
-                        mov_where_conditions.append("fecha_movimiento >= datetime('now', '-{} months')".format(months))
-                    if end_date:
-                        mov_where_conditions.append("fecha_movimiento <= ?")
-                        mov_params.append(end_date)
-                    if proveedor:
-                        mov_where_conditions.append("proveedor_id IN (SELECT id FROM proveedores WHERE nombre LIKE ? OR codigo LIKE ?)")
-                        mov_params.extend([f"%{proveedor}%", f"%{proveedor}%"])
-                    mov_where_clause = ""
-                    if mov_where_conditions:
-                        mov_where_clause = "WHERE " + " AND ".join(mov_where_conditions)
-                    cursor.execute(f"""
-                        SELECT 
-                            strftime('%Y-%m', fecha_movimiento) as mes,
-                            tipo_movimiento,
-                            COUNT(*) as movimientos,
-                            SUM(cantidad) as productos
-                        FROM movimientos_stock
-                        {mov_where_clause}
-                        GROUP BY strftime('%Y-%m', fecha_movimiento), tipo_movimiento
-                        ORDER BY mes, tipo_movimiento
-                    """, mov_params)
-                    movimientos_mensuales = cursor.fetchall()
-                    result = {
-                        "pedidos_mensuales": [
-                            {
-                                "mes": row[0],
-                                "pedidos": row[1],
-                                "proveedores_activos": row[2]
-                            }
-                            for row in pedidos_mensuales
-                        ],
-                        "movimientos_mensuales": [
-                            {
-                                "mes": row[0],
-                                "tipo": row[1],
-                                "movimientos": row[2],
-                                "productos": row[3]
-                            }
-                            for row in movimientos_mensuales
-                        ]
-                    }
-                    self._set_cache(cache_key, result)
-                    return result
-            except Exception as e:
-                return {
-                    "error": f"Error obteniendo tendencias: {str(e)}",
-                    "pedidos_mensuales": [],
-                    "movimientos_mensuales": []
-                }
+            result = self.get_monthly_trends(months, start_date, end_date, proveedor)
+            if not result.get("error"):
+                self._set_cache(cache_key, result)
+            return result
+
+    # Stub básico para alertas de stock si no existe implementación (evita error hasattr)
+    def get_stock_alerts(self) -> List[Dict[str, Any]]:  # type: ignore
+        try:
+            with self.db_manager.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT producto_nombre, SUM(cantidad) as total
+                    FROM detalle_pedidos
+                    GROUP BY producto_nombre
+                    ORDER BY total DESC
+                    LIMIT 3
+                """)
+                rows = cursor.fetchall()
+                return [
+                    {"producto": r[0], "total": r[1], "nivel_alerta": "critico" if (r[1] or 0) < 5 else "ok"}
+                    for r in rows
+                ]
+        except Exception:
+            return []
 
     def get_stock_by_provider(self, limit: int = 10) -> List[Dict[str, Any]]:
         cache = self._get_cache('stock_by_provider')
@@ -922,7 +811,7 @@ async def providers_dashboard(request: Request):
 
 
 @app.get("/analytics", response_class=HTMLResponse)
-async def analytics_dashboard(request: Request, start_date: str = None, end_date: str = None, proveedor: str = None):
+async def analytics_dashboard(request: Request, start_date: Optional[str] = None, end_date: Optional[str] = None, proveedor: Optional[str] = None):
     """Dashboard de analytics avanzado con filtros"""
     try:
         s_start = sanitize_date(start_date)
@@ -966,7 +855,7 @@ async def api_stock_timeline(days: int = 7, _auth: bool = Depends(verify_api_key
 
 
 @app.get("/api/top-products")
-async def api_top_products(limit: int = 10, start_date: str = None, end_date: str = None, proveedor: str = None, _auth: bool = Depends(verify_api_key)):
+async def api_top_products(limit: int = 10, start_date: Optional[str] = None, end_date: Optional[str] = None, proveedor: Optional[str] = None, _auth: bool = Depends(verify_api_key)):
     """API: Productos más pedidos con filtros opcionales"""
     safe_limit = clamp_int(limit, 1, 100)
     s_start = sanitize_date(start_date)
@@ -976,7 +865,7 @@ async def api_top_products(limit: int = 10, start_date: str = None, end_date: st
 
 
 @app.get("/api/trends")
-async def api_trends(months: int = 6, start_date: str = None, end_date: str = None, proveedor: str = None, _auth: bool = Depends(verify_api_key)):
+async def api_trends(months: int = 6, start_date: Optional[str] = None, end_date: Optional[str] = None, proveedor: Optional[str] = None, _auth: bool = Depends(verify_api_key)):
     """API: Tendencias mensuales con filtros opcionales"""
     safe_months = clamp_int(months, 1, 24)
     s_start = sanitize_date(start_date)
@@ -1080,7 +969,7 @@ async def api_export_providers_csv(_auth: bool = Depends(verify_api_key)):
 
 # Exportar Top Productos a CSV (reubicado correctamente)
 @app.get("/api/export/top-products.csv")
-async def api_export_top_products_csv(limit: int = 10, start_date: str = None, end_date: str = None, proveedor: str = None, _auth: bool = Depends(verify_api_key)):
+async def api_export_top_products_csv(limit: int = 10, start_date: Optional[str] = None, end_date: Optional[str] = None, proveedor: Optional[str] = None, _auth: bool = Depends(verify_api_key)):
     """Exporta el ranking de productos más pedidos a CSV con filtros."""
     safe_limit = clamp_int(limit, 1, 100)
     s_start = sanitize_date(start_date)
