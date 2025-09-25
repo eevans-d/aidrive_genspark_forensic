@@ -73,6 +73,9 @@ Secretos necesarios (staging):
 - `STAGING_DASHBOARD_API_KEY`
 - (Opcional) `STAGING_DASHBOARD_UI_API_KEY`
 
+Verificación automática previa:
+- El job `staging-secrets-check` valida que los secretos críticos (`STAGING_HOST`, `STAGING_USER`, `STAGING_KEY`, `STAGING_GHCR_TOKEN`, `STAGING_DASHBOARD_API_KEY`) estén presentes. Si falta alguno, el job de `Deploy to Staging` se omite y en el summary del workflow verás la lista de faltantes.
+
 ## 7) Troubleshooting rápido
 - Ver logs del contenedor:
   ```bash
