@@ -1,0 +1,3 @@
+[run]
+omit =
+    inventario-retail/web_dashboard/dashboard_app_backup.py

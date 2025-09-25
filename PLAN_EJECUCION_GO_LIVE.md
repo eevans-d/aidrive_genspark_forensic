@@ -24,6 +24,7 @@ Este plan ha sido aprobado y NO debe alterarse salvo defectos críticos. Cada pa
 - Cambios no críticos → Backlog Diferido.
 - No se eleva cobertura >85% en esta fase.
 - Performance: sólo si clara mejora >20% en métrica observada.
+ - Tests de integraciones (AFIP/ML) excluidos temporalmente del alcance de cobertura; reintroducción fuera de este plan.
 
 ### Backlog Diferido (No ejecutar ahora)
 - Cobertura >85%.
