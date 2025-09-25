@@ -598,15 +598,21 @@ class DashboardAnalytics:
                 "pedidos_mensuales": [],
                 "movimientos_mensuales": []
             }
-        def get_monthly_trends_cached(self, months: int, start_date: Optional[str], end_date: Optional[str], proveedor: Optional[str]) -> Dict[str, Any]:
-            cache_key = f"monthly_trends:{months}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
-            cache = self._get_cache(cache_key)
-            if cache:
-                return cache
-            result = self.get_monthly_trends(months, start_date, end_date, proveedor)
-            if not result.get("error"):
-                self._set_cache(cache_key, result)
-            return result
+
+    def get_monthly_trends_cached(self, months: int, start_date: Optional[str], end_date: Optional[str], proveedor: Optional[str]) -> Dict[str, Any]:
+        """Wrapper con cache para reducir consultas repetidas.
+
+        Separado de get_monthly_trends para permitir reutilización y testing
+        de la rama de cache hit.
+        """
+        cache_key = f"monthly_trends:{months}:{start_date or ''}:{end_date or ''}:{proveedor or ''}"
+        cache = self._get_cache(cache_key)
+        if cache:
+            return cache
+        result = self.get_monthly_trends(months, start_date, end_date, proveedor)
+        if not result.get("error"):
+            self._set_cache(cache_key, result)
+        return result
 
     # Stub básico para alertas de stock si no existe implementación (evita error hasattr)
     def get_stock_alerts(self) -> List[Dict[str, Any]]:  # type: ignore
