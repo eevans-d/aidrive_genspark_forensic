@@ -83,7 +83,7 @@ Condición: incremento súbito de errores 5xx post despliegue.
 - Ramas de error DB extremas no se fuerzan en tests ahora.
 
 ### Tagging (RC → Release)
-1. Validar staging (smoke + script métricas error% <2, p95 <800ms)
+1. Validar staging (preflight): `scripts/preflight_rc.sh -u <url> -k <API_KEY>`
 2. Tag RC: `git tag v1.0.0-rc1 && git push origin v1.0.0-rc1`
 3. Observar 30–60 min métricas y logs
 4. Si estable: `git tag v1.0.0 && git push origin v1.0.0`

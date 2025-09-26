@@ -195,6 +195,7 @@ scripts/check_security_headers.sh -u https://staging.example.com --expect-hsts
 ```
 4. Crear tag RC:
 ```bash
+scripts/preflight_rc.sh -u https://staging.example.com -k $STAGING_DASHBOARD_API_KEY
 git tag v1.0.0-rc1
 git push origin v1.0.0-rc1
 ```

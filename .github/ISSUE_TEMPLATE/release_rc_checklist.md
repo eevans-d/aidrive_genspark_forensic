@@ -24,9 +24,9 @@ labels: release, rc
 - [ ] Navegación UI (si aplica) sin errores JS
 
 ## 4. Métricas (script)
-Ejecutar:
+Ejecutar preflight unificado:
 ```bash
-scripts/check_metrics_dashboard.sh -u https://staging.example.com -k $STAGING_DASHBOARD_API_KEY
+scripts/preflight_rc.sh -u https://staging.example.com -k $STAGING_DASHBOARD_API_KEY
 ```
 Registrar:
 - Requests totales: ____
