@@ -69,7 +69,7 @@ Sistema robusto y modular para gestión de inventario, compras, ML y dashboard w
 - Rate limiting y headers de seguridad
 - Logging centralizado y manejo global de errores
 
-## � Observabilidad (/metrics)
+## 🔍 Observabilidad (/metrics)
 Todos los servicios exponen métricas Prometheus en el endpoint `/metrics`. Úsalo para monitoreo (latencia, conteo de peticiones, errores por ruta y método, etc.).
 
 Servicios con métricas habilitadas:
@@ -118,6 +118,23 @@ curl -s http://localhost:5000/metrics | head
 ```
 
 Si ves series como `http_request_total` y `http_request_duration_seconds_bucket`, la integración está activa.
+
+## 🛠️ Tooling Operativo Rápido
+Se incluye un `Makefile` con atajos clave:
+```
+make help
+make test
+make coverage
+make preflight STAGING_URL=https://staging.example.com STAGING_DASHBOARD_API_KEY=xxx
+make rc-tag TAG=v1.0.0-rc1 STAGING_URL=https://staging.example.com STAGING_DASHBOARD_API_KEY=xxx
+```
+
+Scripts específicos:
+```
+scripts/preflight_rc.sh -u <url> -k <api_key>
+scripts/check_metrics_dashboard.sh -u <url> -k <api_key>
+scripts/check_security_headers.sh -u <url> [--expect-hsts]
+```
 
 ## 🐳 Imagen Docker del Dashboard (GHCR)
 La imagen del dashboard se publica automáticamente en cada push a `master`:
