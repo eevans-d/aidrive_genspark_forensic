@@ -185,6 +185,14 @@ scripts/check_metrics_dashboard.sh -u <URL> -k <API_KEY> -t 3
 1. Cargar y verificar secretos Staging (ver sección 11).
 2. Push a `master` y esperar deploy automático + smoke ✅.
 3. Verificar métricas: error% <2, p95 <800ms.
+3.1 Verificar headers seguridad:
+```bash
+scripts/check_security_headers.sh -u https://staging.example.com
+```
+Si staging ya está detrás de HTTPS y HSTS activado:
+```bash
+scripts/check_security_headers.sh -u https://staging.example.com --expect-hsts
+```
 4. Crear tag RC:
 ```bash
 git tag v1.0.0-rc1

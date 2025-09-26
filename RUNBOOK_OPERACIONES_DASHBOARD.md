@@ -14,6 +14,7 @@ Procedimientos para operar, monitorear y solucionar problemas del Dashboard.
 - Revisar logs: `${DASHBOARD_LOG_DIR}/dashboard.log`
 - Correlación: usar/propagar `X-Request-ID`
  - Script rápido métricas (requests, errores, p95): `scripts/check_metrics_dashboard.sh -u <url> -k <API_KEY>`
+ - Script headers seguridad: `scripts/check_security_headers.sh -u <url>` (usar `--expect-hsts` en producción HTTPS)
 
 ## Respuesta a incidentes comunes
 - 401 en APIs: validar `X-API-Key` y valor en `DASHBOARD_API_KEY`
@@ -53,6 +54,7 @@ Procedimientos para operar, monitorear y solucionar problemas del Dashboard.
 - Mantener la API Key fuera de repos y logs
 - Forzar HTTPS en entornos públicos
 - Limitar orígenes CORS
+ - Validar headers tras cambios: `scripts/check_security_headers.sh -u <url>`
 
 ## Restauración de servicio
 - Escalar workers Uvicorn/Gunicorn
