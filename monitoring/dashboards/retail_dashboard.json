@@ -1,0 +1,264 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Retail Multi-Agent System - Argentina",
+    "tags": ["retail", "inventory", "argentina", "multi-agent"],
+    "style": "dark",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Stock Operations Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(retail_stock_operations_total[5m])) by (operation_type)",
+            "legendFormat": "{{operation_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "displayMode": "list",
+              "orientation": "horizontal"
+            },
+            "mappings": [],
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "red", "value": 10}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "OCR Processing Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, retail_ocr_processing_seconds)",
+            "legendFormat": "P95 OCR Time"
+          },
+          {
+            "expr": "histogram_quantile(0.50, retail_ocr_processing_seconds)",
+            "legendFormat": "P50 OCR Time"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Seconds",
+            "max": 5,
+            "min": 0
+          }
+        ],
+        "thresholds": [
+          {
+            "value": 2.0,
+            "colorMode": "critical",
+            "op": "gt"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Stock Value by Category",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum(retail_stock_value_total) by (categoria)",
+            "legendFormat": "{{categoria}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "vis": false
+              }
+            },
+            "mappings": [],
+            "unit": "currencyARS"
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Critical Stock Items",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(retail_low_stock_items_count{criticality=\"AGOTADO\"})",
+            "legendFormat": "Agotado"
+          },
+          {
+            "expr": "sum(retail_low_stock_items_count{criticality=\"CRITICO\"})",
+            "legendFormat": "Crítico"
+          },
+          {
+            "expr": "sum(retail_low_stock_items_count{criticality=\"BAJO\"})",
+            "legendFormat": "Bajo"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 5},
+                {"color": "red", "value": 20}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Database Query Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, retail_database_query_seconds{success=\"true\"})",
+            "legendFormat": "P95 Query Time"
+          },
+          {
+            "expr": "rate(retail_database_query_seconds_count{success=\"false\"}[5m])",
+            "legendFormat": "Failed Queries/sec"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "Seconds",
+            "max": 1,
+            "min": 0
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [0.5],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A", "5m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "2m",
+          "frequency": "10s",
+          "handler": 1,
+          "name": "Database Performance Alert",
+          "noDataState": "no_data",
+          "notifications": []
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8}
+      },
+      {
+        "id": 6,
+        "title": "Product Turnover Rate",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "topk(10, retail_product_turnover_rate{period_days=\"30\"})",
+            "format": "table",
+            "instant": true
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "red", "value": 0.1}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 7,
+        "title": "OCR Accuracy by Document Type",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "retail_ocr_accuracy_rate",
+            "legendFormat": "{{document_type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "max": 1,
+            "min": 0,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 0.8},
+                {"color": "green", "value": 0.9}
+              ]
+            },
+            "unit": "percentunit"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 8,
+        "title": "System Health Summary",
+        "type": "logs",
+        "targets": [
+          {
+            "expr": "{job=\"retail-system\"} |= \"ERROR\" or \"CRITICAL\"",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Retail System Dashboard",
+    "uid": "retail-system-dashboard",
+    "version": 1,
+    "weekStart": ""
+  }
+}
