@@ -55,10 +55,11 @@ Sistema robusto y modular para gestión de inventario, compras, ML y dashboard w
 - Ejecuta `smoke_test_staging.sh` para validar endpoints críticos
 
 ## 📚 Documentación y Guías
+- **🤖 NEW: Sistema Prompts GitHub Copilot Pro**: [`README_PROMPTS_COPILOT.md`](./README_PROMPTS_COPILOT.md) - **Genera documentación completa de deployment en 1 hora**
 - Guía de despliegue: `README_DEPLOY_STAGING.md`
 - Guía dashboard web: `inventario_retail_dashboard_web/DEPLOYMENT_GUIDE.md`
 - Documentación endpoints: ver carpetas de cada microservicio
- - Changelog: `CHANGELOG.md`
+- Changelog: `CHANGELOG.md`
 
 ## 🧑‍💻 Onboarding Rápido
 - Sigue los pasos de instalación y despliegue
