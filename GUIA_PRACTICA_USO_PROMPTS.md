@@ -1,431 +1,440 @@
-# GUÍA PRÁCTICA: CÓMO USAR LOS PROMPTS DE GITHUB COPILOT PRO
+# GUÍA PRÁCTICA: ANÁLISIS FORENSE CON GITHUB COPILOT PRO
+## Metodología Adaptativa No-Invasiva para Sistemas Agénticos
 
-## 🎯 OBJETIVO
-Esta guía te muestra paso a paso cómo aplicar los 4 prompts de GitHub Copilot Pro para obtener documentación completa de despliegue para tus proyectos agénticos.
+## 🎯 OBJETIVO REFINADO
+Esta guía implementa **análisis forense pasivo** usando GitHub Copilot Pro para obtener documentación técnica exhaustiva sin modificar código existente. Cada dato debe estar respaldado por evidencia específica (`archivo:línea`).
 
 ---
 
-## 📋 PRERREQUISITOS
+## 📋 PRERREQUISITOS FORENSES
 
 ### 1. Acceso a GitHub Copilot Pro
-- Suscripción activa a GitHub Copilot Pro
-- Acceso al chat de Copilot en IDE o web
+- Suscripción activa con capacidades de análisis de repositorio completo
+- Acceso al chat con contexto de workspace extendido
 
-### 2. Repositorio con Contexto
-- Tu proyecto debe estar abierto en GitHub Codespaces, VS Code, o similar
-- Copilot debe tener acceso completo al código del repositorio
-- Recomendado: tener archivos clave abiertos (README, requirements, etc.)
+### 2. Repositorio en Modo de Solo Lectura
+- Proyecto abierto en GitHub Codespaces, VS Code, o IDE compatible
+- **CRÍTICO**: Modo forense = **NUNCA** modificar archivos durante análisis
+- Contexto completo del repositorio disponible para Copilot
 
-### 3. Tiempo Estimado
-- **Por proyecto**: 45-60 minutos
-- **PROMPT 1**: 10-15 minutos
-- **PROMPT 2**: 15-20 minutos  
-- **PROMPT 3**: 10-15 minutos
-- **PROMPT 4**: 10-15 minutos
-
----
-
-## 🚀 PROCESO PASO A PASO
-
-### PASO 1: PREPARACIÓN DEL CONTEXTO
-
-#### 1.1 Abrir el Proyecto
-```bash
-# En tu IDE, abrir la carpeta del proyecto específico
-# Ejemplo para inventario-retail:
-cd /ruta/a/tu/repo/inventario-retail
-code .  # O tu editor favorito
-```
-
-#### 1.2 Archivos Clave a Tener Abiertos
-```bash
-# Asegúrate de tener estos archivos visibles en el editor:
-- README.md
-- requirements.txt (o package.json)
-- docker-compose.yml (si existe)
-- .env.example o .env.template
-- Dockerfile (si existe)
-- Archivo principal (main.py, app.js, etc.)
-```
-
-#### 1.3 Activar GitHub Copilot
-- Abrir chat de Copilot (Ctrl+Shift+I o Cmd+Shift+I)
-- Verificar que puede ver el contexto del proyecto
+### 3. Tiempo Estimado por Análisis Forense
+- **Por proyecto**: 60-90 minutos (más exhaustivo que versión anterior)
+- **PROMPT 1**: 15-20 minutos (análisis forense detallado)
+- **PROMPT 2**: 20-25 minutos (optimización geoeconómica)  
+- **PROMPT 3**: 15-20 minutos (configuraciones autocurativas)
+- **PROMPT 4**: 15-20 minutos (troubleshooting predictivo)
 
 ---
 
-### PASO 2: EJECUTAR PROMPT 1 - ANÁLISIS TÉCNICO
+## 🔬 METODOLOGÍA FORENSE PASO A PASO
 
-#### 2.1 Copiar y Pegar PROMPT 1
-```
-Abre GitHub Copilot Chat y pega exactamente esto:
+### FASE 1: PREPARACIÓN DEL CONTEXTO FORENSE
 
-# ANÁLISIS TÉCNICO COMPLETO DEL PROYECTO
-
-Analiza este repositorio y proporciona:
-
-## 1. STACK TECNOLÓGICO
-- Framework principal y versión exacta
-- Dependencias críticas y sus versiones
-- Base de datos utilizada (tipo y versión)
-- APIs externas integradas
-- Servicios de terceros conectados
-- Librerías de IA/ML utilizadas
-
-## 2. ARQUITECTURA DEL SISTEMA
-- Estructura de carpetas clave
-- Puntos de entrada principales (main files)
-- Servicios y módulos core
-- Integraciones agénticas específicas
-- Patrones de arquitectura implementados
-
-## 3. REQUISITOS DE DESPLIEGUE
-- Variables de entorno necesarias (lista completa)
-- Configuraciones de base de datos requeridas
-- Puertos y servicios que debe exponer
-- Recursos mínimos (RAM, CPU, storage)
-- Certificados SSL o HTTPS necesarios
-
-## 4. DEPENDENCIAS DE SISTEMA
-- Versión específica de runtime (Node.js/Python/etc)
-- Servicios del sistema operativo necesarios
-- Herramientas de build requeridas
-- Comandos de instalación global necesarios
-
-## 5. CONFIGURACIÓN ACTUAL
-- Archivos de configuración existentes
-- Scripts de package.json/requirements.txt
-- Variables de entorno ya definidas
-- Configuraciones de desarrollo vs producción
-
-Formato: Markdown estructurado con comandos específicos ejecutables.
-```
-
-#### 2.2 Espera la Respuesta Completa
-- Copilot analizará todo el contexto del proyecto
-- Generará un análisis técnico detallado
-- **Tiempo aproximado**: 2-3 minutos
-
-#### 2.3 Guardar el Output
+#### 1.1 Establecer Entorno de Análisis
 ```bash
-# Crear archivo con la respuesta
-touch ANALISIS_TECNICO_COPILOT.md
-# Copiar toda la respuesta de Copilot al archivo
+# Asegurar modo de solo lectura - NO MODIFICAR ARCHIVOS
+cd /ruta/a/proyecto/target
+# Verificar que tienes permisos de lectura completa
+find . -name "*.py" -o -name "*.js" -o -name "*.json" | wc -l
+find . -name "requirements*.txt" -o -name "package*.json" | head -5
 ```
+
+#### 1.2 Archivos de Evidencia Críticos
+```bash
+# Estos archivos DEBEN estar visibles para análisis forense:
+- README.md / README.rst (documentación del proyecto)
+- requirements.txt / package.json / pyproject.toml (dependencias)
+- main.py / app.py / server.js (puntos de entrada)
+- config/ .env.* settings.py (configuraciones)
+- Dockerfile docker-compose.yml (containerización)
+- .github/ workflows/ (CI/CD existente)
+```
+
+#### 1.3 Activación de Contexto Forense
+- Abrir Copilot Chat con comando específico: **"Analizar repositorio en modo forense - solo lectura"**
+- Verificar que Copilot confirme acceso a la estructura completa del proyecto
 
 ---
 
-### PASO 3: EJECUTAR PROMPT 2 - PLAN DE DESPLIEGUE
+### FASE 2: ANÁLISIS FORENSE ADAPTATIVO (PROMPT 1)
 
-#### 3.1 Copiar y Pegar PROMPT 2
+#### 2.1 Ejecutar Análisis Técnico Forense
+```markdown
+Copiar exactamente este prompt en Copilot Chat:
+
+# ANÁLISIS TÉCNICO ADAPTATIVO — DIAGNÓSTICO FORENSE DEL ESTADO REAL
+
+**ROL**: Actúa como **Arquitecto Forense + Ingeniero de Confiabilidad**, con acceso total al repositorio actual.
+
+**MANDATO CRÍTICO**:
+- **NO** asumas stack, arquitectura ni intenciones.
+- **SÍ** infiere solo desde código, configuraciones y scripts reales.
+- **CITA SIEMPRE**: `archivo:línea-inicial–línea-final` para cada dato técnico.
+- Si algo no está en el repo: **"NO EVIDENCIADO – TODO: confirmar"**.
+- Si hay ambigüedad: **marca como riesgo**.
+
+## 1. STACK TECNOLÓGICO — DETECCIÓN EMPÍRICA
+- Lenguaje(s) principal(es) y versión(es) exacta(s) (de `runtime.txt`, `pyproject.toml`, `package.json`, etc.)
+- Framework(s) web y versión(es) (FastAPI, Express, Django, etc.)
+- Base de datos: tipo, versión, driver, modo de conexión (PostgreSQL/SQLite/Mongo/etc.)
+- APIs externas integradas: endpoints reales, proveedores, métodos de autenticación
+- Librerías de IA/agentes: nombre, versión, patrón de uso (síncrono, streaming, tool use)
+
+## 2. ARQUITECTURA DEL SISTEMA — MAPA DE LO EXISTENTE
+- Estructura de carpetas con lógica ejecutable (ignora boilerplate)
+- Puntos de entrada reales: archivos que inician el sistema (`main.py`, `server.js`, etc.)
+- Módulos core: identificados por acoplamiento o uso frecuente
+- Patrones arquitectónicos detectados: microservicios, monolito, event-driven, agéntico, etc.
+- Integraciones agénticas: orquestación, autonomía, comunicación, memoria, tool use
+
+## 3. REQUISITOS DE DESPLIEGUE — ESPECIFICACIÓN OPERATIVA
+- Variables de entorno **usadas en runtime** (no solo declaradas)
+- Puertos y protocolos expuestos (HTTP, WebSocket, gRPC, métricas, healthchecks)
+- Recursos mínimos estimados (CPU, RAM, disco) basados en patrones de uso
+- Dependencias del sistema: paquetes del SO, binarios, permisos
+- Requisitos de red: CORS, proxy, SSL/TLS, dominios
+
+## 4. CONFIGURACIÓN ACTUAL — BRECHA ENTRE DEV Y PROD
+- Archivos de configuración existentes (`config/`, `.env*`, `settings.py`, etc.)
+- Diferencias observables entre entornos (si existen)
+- Scripts de build/test/deploy: comandos reales en `package.json`, `Makefile`, etc.
+- Hardcoding detectado: valores fijos que deberían ser configurables
+
+> **ENTREGABLE**: Markdown estructurado con comandos de verificación (ej: `grep -r "os.getenv" .`) y lista de riesgos con severidad (`CRÍTICO`/`ALTO`/`MEDIO`).
 ```
-En el mismo chat de Copilot, continúa con:
 
-# PLAN DE DESPLIEGUE PERSONALIZADO
+#### 2.2 Validación de Respuesta Forense
+- ✅ **Verificar**: Cada dato técnico incluye cita específica `archivo:línea`
+- ✅ **Confirmar**: No se sugieren modificaciones de código
+- ✅ **Evaluar**: Los comandos de verificación son ejecutables
+- ⚠️ **Alertar**: Si hay información sin evidencia → marcar como "NO EVIDENCIADO"
 
-Basándote en el análisis anterior del repositorio, genera:
-
-## 1. PREPARACIÓN PRE-DESPLIEGUE
-- Checklist completo de verificación de código
-- Configuraciones específicas para producción
-- Variables de entorno para producción (con valores ejemplo)
-- Scripts de build optimizados para deployment
-- Archivos que deben ser excluidos (.gitignore, .dockerignore)
-
-## 2. ESTRATEGIA DE HOSTING PARA ARGENTINA
-- Recomendación específica de plataforma (Vercel, Railway, Render, Fly.io)
-- Justificación técnica de la recomendación
-- Configuración paso a paso para la plataforma elegida
-- Costos estimados mensuales en USD
-- Límites del plan gratuito y cuándo upgrader
-
-## 3. PROCESO DE DESPLIEGUE DETALLADO
-- Comandos git exactos para preparar el deploy
-- Configuración de repositorio para auto-deploy
-- Pasos manuales necesarios (si los hay)
-- Configuración de dominio personalizado
-- Setup de base de datos en producción
-
-## 4. VERIFICACIÓN POST-DESPLIEGUE
-- URLs y endpoints para testear
-- Comandos para verificar que todo funciona
-- Logs críticos a revisar
-- Tests de funcionalidad básicos
-
-## 5. ROLLBACK Y RECOVERY
-- Cómo hacer rollback si algo falla
-- Backup de configuraciones
-- Recovery plan básico
-
-Incluye comandos copy-paste ready y configuraciones exactas.
-```
-
-#### 3.2 Guardar el Output
+#### 2.3 Guardar Evidencia
 ```bash
-touch PLAN_DESPLIEGUE_COPILOT.md
-# Copiar respuesta al archivo
+# Crear archivo de análisis forense
+mkdir -p docs/forensic-analysis/
+touch docs/forensic-analysis/ANALISIS_FORENSE_ADAPTATIVO.md
+# Copiar TODA la respuesta de Copilot con las citas de archivos
 ```
 
 ---
 
-### PASO 4: EJECUTAR PROMPT 3 - CONFIGURACIONES
+### FASE 3: OPTIMIZACIÓN GEOECONÓMICA (PROMPT 2)
 
-#### 4.1 Copiar y Pegar PROMPT 3
-```
-Continúa en el chat:
+#### 3.1 Ejecutar Plan de Despliegue Dinámico
+```markdown
+Continuar en el mismo chat de Copilot:
 
-# CONFIGURACIONES DE PRODUCCIÓN ESPECÍFICAS
+# PLAN DE DESPLIEGUE DINÁMICO — OPTIMIZACIÓN GEOECONÓMICA + RESILIENCIA ANTIFRÁGIL
 
-Genera configuraciones production-ready para este proyecto:
+**ROL**: Actúa como **Ingeniero de Plataformas + Estratega de Costos + Arquitecto de Resiliencia**, con acceso total al repositorio.
 
-## 1. VARIABLES DE ENTORNO COMPLETAS
-- Lista exhaustiva de todas las ENV vars necesarias
-- Descripción de cada variable y su propósito
-- Valores de ejemplo seguros (sin exponer secretos)
-- Variables específicas por entorno (dev/staging/prod)
-- Template de .env.production
+**MANDATO**:
+- **NO** recomiendes plataforma sin justificación técnica basada en el stack real.
+- **SÍ** infiere región óptima desde latencia a APIs de IA, usuarios y costos.
+- **SÍ** diseña un plan que **mejore bajo estrés** (antifrágil): fallbacks, degradación elegante, auto-reconfiguración.
 
-## 2. CONFIGURACIÓN DE BASE DE DATOS
-- Connection strings para producción
-- Configuración de connection pooling
-- Migrations necesarias para producción
-- Seeds o data inicial requerida
-- Configuración de backup automático
+## 1. PREPARACIÓN PRE-DESPLIEGUE — SANITIZACIÓN EXTREMA
+- Checklist de saneamiento: secrets externalizados, hardcoding eliminado, scripts idempotentes
+- Archivos de exclusión: `.dockerignore`, `.gitignore` específicos para este proyecto
+- Build optimizado: layer caching, tree-shaking, compilación nativa (si aplica)
 
-## 3. CONFIGURACIÓN DE SEGURIDAD
-- CORS setup específico para este proyecto
-- Rate limiting adecuado
-- Validación de inputs implementada
-- Headers de seguridad necesarios
-- Configuración de autenticación/autorización
+## 2. ESTRATEGIA DE HOSTING DINÁMICA
+- Recomendación de plataforma (Vercel, Render, Fly.io, AWS, etc.) **justificada por stack, latencia y costo**
+- Costo estimado mensual (USD) en plan mínimo viable + umbral de upgrade
+- Configuración exacta para auto-deploy: branch, build command, root dir
 
-## 4. OPTIMIZACIÓN DE PERFORMANCE
-- Configuración de caching apropiada
-- Compression y minification setup
-- Optimización de static assets
-- CDN configuration (si es necesario)
-- Database query optimization
+## 3. DESPLIEGUE AUTOMATIZADO Y VERIFICABLE
+- Comandos git + CI/CD necesarios (incluso si no existe CI aún)
+- Setup de base de datos en producción: migraciones, seeds, conexión segura
+- Configuración de dominio personalizado y HTTPS (con proveedor sugerido)
 
-## 5. ARCHIVOS DE CONFIGURACIÓN COMPLETOS
-Genera el código completo para:
-- Dockerfile (si aplica)
-- docker-compose.yml (si aplica) 
-- Archivo de configuración del servidor
-- Scripts de package.json optimizados
-- Configuración de CI/CD básica (.github/workflows)
+## 4. ROLLBACK Y RESILIENCIA
+- Procedimiento de rollback basado en la arquitectura (git revert, blue/green, etc.)
+- Backup mínimo viable: qué guardar, cómo y con qué frecuencia
+- Plan de contingencia ante fallo de APIs de IA o servicios externos
 
-## 6. CONFIGURACIÓN ESPECÍFICA DE IA/AGENTES
-- Variables de entorno para APIs de IA
-- Configuración de timeouts y rate limits
-- Manejo de errores de APIs externas
-- Configuración de fallbacks
-
-Proporciona código funcional y completo para cada archivo.
+> **ENTREGABLE**: Comandos copy-paste, archivos de configuración reales, tabla de costos con fuentes, diagrama de flujo en Mermaid.
 ```
 
-#### 4.2 Guardar el Output
+#### 3.2 Guardar Plan Optimizado
 ```bash
-touch CONFIGURACIONES_PRODUCCION_COPILOT.md
-# Copiar respuesta al archivo
+touch docs/forensic-analysis/PLAN_DESPLIEGUE_DINAMICO.md
+# Copiar respuesta con justificaciones geoeconómicas
 ```
 
 ---
 
-### PASO 5: EJECUTAR PROMPT 4 - TROUBLESHOOTING
+### FASE 4: CONFIGURACIONES AUTOCURATIVAS (PROMPT 3)
 
-#### 5.1 Copiar y Pegar PROMPT 4
+#### 4.1 Ejecutar Configuraciones de Producción
+```markdown
+Continuar en el chat:
+
+# CONFIGURACIONES DE PRODUCCIÓN AUTOCURATIVAS
+
+**PRINCIPIO**: La configuración debe **detectar, aislar y corregir** fallos sin intervención humana.
+
+## 1. VARIABLES DE ENTORNO — SEGURIDAD POR DEFECTO
+- Genera `.env.prod.template` con valores por defecto **seguros** y comentarios explicativos
+- Valida en runtime: `if not API_KEY: raise ConfigError("Falta API_KEY crítica")`
+- Variables por entorno: `dev` (verbose), `staging` (estructurado), `prod` (mínimo)
+
+## 2. BASE DE DATOS — RESILIENCIA AUTOMÁTICA
+- Connection string con retry, timeout, pool size
+- Migraciones idempotentes con rollback automático
+- Backup diario con rotación, cifrado y verificación de integridad
+- Health check: endpoint que verifica conexión + latency < 100ms
+
+## 3. SEGURIDAD OPERATIVA — DEFENSA EN PROFUNDIDAD
+- CORS: solo orígenes explícitos (nunca `*`)
+- Rate limiting: por IP + por API key (si aplica)
+- Headers de seguridad: HSTS, CSP, X-Frame-Options, etc.
+- Validación de inputs: esquemas Pydantic/Zod en todas las entradas
+
+## 4. PERFORMANCE AUTONÓMICA
+- Caching: Redis para respuestas de agentes (TTL + invalidación semántica)
+- Compresión: Brotli + Gzip fallback
+- Query optimization: índices sugeridos basados en queries reales
+
+## 5. CONFIGURACIÓN DE AGENTES — ESTABILIDAD EXTREMA
+- Timeouts: LLM (30s), tool use (15s), orquestación (60s)
+- Rate limiting adaptativo (reduce velocidad si hay errores 429)
+- Fallbacks: si falla modelo primario → usa secundario
+- Logging estructurado: con `trace_id` para rastrear decisiones
+
+> **ENTREGABLE**: Código completo de todos los archivos, explicación de cada decisión, comandos para probar.
 ```
-Finaliza con:
 
-# GUÍA DE TROUBLESHOOTING Y MANTENIMIENTO
+#### 4.2 Guardar Configuraciones
+```bash
+touch docs/forensic-analysis/CONFIGURACIONES_AUTOCURATIVAS.md
+# Copiar configuraciones con mecanismos de autocorrección
+```
 
-Crea documentación completa para:
+---
 
-## 1. PROBLEMAS COMUNES DE DESPLIEGUE
-Para este proyecto específico, identifica:
-- Top 5 errores más probables durante deployment
-- Solución paso a paso para cada error
-- Comandos específicos de diagnóstico
-- Logs exactos a revisar y dónde encontrarlos
-- Señales de alerta temprana
+### FASE 5: TROUBLESHOOTING PREDICTIVO (PROMPT 4)
 
-## 2. COMANDOS DE MANTENIMIENTO ESENCIALES
+#### 5.1 Ejecutar Análisis de Confiabilidad
+```markdown
+Finalizar con:
+
+# GUÍA DE TROUBLESHOOTING Y MANTENIMIENTO PROACTIVO
+
+**ROL**: Actúa como **Ingeniero de Confiabilidad Autónoma + Analista de Causa Raíz**.
+
+## 1. PREDICCIÓN DE FALLOS — INDICADORES TEMPRANOS
+- Aumento de latencia en llamadas a LLM
+- Degradación en calidad de salida (hallucinaciones)
+- Quotas de API acercándose al 90%
+- Uso de RAM > 80% sostenido
+
+## 2. DIAGNÓSTICO CAUSAL AUTOMÁTICO
+- Mapa de dependencias dinámico: si falla `/api/agent`, ¿es por LLM, DB o tool?
+- Correlación de eventos: "El fallo coincidió con un deploy de `utils.py`"
+- Hipótesis generadas automáticamente con evidencia
+
+## 3. ACCIONES CORRECTIVAS AUTÓNOMAS
+- Scripts de autocorrección: reinicia worker si RAM > 90%
+- Rollback predictivo: si métricas empeoran tras deploy → revertir en <2 min
+
+## 4. COMANDOS DE MANTENIMIENTO ESENCIALES
 - Health checks específicos para este sistema
-- Comandos para restart de servicios
-- Update de dependencias seguro
-- Limpieza de logs y archivos temporales
+- Comandos para restart, update de dependencias, limpieza de logs
 - Verificación de integridad de base de datos
 
-## 3. MONITORING Y ALERTAS BÁSICAS
-- Métricas críticas a monitorear para este proyecto
-- Setup de logging estructurado
-- Alertas simples con herramientas gratuitas
+## 5. MONITOREO Y ALERTAS BÁSICAS
+- Métricas críticas: latencia p95, tasa de error, uso de tokens, conexiones WS
+- Alertas con umbrales: p95 > 2s, errores > 1%, tokens > 90% quota
 - Dashboard básico con métricas clave
-- Thresholds de alerta recomendados
-
-## 4. MANTENIMIENTO DE SISTEMAS AGÉNTICOS
-- Monitoreo de APIs de IA utilizadas
-- Verificación de quotas y rate limits
-- Performance de modelos de IA
-- Logs específicos de agentes
-- Troubleshooting de timeouts de IA
-
-## 5. ESCALABILIDAD Y OPTIMIZACIÓN
-- Señales de que necesitas más recursos
-- Cómo hacer upgrade de plan de hosting
-- Optimizaciones de código para mejor performance
-- Estrategias de caching para reducir costos de APIs
-- Migration path para crecimiento
 
 ## 6. BACKUP Y RECOVERY AUTOMATIZADO
-- Script de backup completo para este proyecto
+- Script de backup completo con rotación y cifrado
 - Procedimiento de restore paso a paso
-- Backup de configuraciones y secretos
-- Testing de recovery procedures
-- Cronograma de backups recomendado
+- Testing de recovery en staging
 
-## 7. SCRIPTS DE AUTOMATIZACIÓN
-Genera scripts ejecutables para:
-- Deployment completo
-- Health check automatizado
-- Backup automático
-- Update de dependencias
-- Rollback rápido
-
-Incluye código funcional y procedimientos step-by-step detallados.
+> **ENTREGABLE**: Script de predicción de fallos, tabla de correlaciones causa-efecto, comandos de diagnóstico, alertas configurables.
 ```
 
-#### 5.2 Guardar el Output
+#### 5.2 Guardar Análisis Predictivo
 ```bash
-touch TROUBLESHOOTING_COPILOT.md
-# Copiar respuesta al archivo
+touch docs/forensic-analysis/TROUBLESHOOTING_PROACTIVO.md
+# Copiar análisis con correlaciones causales
 ```
 
 ---
 
-## 📁 ORGANIZACIÓN DE ARCHIVOS RESULTANTES
+## 📁 ESTRUCTURA FORENSE RESULTANTE
 
-### Estructura Recomendada
+### Organización de Evidencia Técnica
 ```bash
-tu-proyecto/
-├── docs/                              # Crear si no existe
-│   ├── deployment/                    # Nueva carpeta
-│   │   ├── ANALISIS_TECNICO_COPILOT.md
-│   │   ├── PLAN_DESPLIEGUE_COPILOT.md
-│   │   ├── CONFIGURACIONES_PRODUCCION_COPILOT.md
-│   │   └── TROUBLESHOOTING_COPILOT.md
-│   └── ...otros docs existentes
-├── .env.production.template           # Crear desde PROMPT 3
-├── docker-compose.production.yml      # Crear desde PROMPT 3
-└── scripts/                          # Crear si no existe
-    ├── deploy.sh                     # Crear desde PROMPTs 2-3
-    ├── health-check.sh               # Crear desde PROMPT 4
-    └── backup.sh                     # Crear desde PROMPT 4
+proyecto-target/
+├── docs/
+│   └── forensic-analysis/                    # Nueva metodología
+│       ├── ANALISIS_FORENSE_ADAPTATIVO.md    # Con citas archivo:línea
+│       ├── PLAN_DESPLIEGUE_DINAMICO.md       # Con justificaciones geoeconómicas
+│       ├── CONFIGURACIONES_AUTOCURATIVAS.md  # Con mecanismos de autocorrección  
+│       └── TROUBLESHOOTING_PROACTIVO.md      # Con correlaciones causales
+├── config/
+│   ├── .env.prod.template                   # Generado por PROMPT 3
+│   └── production-configs/                   # Archivos autocurativos
+└── scripts/
+    ├── forensic-deploy.sh                   # Comandos validados
+    ├── health-check-predictive.sh           # Monitoreo proactivo
+    └── backup-automated.sh                  # Recovery automatizado
 ```
 
 ---
 
-## 🔍 VALIDACIÓN DE RESULTADOS
+## 🔍 VALIDACIÓN FORENSE DE RESULTADOS
 
-### Checklist de Calidad
-- [ ] **PROMPT 1**: ¿Identificó correctamente el stack tecnológico?
-- [ ] **PROMPT 1**: ¿Listó todas las dependencias críticas?
-- [ ] **PROMPT 2**: ¿Recomendó plataforma adecuada para Argentina?
-- [ ] **PROMPT 2**: ¿Incluyó comandos copy-paste?
-- [ ] **PROMPT 3**: ¿Generó archivos de configuración completos?
-- [ ] **PROMPT 3**: ¿Incluyó configuraciones de seguridad?
-- [ ] **PROMPT 4**: ¿Identificó problemas comunes específicos del proyecto?
-- [ ] **PROMPT 4**: ¿Incluyó scripts ejecutables?
+### Checklist de Calidad Forense
+- [ ] **PROMPT 1**: ¿Cada dato técnico incluye cita `archivo:línea-inicial–línea-final`?
+- [ ] **PROMPT 1**: ¿Se marcaron elementos "NO EVIDENCIADO" cuando correspondía?
+- [ ] **PROMPT 2**: ¿La recomendación de plataforma está justificada por el stack detectado?
+- [ ] **PROMPT 2**: ¿Los comandos son específicos para la arquitectura real?
+- [ ] **PROMPT 3**: ¿Las configuraciones incluyen mecanismos de autocorrección?
+- [ ] **PROMPT 3**: ¿Los archivos son funcionales y no genéricos?
+- [ ] **PROMPT 4**: ¿El troubleshooting incluye correlaciones causales específicas?
+- [ ] **PROMPT 4**: ¿Los scripts son ejecutables sin modificaciones?
 
-### Señales de Éxito
-✅ **Buena respuesta**:
-- Específica para tu proyecto
-- Incluye comandos ejecutables
-- Menciona tecnologías reales del código
-- Proporciona configuraciones completas
+### 🎯 Indicadores de Análisis Forense Exitoso
+✅ **Respuesta de alta calidad**:
+- Citas específicas: `requirements.txt:15-23`, `main.py:45-67`
+- Comandos verificables: `grep -r "DATABASE_URL" .`
+- Detección de riesgos: "RIESGO ALTO: hardcoded API keys en config.py:12"
+- Evidencia empírica: "Detectado FastAPI 0.104.1 en requirements.txt:8"
+- Configuraciones adaptativas al stack real
 
-❌ **Respuesta genérica**:
-- Muy general, podría aplicar a cualquier proyecto
-- Sin comandos específicos
-- No menciona las tecnologías de tu stack
-- Configuraciones incompletas
-
----
-
-## 💡 CONSEJOS PARA MEJORES RESULTADOS
-
-### 1. Contexto Rico
-```bash
-# Antes de usar los prompts, asegúrate de:
-- Tener múltiples archivos del proyecto abiertos
-- Incluir archivos de configuración (.env, docker, etc.)
-- Mostrar la estructura de carpetas en el explorador
-```
-
-### 2. Conversación Continua
-- Usa el mismo chat para los 4 prompts
-- Copilot mantendrá el contexto entre prompts
-- Puedes hacer preguntas de seguimiento
-
-### 3. Personalización
-```bash
-# Adapta los prompts agregando:
-"Este proyecto es para el mercado argentino y debe cumplir con AFIP"
-"El sistema maneja datos sensibles bancarios"
-"Debe funcionar 24/7 sin interrupciones"
-```
-
-### 4. Validación Cruzada
-- Compara outputs con documentación existente
-- Verifica que los comandos sean correctos
-- Testea configuraciones en ambiente de prueba
+❌ **Respuesta genérica deficiente**:
+- Sin citas de archivos específicos
+- Recomendaciones aplicables a cualquier proyecto
+- Comandos que no corresponden al stack detectado
+- Configuraciones templátizadas sin adaptación
+- Ausencia de análisis de riesgo
 
 ---
 
-## 🚨 PROBLEMAS COMUNES Y SOLUCIONES
+## 💡 TÉCNICAS AVANZADAS PARA ANÁLISIS FORENSE
 
-### Problema 1: Respuesta Muy Genérica
-**Síntoma**: Copilot da respuestas que podrían aplicar a cualquier proyecto
-
-**Solución**:
+### 1. Maximizar Contexto para Copilot
 ```bash
-# Añade más contexto específico:
-"Para el proyecto que estás viendo, que es un sistema multi-agente 
-de inventario retail con FastAPI, OCR de facturas AFIP, y ML..."
+# Antes de ejecutar prompts, preparar contexto rico:
+find . -name "*.py" -exec wc -l {} + | sort -n | tail -10  # Archivos más grandes
+find . -name "requirements*.txt" -exec cat {} \;           # Todas las dependencias
+ls -la .env* config/ settings/                           # Archivos de configuración
 ```
 
-### Problema 2: Comandos Incorrectos
-**Síntoma**: Los comandos generados no funcionan
+### 2. Conversación Forense Continua  
+- Usar el mismo chat para los 4 prompts
+- Copilot mantendrá contexto y podrá correlacionar información
+- Hacer preguntas de seguimiento para clarificar evidencia
 
-**Solución**:
-- Verifica que Copilot tenga acceso a archivos reales
-- Pregunta específicamente: "¿Estos comandos son correctos para el proyecto actual?"
+### 3. Preguntas de Validación Forense
+```markdown
+# Preguntas adicionales recomendadas:
+"¿Puedes verificar que TODOS los datos incluyan citas archivo:línea?"
+"¿Hay configuraciones hardcodeadas que representen riesgos de seguridad?"
+"¿Los comandos generados funcionarán con el stack detectado?"
+"¿Qué evidencia específica respalda la recomendación de plataforma?"
+```
 
-### Problema 3: Configuraciones Incompletas
-**Síntoma**: Los archivos de configuración no incluyen todas las variables
-
-**Solución**:
-```bash
-# Pregunta de seguimiento:
-"¿Puedes revisar el código y asegurarte de que incluiste TODAS 
-las variables de entorno que se usan en el proyecto?"
+### 4. Personalización Contextual
+```markdown
+# Personalizar prompts añadiendo contexto específico:
+"Este sistema maneja datos financieros y debe cumplir PCI DSS"
+"La aplicación tiene picos de 10,000 usuarios simultáneos"
+"Debe funcionar en región LATAM con APIs de OpenAI"
 ```
 
 ---
 
-## 📊 MÉTRICAS DE ÉXITO
+## 🚨 PROBLEMAS COMUNES Y SOLUCIONES FORENSES
 
-### Por Proyecto Completado
-- ✅ 4 archivos de documentación generados
-- ✅ Al menos 3 scripts ejecutables funcionando
-- ✅ Configuraciones validadas en test
-- ✅ Plan de despliegue paso a paso documentado
+### Problema 1: Respuestas Sin Evidencia
+**Síntoma**: Copilot proporciona datos técnicos sin citar archivos específicos
 
-### Tiempo Ahorrado
-- **Sin prompts**: 8-12 horas de documentación manual
-- **Con prompts**: 1-2 horas de aplicación + validación
-- **Ahorro**: ~80% del tiempo de documentación
+**Solución Forense**:
+```markdown
+"Para cada dato técnico que mencionas, NECESITO la cita exacta archivo:línea. 
+Si no puedes encontrar evidencia en el código, marca como 'NO EVIDENCIADO'."
+```
+
+### Problema 2: Recomendaciones Genéricas
+**Síntoma**: Configuraciones que podrían aplicar a cualquier proyecto
+
+**Solución Forense**:
+```markdown
+"Basándote ÚNICAMENTE en el código que estás analizando, adapta las 
+configuraciones al stack específico detectado. NO uses plantillas genéricas."
+```
+
+### Problema 3: Comandos Incorrectos
+**Síntoma**: Scripts que no funcionan con la arquitectura real
+
+**Solución Forense**:
+```markdown
+"Verifica que cada comando sea ejecutable en el proyecto actual. 
+Proporciona evidencia de por qué ese comando es correcto para este stack."
+```
+
+### Problema 4: Ausencia de Análisis de Riesgo
+**Síntoma**: No se identifican problemas de seguridad o configuración
+
+**Solución Forense**:
+```markdown
+"Identifica TODOS los riesgos de seguridad, hardcoding, y configuraciones 
+inseguras con severidad CRÍTICO/ALTO/MEDIO y cita la ubicación exacta."
+```
 
 ---
 
-Esta guía práctica te permitirá aplicar sistemáticamente los prompts a todos tus proyectos y obtener documentación de despliegue completa y profesional.
+## 📊 MÉTRICAS DE ÉXITO FORENSE
+
+### Por Análisis Completado
+- ✅ 4 documentos con evidencia citada (`archivo:línea`)
+- ✅ Al menos 5 comandos de verificación ejecutables
+- ✅ Identificación de 3+ riesgos con severidad asignada
+- ✅ Configuraciones adaptadas al stack específico detectado
+- ✅ Plan de despliegue con justificación geoeconómica
+
+### Tiempo y Precisión
+- **Análisis tradicional**: 12-16 horas de investigación manual
+- **Análisis forense con prompts**: 60-90 minutos + validación
+- **Ahorro de tiempo**: ~85% con mayor precisión
+- **Precisión mejorada**: Evidencia citada y verificable
+
+### Calidad de Evidencia
+- **Citas específicas**: >95% de datos técnicos con `archivo:línea`
+- **Comandos verificables**: 100% ejecutables sin error
+- **Adaptación contextual**: Configuraciones específicas al stack real
+- **Detección de riesgos**: Identificación proactiva de vulnerabilidades
+
+---
+
+## 🛡️ PRINCIPIOS FORENSES CRÍTICOS
+
+### 1. Modo Solo Lectura Estricto
+- **NUNCA** modificar archivos durante el análisis
+- **SOLO** observar, diagnosticar y documentar
+- **VALIDAR** que Copilot no sugiera cambios de código
+
+### 2. Evidencia Obligatoria
+- Todo dato técnico DEBE incluir `archivo:línea-inicial–línea-final`
+- Sin evidencia = "NO EVIDENCIADO – TODO: confirmar"
+- Ambigüedades = "RIESGO: requiere validación manual"
+
+### 3. Adaptación Forzada
+- Configuraciones específicas al stack detectado
+- NO usar plantillas genéricas
+- Justificar cada recomendación con evidencia del código
+
+### 4. Crítica Constructiva
+- Cuestionar configuraciones inseguras
+- Identificar hardcoding y malas prácticas
+- Proponer soluciones basadas en el contexto real
+
+---
+
+Esta metodología forense refinada garantiza análisis técnicos exhaustivos, evidenciados y adaptados a la realidad específica de cada proyecto, eliminando suposiciones y maximizando la precisión operativa.

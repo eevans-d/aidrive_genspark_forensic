@@ -1,236 +1,210 @@
-# PROMPTS PARA GITHUB COPILOT PRO
-## Análisis Completo para Despliegue de Sistemas Agénticos
+# PROMPTS REFINADOS PARA GITHUB COPILOT PRO
+## Análisis Forense Adaptativo para Sistemas Agénticos
+
+**✅ PRINCIPIOS FUNDAMENTALES:**
+- ✅ **Modo pasivo/no invasivo**: nunca modifican el repositorio. Solo observan, diagnostican y analizan
+- ✅ **Universalmente aplicables**: cualquier proyecto (FastAPI, Express, Django, etc.), no solo específicos  
+- ✅ **Crítica autónoma**: el modelo debe cuestionar, no asumir
+- ✅ **Adaptación forzada**: cada salida se alinea con la realidad del código, no con plantillas genéricas
+- ✅ **Exhaustividad forense**: nada queda fuera; todo se respalda con `archivo:línea`
+- ✅ **Acción inmediata**: comandos copy-paste, scripts, tablas, decisiones justificadas
 
 ---
 
-## PROMPT 1: ANÁLISIS TÉCNICO DEL PROYECTO
+## ✅ **PROMPT 1 REFINADO: ANÁLISIS TÉCNICO ADAPTATIVO — DIAGNÓSTICO FORENSE DEL ESTADO REAL**
 
-```
-# ANÁLISIS TÉCNICO COMPLETO DEL PROYECTO
+```markdown
+# ANÁLISIS TÉCNICO ADAPTATIVO — DIAGNÓSTICO FORENSE DEL ESTADO REAL
 
-Analiza este repositorio y proporciona:
+**ROL**: Actúa como **Arquitecto Forense + Ingeniero de Confiabilidad**, con acceso total al repositorio actual.
 
-## 1. STACK TECNOLÓGICO
-- Framework principal y versión exacta
-- Dependencias críticas y sus versiones
-- Base de datos utilizada (tipo y versión)
-- APIs externas integradas
-- Servicios de terceros conectados
-- Librerías de IA/ML utilizadas
+**MANDATO CRÍTICO**:
+- **NO** asumas stack, arquitectura ni intenciones.
+- **SÍ** infiere solo desde código, configuraciones y scripts reales.
+- **CITA SIEMPRE**: `archivo:línea-inicial–línea-final` para cada dato técnico.
+- Si algo no está en el repo: **"NO EVIDENCIADO – TODO: confirmar"**.
+- Si hay ambigüedad: **marca como riesgo**.
 
-## 2. ARQUITECTURA DEL SISTEMA
-- Estructura de carpetas clave
-- Puntos de entrada principales (main files)
-- Servicios y módulos core
-- Integraciones agénticas específicas
-- Patrones de arquitectura implementados
+## 1. STACK TECNOLÓGICO — DETECCIÓN EMPÍRICA
+- Lenguaje(s) principal(es) y versión(es) exacta(s) (de `runtime.txt`, `pyproject.toml`, `package.json`, etc.)
+- Framework(s) web y versión(es) (FastAPI, Express, Django, etc.)
+- Base de datos: tipo, versión, driver, modo de conexión (PostgreSQL/SQLite/Mongo/etc.)
+- APIs externas integradas: endpoints reales, proveedores, métodos de autenticación
+- Librerías de IA/agentes: nombre, versión, patrón de uso (síncrono, streaming, tool use)
 
-## 3. REQUISITOS DE DESPLIEGUE
-- Variables de entorno necesarias (lista completa)
-- Configuraciones de base de datos requeridas
-- Puertos y servicios que debe exponer
-- Recursos mínimos (RAM, CPU, storage)
-- Certificados SSL o HTTPS necesarios
+## 2. ARQUITECTURA DEL SISTEMA — MAPA DE LO EXISTENTE
+- Estructura de carpetas con lógica ejecutable (ignora boilerplate)
+- Puntos de entrada reales: archivos que inician el sistema (`main.py`, `server.js`, etc.)
+- Módulos core: identificados por acoplamiento o uso frecuente
+- Patrones arquitectónicos detectados: microservicios, monolito, event-driven, agéntico, etc.
+- Integraciones agénticas: orquestación, autonomía, comunicación, memoria, tool use
 
-## 4. DEPENDENCIAS DE SISTEMA
-- Versión específica de runtime (Node.js/Python/etc)
-- Servicios del sistema operativo necesarios
-- Herramientas de build requeridas
-- Comandos de instalación global necesarios
+## 3. REQUISITOS DE DESPLIEGUE — ESPECIFICACIÓN OPERATIVA
+- Variables de entorno **usadas en runtime** (no solo declaradas)
+- Puertos y protocolos expuestos (HTTP, WebSocket, gRPC, métricas, healthchecks)
+- Recursos mínimos estimados (CPU, RAM, disco) basados en patrones de uso
+- Dependencias del sistema: paquetes del SO, binarios, permisos
+- Requisitos de red: CORS, proxy, SSL/TLS, dominios
 
-## 5. CONFIGURACIÓN ACTUAL
-- Archivos de configuración existentes
-- Scripts de package.json/requirements.txt
-- Variables de entorno ya definidas
-- Configuraciones de desarrollo vs producción
+## 4. CONFIGURACIÓN ACTUAL — BRECHA ENTRE DEV Y PROD
+- Archivos de configuración existentes (`config/`, `.env*`, `settings.py`, etc.)
+- Diferencias observables entre entornos (si existen)
+- Scripts de build/test/deploy: comandos reales en `package.json`, `Makefile`, etc.
+- Hardcoding detectado: valores fijos que deberían ser configurables
 
-Formato: Markdown estructurado con comandos específicos ejecutables.
-```
-
----
-
-## PROMPT 2: PLAN DE DESPLIEGUE PERSONALIZADO
-
-```
-# PLAN DE DESPLIEGUE PERSONALIZADO
-
-Basándote en el análisis anterior del repositorio, genera:
-
-## 1. PREPARACIÓN PRE-DESPLIEGUE
-- Checklist completo de verificación de código
-- Configuraciones específicas para producción
-- Variables de entorno para producción (con valores ejemplo)
-- Scripts de build optimizados para deployment
-- Archivos que deben ser excluidos (.gitignore, .dockerignore)
-
-## 2. ESTRATEGIA DE HOSTING PARA ARGENTINA
-- Recomendación específica de plataforma (Vercel, Railway, Render, Fly.io)
-- Justificación técnica de la recomendación
-- Configuración paso a paso para la plataforma elegida
-- Costos estimados mensuales en USD
-- Límites del plan gratuito y cuándo upgrader
-
-## 3. PROCESO DE DESPLIEGUE DETALLADO
-- Comandos git exactos para preparar el deploy
-- Configuración de repositorio para auto-deploy
-- Pasos manuales necesarios (si los hay)
-- Configuración de dominio personalizado
-- Setup de base de datos en producción
-
-## 4. VERIFICACIÓN POST-DESPLIEGUE
-- URLs y endpoints para testear
-- Comandos para verificar que todo funciona
-- Logs críticos a revisar
-- Tests de funcionalidad básicos
-
-## 5. ROLLBACK Y RECOVERY
-- Cómo hacer rollback si algo falla
-- Backup de configuraciones
-- Recovery plan básico
-
-Incluye comandos copy-paste ready y configuraciones exactas.
+> **ENTREGABLE**: Markdown estructurado con comandos de verificación (ej: `grep -r "os.getenv" .`) y lista de riesgos con severidad (`CRÍTICO`/`ALTO`/`MEDIO`).
 ```
 
 ---
 
-## PROMPT 3: CONFIGURACIONES DE PRODUCCIÓN
+## ✅ **PROMPT 2 REFINADO: PLAN DE DESPLIEGUE DINÁMICO — OPTIMIZACIÓN GEOECONÓMICA Y RESILIENCIA ANTIFRÁGIL**
 
-```
-# CONFIGURACIONES DE PRODUCCIÓN ESPECÍFICAS
+```markdown
+# PLAN DE DESPLIEGUE DINÁMICO — OPTIMIZACIÓN GEOECONÓMICA + RESILIENCIA ANTIFRÁGIL
 
-Genera configuraciones production-ready para este proyecto:
+**ROL**: Actúa como **Ingeniero de Plataformas + Estratega de Costos + Arquitecto de Resiliencia**, con acceso total al repositorio.
 
-## 1. VARIABLES DE ENTORNO COMPLETAS
-- Lista exhaustiva de todas las ENV vars necesarias
-- Descripción de cada variable y su propósito
-- Valores de ejemplo seguros (sin exponer secretos)
-- Variables específicas por entorno (dev/staging/prod)
-- Template de .env.production
+**MANDATO**:
+- **NO** recomiendes plataforma sin justificación técnica basada en el stack real.
+- **SÍ** infiere región óptima desde latencia a APIs de IA, usuarios y costos.
+- **SÍ** diseña un plan que **mejore bajo estrés** (antifrágil): fallbacks, degradación elegante, auto-reconfiguración.
 
-## 2. CONFIGURACIÓN DE BASE DE DATOS
-- Connection strings para producción
-- Configuración de connection pooling
-- Migrations necesarias para producción
-- Seeds o data inicial requerida
-- Configuración de backup automático
+## 1. PREPARACIÓN PRE-DESPLIEGUE — SANITIZACIÓN EXTREMA
+- Checklist de saneamiento: secrets externalizados, hardcoding eliminado, scripts idempotentes
+- Archivos de exclusión: `.dockerignore`, `.gitignore` específicos para este proyecto
+- Build optimizado: layer caching, tree-shaking, compilación nativa (si aplica)
 
-## 3. CONFIGURACIÓN DE SEGURIDAD
-- CORS setup específico para este proyecto
-- Rate limiting adecuado
-- Validación de inputs implementada
-- Headers de seguridad necesarios
-- Configuración de autenticación/autorización
+## 2. ESTRATEGIA DE HOSTING DINÁMICA
+- Recomendación de plataforma (Vercel, Render, Fly.io, AWS, etc.) **justificada por stack, latencia y costo**
+- Costo estimado mensual (USD) en plan mínimo viable + umbral de upgrade
+- Configuración exacta para auto-deploy: branch, build command, root dir
 
-## 4. OPTIMIZACIÓN DE PERFORMANCE
-- Configuración de caching apropiada
-- Compression y minification setup
-- Optimización de static assets
-- CDN configuration (si es necesario)
-- Database query optimization
+## 3. DESPLIEGUE AUTOMATIZADO Y VERIFICABLE
+- Comandos git + CI/CD necesarios (incluso si no existe CI aún)
+- Setup de base de datos en producción: migraciones, seeds, conexión segura
+- Configuración de dominio personalizado y HTTPS (con proveedor sugerido)
 
-## 5. ARCHIVOS DE CONFIGURACIÓN COMPLETOS
-Genera el código completo para:
-- Dockerfile (si aplica)
-- docker-compose.yml (si aplica) 
-- Archivo de configuración del servidor
-- Scripts de package.json optimizados
-- Configuración de CI/CD básica (.github/workflows)
+## 4. ROLLBACK Y RESILIENCIA
+- Procedimiento de rollback basado en la arquitectura (git revert, blue/green, etc.)
+- Backup mínimo viable: qué guardar, cómo y con qué frecuencia
+- Plan de contingencia ante fallo de APIs de IA o servicios externos
 
-## 6. CONFIGURACIÓN ESPECÍFICA DE IA/AGENTES
-- Variables de entorno para APIs de IA
-- Configuración de timeouts y rate limits
-- Manejo de errores de APIs externas
-- Configuración de fallbacks
-
-Proporciona código funcional y completo para cada archivo.
+> **ENTREGABLE**: Comandos copy-paste, archivos de configuración reales, tabla de costos con fuentes, diagrama de flujo en Mermaid.
 ```
 
 ---
 
-## PROMPT 4: TROUBLESHOOTING Y MANTENIMIENTO
+## ✅ **PROMPT 3 REFINADO: CONFIGURACIONES DE PRODUCCIÓN AUTOCURATIVAS — SEGURIDAD, PERFORMANCE Y OBSERVABILIDAD POR DISEÑO**
 
+```markdown
+# CONFIGURACIONES DE PRODUCCIÓN AUTOCURATIVAS
+
+**PRINCIPIO**: La configuración debe **detectar, aislar y corregir** fallos sin intervención humana.
+
+## 1. VARIABLES DE ENTORNO — SEGURIDAD POR DEFECTO
+- Genera `.env.prod.template` con valores por defecto **seguros** y comentarios explicativos
+- Valida en runtime: `if not API_KEY: raise ConfigError("Falta API_KEY crítica")`
+- Variables por entorno: `dev` (verbose), `staging` (estructurado), `prod` (mínimo)
+
+## 2. BASE DE DATOS — RESILIENCIA AUTOMÁTICA
+- Connection string con retry, timeout, pool size
+- Migraciones idempotentes con rollback automático
+- Backup diario con rotación, cifrado y verificación de integridad
+- Health check: endpoint que verifica conexión + latency < 100ms
+
+## 3. SEGURIDAD OPERATIVA — DEFENSA EN PROFUNDIDAD
+- CORS: solo orígenes explícitos (nunca `*`)
+- Rate limiting: por IP + por API key (si aplica)
+- Headers de seguridad: HSTS, CSP, X-Frame-Options, etc.
+- Validación de inputs: esquemas Pydantic/Zod en todas las entradas
+
+## 4. PERFORMANCE AUTONÓMICA
+- Caching: Redis para respuestas de agentes (TTL + invalidación semántica)
+- Compresión: Brotli + Gzip fallback
+- Query optimization: índices sugeridos basados en queries reales
+
+## 5. CONFIGURACIÓN DE AGENTES — ESTABILIDAD EXTREMA
+- Timeouts: LLM (30s), tool use (15s), orquestación (60s)
+- Rate limiting adaptativo (reduce velocidad si hay errores 429)
+- Fallbacks: si falla modelo primario → usa secundario
+- Logging estructurado: con `trace_id` para rastrear decisiones
+
+> **ENTREGABLE**: Código completo de todos los archivos, explicación de cada decisión, comandos para probar.
 ```
-# GUÍA DE TROUBLESHOOTING Y MANTENIMIENTO
 
-Crea documentación completa para:
+---
 
-## 1. PROBLEMAS COMUNES DE DESPLIEGUE
-Para este proyecto específico, identifica:
-- Top 5 errores más probables durante deployment
-- Solución paso a paso para cada error
-- Comandos específicos de diagnóstico
-- Logs exactos a revisar y dónde encontrarlos
-- Señales de alerta temprana
+## ✅ **PROMPT 4 REFINADO: GUÍA DE TROUBLESHOOTING Y MANTENIMIENTO PROACTIVO — DIAGNÓSTICO CAUSAL Y AUTOCURACIÓN**
 
-## 2. COMANDOS DE MANTENIMIENTO ESENCIALES
+```markdown
+# GUÍA DE TROUBLESHOOTING Y MANTENIMIENTO PROACTIVO
+
+**ROL**: Actúa como **Ingeniero de Confiabilidad Autónoma + Analista de Causa Raíz**.
+
+## 1. PREDICCIÓN DE FALLOS — INDICADORES TEMPRANOS
+- Aumento de latencia en llamadas a LLM
+- Degradación en calidad de salida (hallucinaciones)
+- Quotas de API acercándose al 90%
+- Uso de RAM > 80% sostenido
+
+## 2. DIAGNÓSTICO CAUSAL AUTOMÁTICO
+- Mapa de dependencias dinámico: si falla `/api/agent`, ¿es por LLM, DB o tool?
+- Correlación de eventos: "El fallo coincidió con un deploy de `utils.py`"
+- Hipótesis generadas automáticamente con evidencia
+
+## 3. ACCIONES CORRECTIVAS AUTÓNOMAS
+- Scripts de autocorrección: reinicia worker si RAM > 90%
+- Rollback predictivo: si métricas empeoran tras deploy → revertir en <2 min
+
+## 4. COMANDOS DE MANTENIMIENTO ESENCIALES
 - Health checks específicos para este sistema
-- Comandos para restart de servicios
-- Update de dependencias seguro
-- Limpieza de logs y archivos temporales
+- Comandos para restart, update de dependencias, limpieza de logs
 - Verificación de integridad de base de datos
 
-## 3. MONITORING Y ALERTAS BÁSICAS
-- Métricas críticas a monitorear para este proyecto
-- Setup de logging estructurado
-- Alertas simples con herramientas gratuitas
+## 5. MONITOREO Y ALERTAS BÁSICAS
+- Métricas críticas: latencia p95, tasa de error, uso de tokens, conexiones WS
+- Alertas con umbrales: p95 > 2s, errores > 1%, tokens > 90% quota
 - Dashboard básico con métricas clave
-- Thresholds de alerta recomendados
-
-## 4. MANTENIMIENTO DE SISTEMAS AGÉNTICOS
-- Monitoreo de APIs de IA utilizadas
-- Verificación de quotas y rate limits
-- Performance de modelos de IA
-- Logs específicos de agentes
-- Troubleshooting de timeouts de IA
-
-## 5. ESCALABILIDAD Y OPTIMIZACIÓN
-- Señales de que necesitas más recursos
-- Cómo hacer upgrade de plan de hosting
-- Optimizaciones de código para mejor performance
-- Estrategias de caching para reducir costos de APIs
-- Migration path para crecimiento
 
 ## 6. BACKUP Y RECOVERY AUTOMATIZADO
-- Script de backup completo para este proyecto
+- Script de backup completo con rotación y cifrado
 - Procedimiento de restore paso a paso
-- Backup de configuraciones y secretos
-- Testing de recovery procedures
-- Cronograma de backups recomendado
+- Testing de recovery en staging
 
-## 7. SCRIPTS DE AUTOMATIZACIÓN
-Genera scripts ejecutables para:
-- Deployment completo
-- Health check automatizado
-- Backup automático
-- Update de dependencias
-- Rollback rápido
-
-Incluye código funcional y procedimientos step-by-step detallados.
+> **ENTREGABLE**: Script de predicción de fallos, tabla de correlaciones causa-efecto, comandos de diagnóstico, alertas configurables.
 ```
 
 ---
 
-## INSTRUCCIONES DE USO
+## 📋 INSTRUCCIONES DE USO REFINADAS
 
+### METODOLOGÍA FORENSE
+1. **MODO PASIVO**: Los prompts **JAMÁS** modifican código. Solo analizan y diagnostican.
+2. **EVIDENCIA CITADA**: Cada dato técnico debe incluir `archivo:línea-inicial–línea-final`.
+3. **CRÍTICA CONSTRUCTIVA**: Cuestiona todo, no asumas nada que no esté evidenciado.
+4. **UNIVERSALIDAD**: Aplicable a cualquier stack tecnológico sin sesgos.
+
+### PROCESO DE EJECUCIÓN
 1. **Ejecuta los prompts en orden** (1→2→3→4) en cada repositorio
-2. **Copia cada prompt completo** incluyendo los headers y estructura
+2. **Copia cada prompt completo** manteniendo la estructura markdown
 3. **Pega en GitHub Copilot Pro** con el contexto del repositorio abierto
-4. **Guarda la documentación generada** en archivos markdown separados
-5. **Repite el proceso** para cada uno de tus 3-4 proyectos
+4. **Valida que las respuestas incluyan citas** de archivos específicos
+5. **Guarda la documentación generada** con nombres descriptivos
+6. **Repite el proceso** para cada proyecto del repositorio
 
-## RESULTADO ESPERADO
+## 🎯 RESULTADO ESPERADO REFINADO
 
 Después de ejecutar los 4 prompts obtendrás:
-- ✅ Análisis técnico completo
-- ✅ Plan de deployment específico  
-- ✅ Configuraciones production-ready
-- ✅ Guía de mantenimiento completa
-- ✅ Scripts automatizados
-- ✅ Troubleshooting detallado
+- ✅ **Análisis forense exhaustivo** con evidencia citada
+- ✅ **Plan de deployment geoeconómico** optimizado para latencia/costo
+- ✅ **Configuraciones autocurativas** que se corrigen automáticamente
+- ✅ **Sistema de troubleshooting predictivo** con correlación causal
+- ✅ **Scripts completamente funcionales** validados contra el código real
+- ✅ **Documentación universal** aplicable a cualquier stack
 
 ---
 
-## PROYECTOS IDENTIFICADOS EN ESTE REPOSITORIO
+## 🔍 PROYECTOS IDENTIFICADOS EN ESTE REPOSITORIO
 
 ### 1. Sistema Inventario Retail Multi-Agente
 - **Ubicación**: `/inventario-retail/`
@@ -279,18 +253,33 @@ cd retail-argentina-system/prompt8-final/
 # Ejecutar PROMPT 2-4 secuencialmente
 ```
 
-## OUTPUTS RECOMENDADOS
+## 📊 OUTPUTS REFINADOS RECOMENDADOS
 
-Crear en cada proyecto:
-- `ANALISIS_TECNICO_COPILOT.md` (PROMPT 1)
-- `PLAN_DESPLIEGUE_COPILOT.md` (PROMPT 2)
-- `CONFIGURACIONES_PRODUCCION_COPILOT.md` (PROMPT 3)
-- `TROUBLESHOOTING_COPILOT.md` (PROMPT 4)
+Crear en cada proyecto con metodología forense:
+- `ANALISIS_FORENSE_ADAPTATIVO.md` (PROMPT 1) - Con citas `archivo:línea`
+- `PLAN_DESPLIEGUE_DINAMICO.md` (PROMPT 2) - Con justificaciones geoeconómicas
+- `CONFIGURACIONES_AUTOCURATIVAS.md` (PROMPT 3) - Con mecanismos de autocorrección
+- `TROUBLESHOOTING_PROACTIVO.md` (PROMPT 4) - Con correlaciones causales
 
-## NOTAS IMPORTANTES
+## 🛡️ VALIDACIÓN DE CALIDAD
 
-- 🔥 **Ejecuta con repositorio abierto** en GitHub Copilot Pro
-- 📝 **Adapta los prompts** según las necesidades específicas de cada proyecto
-- 🛡️ **Revisa outputs** antes de aplicar configuraciones en producción
-- 🔄 **Actualiza regularmente** cuando el código del proyecto cambie
-- 💾 **Versionea la documentación** junto con el código del proyecto
+### ✅ Indicadores de Éxito:
+- **Citas específicas**: Cada dato técnico tiene `archivo:línea-inicial–línea-final`
+- **No invasivo**: Ningún prompt sugiere modificar código existente
+- **Adaptativo**: Las recomendaciones se basan en el stack real detectado
+- **Ejecutable**: Comandos copy-paste que funcionan sin modificación
+- **Crítico**: Identifica riesgos y ambigüedades explícitamente
+
+### ❌ Señales de Respuesta Deficiente:
+- Recomendaciones genéricas sin evidencia del código
+- Ausencia de citas específicas de archivos
+- Sugerencias de modificar código (violación del modo pasivo)
+- Comandos que no corresponden al stack detectado
+
+## 🚨 NOTAS CRÍTICAS REFINADAS
+
+- 🔥 **MODO FORENSE ESTRICTO**: Los prompts solo observan, nunca modifican
+- 📝 **EVIDENCIA OBLIGATORIA**: Sin `archivo:línea`, la información no es válida
+- 🛡️ **VALIDAR ANTES DE APLICAR**: Revisar todas las configuraciones en staging
+- 🔄 **ACTUALIZACIÓN CONTINUA**: Re-ejecutar cuando el código cambie significativamente
+- 💾 **VERSIONADO SINCRONIZADO**: Mantener documentación al día con el código
