@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.8.4] - 2025-09-30
+### Added
+
+
 Todas las notas siguen el formato Keep a Changelog (simplificado) y versionado SemVer.
 
 ## [Unreleased]
@@ -24,3 +28,9 @@ Todas las notas siguen el formato Keep a Changelog (simplificado) y versionado S
 
 ---
 Formato basado en ideas de Keep a Changelog.
+### Misc
+- Fixed: retail tests now pass (async DB factory handled without context manager
+- Prometheus labels ASCII
+- validation messages aligned
+- EAN-13 util tests green). Improved: CircuitBreaker exception handling
+- metrics export returns string. Notes: left Pydantic v1 validator warnings in shared/retail_validation.py for later migration.
