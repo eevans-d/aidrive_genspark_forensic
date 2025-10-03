@@ -347,17 +347,41 @@ b02f2ae - security(R1,R6): harden dashboard container + enforce Trivy [Oct 3, 20
 
 ---
 
+## Validación Ejecutada
+
+**Script**: `validate_etapa2_mitigations.py` (alternativa a pytest)  
+**Fecha**: Octubre 3, 2025  
+**Resultado**: ✅ **27/27 validaciones pasadas** (0 fallos, 0 warnings)
+
+### Tests Ejecutados
+
+- **R1 Container Security**: 4 Dockerfiles con USER directives
+- **R6 Dependency Scanning**: Trivy job enforced con exit-code=1, severity CRITICAL/HIGH
+- **R3 OCR Timeout**: OCR_TIMEOUT_SECONDS en docker-compose, .env template, main_complete.py
+- **R2 JWT Isolation**: 4 secrets en compose, template; AuthManager con issuer claim + instances
+- **R4 ML Inflation**: INFLATION_RATE_MONTHLY en compose, template, predictor.py, features.py
+- **Documentation**: 2 guías de migración, CHANGELOG v0.10.0, README actualizado
+
+**Comando de Ejecución**:
+```bash
+python3 validate_etapa2_mitigations.py
+```
+
+---
+
 ## Referencias
 
 - **Mega-Plan Source**: MEGAPLANIF_AIDRIVE_GENSPARK_FORENSIC_2.txt
 - **Repository**: https://github.com/eevans-d/aidrive_genspark_forensic
 - **CI/CD**: `.github/workflows/ci.yml`
 - **Compose**: `inventario-retail/docker-compose.production.yml`
+- **Validation Script**: `validate_etapa2_mitigations.py`
 
 **Metodología**: Forensic analysis con scoring ROI, anti-loop controls, zero-downtime deployment strategy.
 
 ---
 
-**Status Final**: ✅ ETAPA 2 COMPLETADA  
+**Status Final**: ✅ ETAPA 2 COMPLETADA Y VALIDADA  
 **Fecha Completación**: Octubre 3, 2025  
+**Validación**: 27/27 tests pasados  
 **Responsable**: AI Development Team (GitHub Copilot + eevans-d)
