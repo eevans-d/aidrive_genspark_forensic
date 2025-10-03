@@ -13,12 +13,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
  && rm -rf /var/lib/apt/lists/*
 
+# Crear usuario no-root para dashboard
+RUN groupadd -r dashboarduser && useradd --no-log-init -r -g dashboarduser dashboarduser && \
+    mkdir -p /app/logs /app/cache && \
+    chown -R dashboarduser:dashboarduser /app
+
 # Instalar requirements
 COPY inventario-retail/web_dashboard/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt
 
-# Copiar código
-COPY . /app
+# Copiar código con ownership
+COPY --chown=dashboarduser:dashboarduser . /app
+
+# Cambiar a usuario no-root
+USER dashboarduser
 
 # Puerto de la app
 EXPOSE 8080
