@@ -19,7 +19,7 @@ RUN groupadd -r dashboarduser && useradd --no-log-init -r -g dashboarduser dashb
     chown -R dashboarduser:dashboarduser /app
 
 # Instalar requirements
-COPY inventario-retail/web_dashboard/requirements.txt /tmp/requirements.txt
+COPY web_dashboard/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt
 
 # Copiar código con ownership
@@ -37,4 +37,4 @@ ENV DASHBOARD_RATELIMIT_ENABLED=true \
     DASHBOARD_API_KEY=change-me
 
 # Comando de ejecución (uvicorn)
-CMD ["uvicorn", "inventario-retail.web_dashboard.dashboard_app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "web_dashboard.dashboard_app:app", "--host", "0.0.0.0", "--port", "8080"]
