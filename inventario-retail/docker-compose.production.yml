@@ -123,6 +123,8 @@ services:
       # R2 Mitigation: Per-agent JWT secret with backward compatibility
       - JWT_SECRET_KEY=${JWT_SECRET_ML:-${JWT_SECRET_KEY}}
       - JWT_SECRET_ML=${JWT_SECRET_ML:-${JWT_SECRET_KEY}}
+      # R4 Mitigation: Externalizar inflación mensual (default 4.5% = 0.045)
+      - INFLATION_RATE_MONTHLY=${INFLATION_RATE_MONTHLY:-0.045}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     ports:

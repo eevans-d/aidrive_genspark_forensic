@@ -5,13 +5,13 @@ ML Predictor Module - Sistema de Inventario Retail Argentina
 Módulo de predicción de demanda usando RandomForest entrenado.
 Proporciona endpoints FastAPI para predicciones de demanda a 7 días.
 
-Contexto Argentino:
-- Considera inflación mensual del 4.5%
+Contexto Argentino (R4 Mitigation):
+- Inflación mensual configurable via INFLATION_RATE_MONTHLY (default 4.5%)
 - Incluye feriados nacionales y estacionalidad local
 - Optimizado para retail argentino con patrones de consumo locales
 
 Autor: Sistema Multi-Agente Inventario
-Versión: Post-MVP con ML
+Versión: Post-MVP con ML + R4 Security
 """
 
 import os
@@ -101,9 +101,13 @@ class DemandPredictor:
         self.prediction_cache = {}
         self.cache_ttl = 3600  # 1 hora
 
-        # Configuración Argentina
-        self.inflation_rate = 0.045  # 4.5% mensual
+        # Configuración Argentina (R4 Mitigation: externalizado a variable de entorno)
+        # INFLATION_RATE_MONTHLY: tasa mensual como decimal (ej: 0.045 = 4.5%)
+        # Permite ajustar la inflación sin redeploy, crítico para contexto argentino
+        self.inflation_rate = float(os.getenv("INFLATION_RATE_MONTHLY", "0.045"))
         self.currency_format = "ARS"
+        
+        logger.info(f"ML Predictor initialized with inflation rate: {self.inflation_rate * 100:.2f}% monthly")
 
         self._initialize()
 

@@ -1,9 +1,11 @@
 """
 Feature engineering para predicción de demanda
 Incluye ventas históricas, inflación, estacionalidad y feriados argentinos
+
+R4 Mitigation: Inflación externalizada a INFLATION_RATE_MONTHLY env var.
 """
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 import pandas as pd
 import numpy as np
 from sqlalchemy.orm import Session
@@ -64,11 +66,28 @@ class SeasonalFactors:
         return cls.SEASONAL_FACTORS.get(month, 1.0)
 
 class DemandFeatures:
-    """Extractor de features para predicción de demanda"""
+    """Extractor de features para predicción de demanda (R4 Mitigation)"""
 
-    def __init__(self, db_session: Session, inflacion_mensual: float = 4.5):
+    def __init__(self, db_session: Session, inflacion_mensual: Optional[float] = None):
+        """
+        Inicializa extractor de features.
+        
+        Args:
+            db_session: Sesión de base de datos
+            inflacion_mensual: Tasa mensual de inflación (%). Si None, lee de INFLATION_RATE_MONTHLY env var.
+        
+        R4 Mitigation: Inflación externalizada a variable de entorno.
+        """
+        import os
         self.db = db_session
-        self.inflacion_mensual = inflacion_mensual
+        # Si no se provee inflacion_mensual, leer de env var (como porcentaje, ej: 4.5)
+        # Si env var está como decimal (0.045), multiplicar por 100
+        if inflacion_mensual is None:
+            env_rate = float(os.getenv("INFLATION_RATE_MONTHLY", "0.045"))
+            # Detectar si es decimal o porcentaje
+            self.inflacion_mensual = env_rate * 100 if env_rate < 1 else env_rate
+        else:
+            self.inflacion_mensual = inflacion_mensual
 
     def extract_sales_features(self, producto_id: int, days_back: int = 90) -> Dict[str, float]:
         """Extraer features de ventas históricas"""
