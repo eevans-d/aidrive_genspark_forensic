@@ -50,7 +50,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-inventario_retail}
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # R2 Mitigation: Per-agent JWT secret with backward compatibility
+      - JWT_SECRET_KEY=${JWT_SECRET_DEPOSITO:-${JWT_SECRET_KEY}}
+      - JWT_SECRET_DEPOSITO=${JWT_SECRET_DEPOSITO:-${JWT_SECRET_KEY}}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     ports:
@@ -80,11 +82,14 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-inventario_retail}
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # R2 Mitigation: Per-agent JWT secret with backward compatibility
+      - JWT_SECRET_KEY=${JWT_SECRET_NEGOCIO:-${JWT_SECRET_KEY}}
+      - JWT_SECRET_NEGOCIO=${JWT_SECRET_NEGOCIO:-${JWT_SECRET_KEY}}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
       - AGENTE_DEPOSITO_URL=http://agente-deposito:8001
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - TESSERACT_CMD=/usr/bin/tesseract
+      - OCR_TIMEOUT_SECONDS=${OCR_TIMEOUT_SECONDS:-30}
     ports:
       - "8002:8002"
     volumes:
@@ -115,7 +120,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-inventario_retail}
       - REDIS_URL=redis://redis:6379
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # R2 Mitigation: Per-agent JWT secret with backward compatibility
+      - JWT_SECRET_KEY=${JWT_SECRET_ML:-${JWT_SECRET_KEY}}
+      - JWT_SECRET_ML=${JWT_SECRET_ML:-${JWT_SECRET_KEY}}
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     ports:
@@ -149,6 +156,9 @@ services:
       - AGENTE_DEPOSITO_URL=http://agente-deposito:8001
       - AGENTE_NEGOCIO_URL=http://agente-negocio:8002
       - ML_PREDICTOR_URL=http://ml-service:8003
+      # R2 Mitigation: Per-agent JWT secret (dashboard may not use JWT directly, but included for consistency)
+      - JWT_SECRET_KEY=${JWT_SECRET_DASHBOARD:-${JWT_SECRET_KEY}}
+      - JWT_SECRET_DASHBOARD=${JWT_SECRET_DASHBOARD:-${JWT_SECRET_KEY}}
       - DASHBOARD_API_KEY=${DASHBOARD_API_KEY}
       - DASHBOARD_UI_API_KEY=${DASHBOARD_UI_API_KEY}
       - DASHBOARD_CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}

@@ -3,6 +3,8 @@
 """
 Autenticación y autorización para agentes multiagente.
 Provee dependencias para validación de roles y JWT, gestión de tokens y hashing seguro de contraseñas.
+
+R2 Mitigation: Soporte para secretos JWT separados por agente con backward compatibility.
 """
 
 import os
@@ -13,8 +15,14 @@ from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from passlib.context import CryptContext
 
-# Configuración global de seguridad
+# Configuración global de seguridad (R2 mitigation: per-agent secrets with fallback)
+# Priority: specific agent secret > JWT_SECRET_KEY > default
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "CHANGE-ME-IN-PRODUCTION")
+JWT_SECRET_DEPOSITO = os.getenv("JWT_SECRET_DEPOSITO", JWT_SECRET_KEY)
+JWT_SECRET_NEGOCIO = os.getenv("JWT_SECRET_NEGOCIO", JWT_SECRET_KEY)
+JWT_SECRET_ML = os.getenv("JWT_SECRET_ML", JWT_SECRET_KEY)
+JWT_SECRET_DASHBOARD = os.getenv("JWT_SECRET_DASHBOARD", JWT_SECRET_KEY)
+
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 8
 
@@ -27,14 +35,24 @@ class AuthManager:
     """
     Gestor de autenticación y autorización JWT.
     Métodos para crear/verificar tokens y contraseñas.
+    
+    R2 Mitigation: Soporta secreto específico por agente para mejor aislamiento.
     """
-    def __init__(self):
-        self.secret_key = JWT_SECRET_KEY
+    def __init__(self, secret_key: Optional[str] = None, issuer: Optional[str] = None):
+        """
+        Inicializa AuthManager con secreto opcional específico del agente.
+        
+        Args:
+            secret_key: Secreto JWT específico. Si None, usa JWT_SECRET_KEY global.
+            issuer: Identificador del agente emisor (e.g., 'deposito', 'negocio').
+        """
+        self.secret_key = secret_key or JWT_SECRET_KEY
         self.algorithm = JWT_ALGORITHM
+        self.issuer = issuer
 
     def create_access_token(self, data: Dict[str, Any]) -> str:
         """
-        Crea un token JWT con expiración.
+        Crea un token JWT con expiración y claim de issuer.
         Args:
             data (dict): Datos a codificar en el token.
         Returns:
@@ -43,6 +61,11 @@ class AuthManager:
         to_encode = data.copy()
         expire = datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
         to_encode.update({"exp": expire})
+        
+        # R2 Mitigation: Añadir claim de issuer si está configurado
+        if self.issuer:
+            to_encode.update({"iss": self.issuer})
+        
         return jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
 
     def verify_token(self, token: str) -> Dict[str, Any]:
@@ -83,8 +106,34 @@ class AuthManager:
 
 
 
-# Instancia global del gestor de autenticación
+# Instancia global del gestor de autenticación (backward compatible)
 auth_manager = AuthManager()
+
+# R2 Mitigation: Instancias específicas por agente con secretos aislados
+auth_manager_deposito = AuthManager(secret_key=JWT_SECRET_DEPOSITO, issuer="deposito")
+auth_manager_negocio = AuthManager(secret_key=JWT_SECRET_NEGOCIO, issuer="negocio")
+auth_manager_ml = AuthManager(secret_key=JWT_SECRET_ML, issuer="ml")
+auth_manager_dashboard = AuthManager(secret_key=JWT_SECRET_DASHBOARD, issuer="dashboard")
+
+def get_auth_manager_for_agent(agent_name: str) -> AuthManager:
+    """
+    Obtiene la instancia de AuthManager específica para un agente.
+    
+    Args:
+        agent_name: Nombre del agente ('deposito', 'negocio', 'ml', 'dashboard')
+    
+    Returns:
+        AuthManager configurado para el agente especificado.
+    
+    R2 Mitigation: Permite aislamiento de secretos por agente.
+    """
+    managers = {
+        "deposito": auth_manager_deposito,
+        "negocio": auth_manager_negocio,
+        "ml": auth_manager_ml,
+        "dashboard": auth_manager_dashboard,
+    }
+    return managers.get(agent_name, auth_manager)
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
     """
