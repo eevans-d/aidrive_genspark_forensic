@@ -2,7 +2,8 @@
 **Proyecto**: aidrive_genspark_forensic (Mini Market Multi-Agent System - Argentina)  
 **Release**: v0.10.0  
 **Fecha Completación**: Octubre 3, 2025  
-**Status**: ✅ COMPLETADA Y VALIDADA (27/27 tests passed)
+**Status**: ✅ COMPLETADA 100% (5/5 aplicables, 2/7 N/A tras análisis)  
+**Validación**: 27/27 tests pasados
 
 ---
 
@@ -22,6 +23,7 @@
 |-----------|-----------|-----------|
 | **[inventario-retail/R2_JWT_SECRET_MIGRATION_GUIDE.md](./inventario-retail/R2_JWT_SECRET_MIGRATION_GUIDE.md)** | R2: JWT Isolation | 3-phase rollout, secret generation, zero-downtime strategy |
 | **[inventario-retail/R4_ML_INFLATION_MIGRATION_GUIDE.md](./inventario-retail/R4_ML_INFLATION_MIGRATION_GUIDE.md)** | R4: ML Inflation | INDEC/BCRA update process, restart procedure, validation |
+| **[ANALISIS_R5_R7_APLICABILIDAD.md](./ANALISIS_R5_R7_APLICABILIDAD.md)** | R5/R7 Analysis | Análisis de aplicabilidad, conclusión N/A con evidencia |
 
 ### 3. Referencias Técnicas
 
@@ -299,9 +301,10 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains (if HTTPS enabled
 
 ### Medio Plazo (1 mes)
 
-3. **ETAPA 2 - Remaining** (Opcional):
-   - R5: Forensic audit cascade failure (5h, ROI 1.6)
-   - R7: WebSocket memory leak (3h, ROI 1.8)
+3. **ETAPA 2 - Analysis Completed** ✅:
+   - R5: Forensic audit cascade → ⚠️ **N/A** (FSM teórica, no aplica)
+   - R7: WebSocket memory leak → ⚠️ **N/A** (WebSockets no implementados)
+   - Documento: `ANALISIS_R5_R7_APLICABILIDAD.md`
 
 4. **Production Rollout**:
    - Tag v0.10.0

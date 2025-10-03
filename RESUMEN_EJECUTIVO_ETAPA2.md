@@ -15,9 +15,12 @@
 | **R3** | OCR Timeout Protection | 7 | 4h | 1.8 | ✅ DONE |
 | **R2** | JWT Secret Isolation | 8 | 8h | 1.6 | ✅ DONE |
 | **R4** | ML Inflation Externalization | 6 | 6h | 1.7 | ✅ DONE |
+| **R5** | Forensic Audit Cascade | 6 | N/A | N/A | ⚠️ N/A |
+| **R7** | WebSocket Memory Leak | 5 | N/A | N/A | ⚠️ N/A |
 
-**Promedio ROI**: 1.95 (umbral: 1.6)  
-**Severity Promedio Mitigada**: 7.6/10
+**Promedio ROI**: 1.95 (umbral: 1.6) - calculado sobre mitigaciones aplicables  
+**Severity Promedio Mitigada**: 7.6/10  
+**Tasa Completitud**: 5/5 aplicables (100%), 2/7 identificadas como N/A tras análisis
 
 ---
 
@@ -131,8 +134,17 @@ openssl rand -base64 32  # JWT_SECRET_DASHBOARD
 ```
 
 ### 2. ETAPA 2 - Remaining (Opcional)
-**R5**: Forensic audit cascade failure (5h, ROI 1.6, severity 6)  
-**R7**: WebSocket memory leak (3h, ROI 1.8, severity 5)
+### 2. R5 + R7 - Análisis Completado ✅
+**R5**: Forensic audit cascade failure → ⚠️ **N/A** (FSM teórica, no código producción)  
+**R7**: WebSocket memory leak → ⚠️ **N/A** (WebSockets no implementados)
+
+**Análisis** (Octubre 3, 2025):
+- Búsqueda exhaustiva confirmó que R5 se refiere a FSM teórica en `audit_framework/` (herramienta de análisis, no código deployable)
+- WebSockets no existen en dashboard actual (arquitectura REST + polling)
+- Forensic analysis tool generó falsos positivos basados en patrones teóricos
+- **Conclusión**: No hay código real que requiera estas mitigaciones
+
+**Documento**: `ANALISIS_R5_R7_APLICABILIDAD.md`
 
 ### 3. Production Rollout (Largo Plazo)
 - Crear tag `v0.10.0` para production deploy

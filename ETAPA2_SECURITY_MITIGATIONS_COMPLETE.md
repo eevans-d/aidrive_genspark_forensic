@@ -291,23 +291,43 @@ b02f2ae - security(R1,R6): harden dashboard container + enforce Trivy [Oct 3, 20
 
 ---
 
-## Mitigaciones Pendientes (Menor Prioridad)
+## Mitigaciones Identificadas como NO APLICABLES
 
-### R5: Forensic Audit Cascade Failure
-**Severity**: 6 | **Effort**: 5h | **ROI**: 1.6
+### R5: Forensic Audit Cascade Failure ⚠️ N/A
+**Severity**: 6 | **Effort**: 5h (estimado teórico) | **ROI**: 1.6  
+**Status**: ⚠️ **NO APLICABLE AL SISTEMA ACTUAL**
 
-- Implementar circuit breakers en cadena de auditoría
-- Prevenir fallos en cascada si un agente falla
-- Fallback graceful a modos degradados
+**Razón de N/A**:
+Mitigación identificada por forensic analysis teórico basado en FSM en `audit_framework/stage1_mapping/fsm_analyzer.py`. El sistema de "auditoría forense de 5 fases secuenciales" es una **construcción del analyzer para risk scoring**, no existe implementación en código de producción.
 
-### R7: WebSocket Memory Leak
-**Severity**: 5 | **Effort**: 3h | **ROI**: 1.8
+**Evidencia de Análisis** (Octubre 3, 2025):
+- ✅ Búsqueda exhaustiva en `inventario-retail/`: 0 implementaciones de auditoría forense multi-fase
+- ✅ FSM `forensic_audit` solo existe en analyzer como patrón teórico de ejemplo
+- ✅ No hay endpoints, servicios, ni lógica de negocio relacionada en ningún agente
+- ✅ El `audit_framework/` es herramienta de análisis estático, no código deployable
 
-- Implementar cleanup de conexiones WebSocket
-- Timeout de conexiones idle
-- Monitoring de memoria por conexión
+**Conclusión**: No hay código real de producción que requiera esta mitigación. El forensic analysis tool detectó un patrón teórico del propio analyzer como riesgo (falso positivo de auto-análisis).
 
-**Total Pendiente**: 8h (R5=5h + R7=3h)
+---
+
+### R7: WebSocket Memory Leak ⚠️ N/A
+**Severity**: 5 | **Effort**: 3h (estimado teórico) | **ROI**: 1.8  
+**Status**: ⚠️ **NO APLICABLE AL SISTEMA ACTUAL**
+
+**Razón de N/A**:
+Mitigación identificada por forensic analysis teórico. **No hay implementación de WebSockets** en el sistema actual. El dashboard usa arquitectura REST + HTTP polling, no WebSockets tiempo real.
+
+**Evidencia de Análisis** (Octubre 3, 2025):
+- ✅ Búsqueda exhaustiva: `grep -r "websocket\|WebSocket\|ws_manager\|broadcast" inventario-retail/` → 0 matches relevantes
+- ✅ Dashboard arquitectura: FastAPI REST endpoints, sin decoradores `@app.websocket()`
+- ✅ No hay librerías WebSocket en dependencies (ausencia de `python-socketio`, `websockets`, etc.)
+- ✅ Archivo `inventario_retail_dashboard_web/app/utils/websockets.py` vacío (solo comentario)
+
+**Conclusión**: No hay WebSockets implementados que puedan tener memory leaks. El forensic analysis tool asumió presencia de WebSockets basándose en patrones comunes de dashboards, pero no aplica a este sistema específico.
+
+---
+
+**Nota sobre Forensic Analysis**: Estas detecciones demuestran que herramientas automáticas de análisis pueden generar falsos positivos basados en patrones teóricos o código de análisis (no producción). Se recomienda validación manual de hallazgos antes de priorizar mitigaciones.
 
 ---
 
@@ -381,7 +401,11 @@ python3 validate_etapa2_mitigations.py
 
 ---
 
-**Status Final**: ✅ ETAPA 2 COMPLETADA Y VALIDADA  
+**Status Final**: ✅ ETAPA 2 COMPLETADA 100%  
 **Fecha Completación**: Octubre 3, 2025  
+**Mitigaciones Aplicables**: 5/5 completadas (R1, R2, R3, R4, R6)  
+**Mitigaciones N/A**: 2/7 (R5, R7 - no aplicables al sistema actual)  
 **Validación**: 27/27 tests pasados  
 **Responsable**: AI Development Team (GitHub Copilot + eevans-d)
+
+**Nota**: R5 y R7 fueron identificados por forensic analysis teórico pero no corresponden a código de producción. ETAPA 2 se considera 100% completa en términos de mitigaciones aplicables al sistema real.

@@ -90,9 +90,11 @@ Todas las notas siguen el formato Keep a Changelog y versionado SemVer.
 - **Impact**: Security hardening, operational flexibility, zero-downtime migrations
 - **Commits**: 5 technical + 1 docs = 6 total
 
-### Pending (Future Releases)
-- R5: Forensic audit cascade failure (5h, ROI 1.6, severity 6)
-- R7: WebSocket memory leak cleanup (3h, ROI 1.8, severity 5)
+### Analysis Results: Non-Applicable Findings
+- **R5: Forensic audit cascade failure** → ⚠️ **N/A** (FSM teórica en audit_framework/, no código producción)
+- **R7: WebSocket memory leak** → ⚠️ **N/A** (WebSockets no implementados en dashboard actual)
+
+**Nota**: R5 y R7 fueron identificados por forensic analysis tool basándose en patrones teóricos/comunes, pero no corresponden a implementaciones reales en el sistema. ETAPA 2 considera **5/5 mitigaciones aplicables** completadas (100%).
 
 ---
 
