@@ -18,6 +18,10 @@ RUN groupadd -r dashboarduser && useradd --no-log-init -r -g dashboarduser dashb
     mkdir -p /app/logs /app/cache && \
     chown -R dashboarduser:dashboarduser /app
 
+# Configurar timeout y retries para descargas de paquetes grandes
+ENV PIP_DEFAULT_TIMEOUT=600
+ENV PIP_RETRIES=5
+
 # Instalar requirements
 COPY web_dashboard/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt

@@ -21,6 +21,10 @@ RUN useradd --create-home --shell /bin/bash negocio && \
 USER negocio
 WORKDIR /app
 
+# Configurar timeout y retries para descargas de paquetes grandes
+ENV PIP_DEFAULT_TIMEOUT=600
+ENV PIP_RETRIES=5
+
 # Instalar dependencias Python
 COPY --chown=negocio:negocio ../requirements.txt ./
 RUN pip install --user --no-cache-dir -r requirements.txt

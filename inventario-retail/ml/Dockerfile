@@ -19,6 +19,10 @@ RUN useradd --create-home --shell /bin/bash mluser && \
 USER mluser
 WORKDIR /app
 
+# Configurar timeout y retries para descargas de paquetes grandes (ML packages ~2.8GB)
+ENV PIP_DEFAULT_TIMEOUT=600
+ENV PIP_RETRIES=5
+
 # Instalar dependencias Python
 COPY --chown=mluser:mluser ../requirements.txt ./
 RUN pip install --user --no-cache-dir -r requirements.txt
