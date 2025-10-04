@@ -236,3 +236,4 @@ test_data/confidential/
 # 6. Revisar siempre antes de hacer commit
 # 7. Usar .env.template para documentar variables
 #
+wheels/

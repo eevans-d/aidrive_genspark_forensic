@@ -254,5 +254,56 @@ Una vez cargados, el job `staging-secrets-check` mostrará ✅ y habilitará el 
 - Verificar que el `.env.dashboard` tenga la API Key y que el `healthcheck` está usando ese valor.
 - Si usas proxy TLS, asegúrate de pasar `X-Forwarded-Proto` y configurar `DASHBOARD_FORCE_HTTPS=true` y `DASHBOARD_ENABLE_HSTS=true` si corresponde.
 
+## 8) Pre-downloaded Wheels Strategy (Offline/Network Issues)
+
+**Problema:** Descargas de paquetes ML grandes (~2.8GB) pueden fallar por timeouts de red.
+
+**Solución:** Pre-descargar wheels localmente y copiar a contenedores Docker.
+
+### Paso 1: Descargar wheels
+```bash
+# En tu máquina local o servidor de build
+./scripts/download_wheels.sh
+```
+
+Este script descarga:
+- Paquetes críticos ML: `torch`, `easyocr`, `scikit-learn`, etc.
+- Todas las dependencias de `requirements.txt`
+- Total: ~2.5-3GB en archivos `.whl`
+- Ubicación: `inventario-retail/wheels/`
+
+### Paso 2: Build con wheels locales
+
+Los Dockerfiles ya están configurados para usar el mirror de Tsinghua y timeouts extendidos:
+- `PIP_DEFAULT_TIMEOUT=600` (10 minutos)
+- `PIP_RETRIES=5` (5 reintentos)
+- Mirror: `https://pypi.tuna.tsinghua.edu.cn/simple`
+
+**NOTA:** Las wheels no se commitean al repo (están en `.gitignore`). Si haces deployment en servidor staging/production, primero copia las wheels:
+
+```bash
+# En servidor staging
+scp -r inventario-retail/wheels/ user@staging-server:~/minimarket-deploy/inventario-retail/
+
+# Luego build
+cd ~/minimarket-deploy/inventario-retail
+docker-compose build
+```
+
+### Paso 3: Validar descarga
+```bash
+ls -lh inventario-retail/wheels/
+# Debe mostrar ~2.5-3GB en archivos .whl
+
+# Contar wheels
+find inventario-retail/wheels/ -name "*.whl" | wc -l
+# Debe mostrar 50-100+ archivos
+```
+
+### Troubleshooting wheels
+- **Error "No matching distribution":** Verifica versión de Python en Dockerfile (debe ser 3.11 o 3.12)
+- **Timeout persistente:** Usa mirror alternativo (Aliyun: `https://mirrors.aliyun.com/pypi/simple/`)
+- **Wheels corruptas:** Re-ejecuta `download_wheels.sh` limpiando el directorio primero
+
 ---
 Staging listo. Para producción, usa tags (`vX.Y.Z`) que activan el job `deploy-production` con imagen versionada.
