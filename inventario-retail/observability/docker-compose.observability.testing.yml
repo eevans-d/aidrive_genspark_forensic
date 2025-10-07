@@ -1,0 +1,99 @@
+# Docker Compose for Observability Stack - Testing Local Version
+# Prometheus, Grafana, Loki, Alertmanager
+# Usage: docker-compose -f docker-compose.observability.testing.yml up -d
+
+version: '3.8'
+
+services:
+  # ============================================
+  # PROMETHEUS - Metrics Collection
+  # ============================================
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: minimarket-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - minimarket-observability
+
+  # ============================================
+  # GRAFANA - Visualization
+  # ============================================
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: minimarket-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clock-panel
+      - GF_SERVER_ROOT_URL=http://localhost:3000
+      - GF_DASHBOARDS_MIN_REFRESH_INTERVAL=5s
+    networks:
+      - minimarket-observability
+
+  # ============================================
+  # LOKI - Log Aggregation
+  # ============================================
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: minimarket-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - minimarket-observability
+
+  # ============================================
+  # ALERTMANAGER - Alert Handling
+  # ============================================
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: minimarket-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/config.yml:ro
+      - alertmanager-data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-https://hooks.slack.com/services/TEST/TEST/TEST}
+    networks:
+      - minimarket-observability
+
+networks:
+  minimarket-observability:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  alertmanager-data:
