@@ -1,5 +1,89 @@
 # 🚀 Sistema Inventario Multi-Agente - Guía de Deployment
 
+## 🏗️ Arquitectura del Sistema
+
+### Diagrama de Componentes (ETAPA 3 - Actualizado)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                          Users/Clients                           │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                        ┌──────▼──────┐
+                        │   NGINX     │ Port 80/443
+                        │  TLS Ready  │
+                        └──────┬──────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │                      │                      │
+    ┌───▼───┐            ┌────▼────┐           ┌────▼────┐
+    │Agente │   Port 8001│Dashboard │ Port 8080│ Metrics │
+    │Depósito            │          │          │Prometheus
+    └───┬───┘            └────┬────┘          └────┬────┘
+        │                     │                     │
+    JWT │                 API Key                   │
+    Auth│              Authorization           X-API-Key
+        │                     │                     │
+        └──────────┬──────────┴──────────────────────┘
+                   │
+      ┌────────────┴────────────┐
+      │                         │
+  ┌───▼────────────┐     ┌──────▼────┐
+  │  PostgreSQL    │     │   Redis   │
+  │  Cifrado en    │     │   Cache   │
+  │  Reposo (AES)  │     │           │
+  │  + Auditoría   │     └───────────┘
+  └────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    Observability Stack                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Prometheus (9090)  ──TLS──▶ Alertmanager (9093)                │
+│     │                          │                                 │
+│     │                      Slack/Email                           │
+│  Scrape Metrics              Alerts                              │
+│     │                                                             │
+│  ◀──┴──────────────▶ Grafana (3000)                             │
+│     │                                                             │
+│     └──────▶ Loki (3100) ──▶ Logs                               │
+│                                                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                      Security Layer                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  TLS Certificates    PostgreSQL Encryption    API Keys          │
+│  (Mutual Auth)       (AES-256-CBC)            (Dashboard)       │
+│                      pgcrypto + Audit         X-API-Key Header  │
+│                                                                   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Flujo de Datos Seguro
+
+```
+1. CLIENTE REQUEST (HTTPS - TLS 1.2+)
+   Client ─TLS─▶ Nginx ─JWT─▶ Dashboard ─API Key─▶ Backend
+
+2. BACKEND COMMUNICATION (MUTUAL TLS)
+   Prometheus ─mTLS─▶ Alertmanager
+   (certificado cliente + servidor validados)
+
+3. BASE DE DATOS (CIFRADO EN REPOSO)
+   Dashboard/Agentes ─SQL─▶ PostgreSQL
+   Datos sensibles: decrypt_data() con clave maestra
+   Acceso registrado: encrypted_data_access_log
+
+4. OBSERVABILIDAD (SECURE SCRAPING)
+   Prometheus ─API Key─▶ Dashboard /metrics
+   Grafana ─datasource─▶ Prometheus (http://prometheus:9090)
+   Logs: Promtail ─push─▶ Loki ─query─▶ Grafana
+```
+
+---
+
 ## 📋 Componentes del Sistema
 
 ### Servicios Principales
@@ -593,7 +677,308 @@ docker logs alertmanager | grep -i "slack\|error"
 
 ---
 
-## �🔄 Backup y Restore
+## 🔒 Seguridad - TLS y Comunicaciones Seguras
+
+### Configuración de TLS para Prometheus y Alertmanager
+
+A partir de ETAPA 3, se implementó comunicación segura entre Prometheus y Alertmanager usando TLS con autenticación mutua.
+
+**Certificados:**
+```bash
+# Los certificados se encuentran en:
+inventario-retail/observability/prometheus/tls/
+├── ca.crt                    # Certificate Authority
+├── ca.key                    # Private key del CA
+├── prometheus.crt            # Certificado de cliente (Prometheus)
+├── prometheus.key            # Private key de Prometheus
+├── alertmanager.crt          # Certificado de servidor (Alertmanager)
+└── alertmanager.key          # Private key de Alertmanager
+
+# Validez: 365 días desde la generación
+# Generados con: OpenSSL 3.0+ | RSA 4096-bit | TLS 1.2+
+```
+
+**Generación de nuevos certificados:**
+```bash
+# Regenerar certificados (útil para renovación antes de expirar)
+cd inventario-retail/observability/prometheus/tls
+
+# Hacer backup de certificados actuales
+mv ca.crt ca.crt.bak
+mv ca.key ca.key.bak
+mv prometheus.* prometheus.bak/
+mv alertmanager.* alertmanager.bak/
+
+# Ejecutar script de generación
+./generate_certs.sh
+
+# Verificar nuevos certificados
+openssl x509 -in prometheus.crt -text -noout | grep "Not Before\|Not After"
+```
+
+**Verificación de conectividad TLS:**
+```bash
+# Verificar que Prometheus puede conectar a Alertmanager con TLS
+docker exec prometheus curl --cacert /etc/prometheus/tls/ca.crt \
+  --cert /etc/prometheus/tls/prometheus.crt \
+  --key /etc/prometheus/tls/prometheus.key \
+  https://alertmanager:9093/api/v2/status
+
+# Esperado: JSON con status de Alertmanager
+```
+
+**Documentación completa:**
+```bash
+# Ver guía detallada de TLS setup
+cat security/TLS_SETUP.md
+
+# Incluye:
+# - Arquitectura de seguridad
+# - Procedimientos de renovación
+# - Troubleshooting de certificados
+# - Mejores prácticas
+```
+
+---
+
+## 🔐 Encriptación de Datos - Datos en Reposo
+
+### Cifrado de Datos Sensibles en PostgreSQL
+
+A partir de ETAPA 3, se implementó cifrado AES-256-CBC para datos sensibles usando la extensión pgcrypto de PostgreSQL.
+
+**Datos cifrados:**
+```sql
+-- Tabla: system_config
+- api_key_encrypted
+- jwt_secret_encrypted
+- slack_webhook_encrypted
+
+-- Tabla: productos
+- costo_adquisicion_encrypted
+- precio_sugerido_encrypted
+```
+
+**Aplicar migración de cifrado:**
+```bash
+# La migración 004_add_encryption.sql debe ser aplicada una sola vez
+# Verificar si ya fue aplicada:
+
+docker exec inventario_retail_db psql -U postgres inventario_retail -c \
+  "SELECT EXISTS(SELECT 1 FROM pg_extension WHERE extname='pgcrypto')"
+# Resultado: t (true) = ya aplicada | f (false) = no aplicada
+
+# Si no está aplicada:
+docker exec inventario_retail_db psql -U postgres inventario_retail \
+  -f /docker-entrypoint-initdb.d/004_add_encryption.sql
+
+# Verificar funciones de cifrado
+docker exec inventario_retail_db psql -U postgres inventario_retail -c \
+  "\df encrypt_data"
+```
+
+**Configuración de la clave maestra:**
+```bash
+# En .env.production, establecer clave de 32 bytes (64 caracteres hex)
+DATABASE_ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+# IMPORTANTE:
+# - Usar clave fuerte y aleatoria
+# - NO compartir esta clave en repositorio
+# - Guardar copia segura en bóveda de secretos
+# - Rotar cada 90 días (ver procedimiento abajo)
+```
+
+**Uso de funciones de cifrado:**
+```sql
+-- Cifrar datos
+UPDATE system_config SET 
+  api_key_encrypted = encrypt_data(api_key, current_setting('DATABASE_ENCRYPTION_KEY'))
+WHERE id = 1;
+
+-- Descifrar datos
+SELECT decrypt_data(api_key_encrypted, current_setting('DATABASE_ENCRYPTION_KEY'))
+FROM system_config WHERE id = 1;
+
+-- Auditoría de acceso
+SELECT * FROM encrypted_data_access_log 
+ORDER BY accessed_at DESC 
+LIMIT 10;
+```
+
+**Rotación de claves de cifrado (Procedimiento):**
+```bash
+# 1. Generar nueva clave maestra
+NEW_KEY=<generar-nueva-clave-32-bytes>
+
+# 2. En production, ejecutar:
+docker exec inventario_retail_db psql -U postgres inventario_retail << EOF
+BEGIN;
+
+-- Re-cifrar todos los datos con nueva clave
+UPDATE system_config SET
+  api_key_encrypted = encrypt_data(
+    decrypt_data(api_key_encrypted, current_setting('old_key')), 
+    '$NEW_KEY'
+  );
+
+COMMIT;
+EOF
+
+# 3. Actualizar DATABASE_ENCRYPTION_KEY en .env.production
+# 4. Reiniciar servicios que usan la BD
+```
+
+**Verificación de integridad:**
+```bash
+# Verificar que todos los datos se pueden descifrar
+docker exec inventario_retail_db psql -U postgres inventario_retail -c \
+  "SELECT COUNT(*) FROM system_config WHERE decrypt_data(api_key_encrypted, current_setting('DATABASE_ENCRYPTION_KEY')) IS NULL"
+# Esperado: 0 (ninguno nulo)
+```
+
+**Rollback (en caso de necesidad):**
+```bash
+# Si necesitas revertir la migración de cifrado:
+docker exec inventario_retail_db psql -U postgres inventario_retail \
+  -f /docker-entrypoint-initdb.d/004_add_encryption_rollback.sql
+
+# ADVERTENCIA: esto elimina las columnas cifradas y las funciones
+# Ejecutar solo si es absolutamente necesario
+```
+
+**Documentación completa:**
+```bash
+# Ver guía detallada de encriptación
+cat security/DATA_ENCRYPTION.md
+
+# Incluye:
+# - Estrategia de encriptación
+# - Ejemplos de uso (SQL y Python)
+# - Análisis de performance
+# - Gestión de claves
+# - Compliance y auditoría
+```
+
+---
+
+## 📊 Performance - Load Testing
+
+### Suite de Load Testing con k6
+
+A partir de ETAPA 3, se implementó suite completa de load testing automatizado con k6 para validar performance de todos los endpoints críticos.
+
+**Ubicación de scripts:**
+```bash
+inventario-retail/scripts/load_testing/
+├── test-health.js           # Baseline: health check (P95<100ms)
+├── test-inventory-read.js   # Lectura: GET operations (P95<300ms)
+├── test-inventory-write.js  # Escritura: POST operations (P95<500ms)
+├── test-metrics.js          # Métricas: Prometheus scraping (P95<200ms)
+├── run-all.sh               # Orquestador de suite completa
+└── results/                 # Directorio de resultados
+```
+
+**Requisitos previos:**
+```bash
+# Instalar k6
+sudo apt install k6
+
+# Verificar instalación
+k6 version
+```
+
+**Ejecutar tests individuales:**
+```bash
+cd inventario-retail/scripts/load_testing
+
+# Test de health check
+k6 run test-health.js
+
+# Test de lectura (requiere API key)
+k6 run -e BASE_URL=http://localhost:8080 \
+       -e API_KEY=your-api-key \
+       test-inventory-read.js
+
+# Test de escritura (CUIDADO: crea datos de prueba)
+k6 run -e BASE_URL=http://localhost:8080 \
+       -e API_KEY=your-api-key \
+       test-inventory-write.js
+
+# Test de métricas
+k6 run -e BASE_URL=http://localhost:8080 \
+       -e API_KEY=your-api-key \
+       test-metrics.js
+```
+
+**Ejecutar suite completa:**
+```bash
+cd inventario-retail/scripts/load_testing
+
+# Ejecución básica (omite write tests por defecto)
+./run-all.sh
+
+# Con parámetros personalizados
+BASE_URL=https://staging.yourdomain.com \
+API_KEY=staging-key \
+SKIP_WRITE_TESTS=true \
+./run-all.sh
+
+# Continuar aunque fallen algunos tests
+CONTINUE_ON_FAILURE=true ./run-all.sh
+```
+
+**Umbrales de Performance (SLOs):**
+
+| Endpoint | Métrica | Target | Crítico |
+|----------|---------|--------|---------|
+| `/health` | P95 Latency | <100ms | <200ms |
+| `/health` | Error Rate | <0.1% | <1% |
+| `/api/inventory` | P95 Latency | <300ms | <500ms |
+| `/api/inventory` | Error Rate | <0.5% | <2% |
+| `/metrics` | P95 Latency | <200ms | <400ms |
+| `/metrics` | Error Rate | <0.1% | <1% |
+
+**Análisis de resultados:**
+```bash
+# Ver resultados más recientes
+cat results/consolidated-report-*.txt
+
+# Análisis JSON
+cat results/health-check-summary.json | jq '.metrics.http_req_duration'
+
+# Latencia por percentil
+cat results/health-check-summary.json | jq '.metrics.http_req_duration.values | {min, med, "p(95)", "p(99)", max}'
+```
+
+**Pre-deployment gate:**
+```bash
+# Ejecutar como verificación antes de deploy
+SKIP_WRITE_TESTS=true ./run-all.sh
+
+# Si algún threshold falla, abortar deployment
+if [ $? -ne 0 ]; then
+  echo "❌ Performance baseline no cumplido. Abortando deployment."
+  exit 1
+fi
+```
+
+**Documentación completa:**
+```bash
+# Ver guía detallada de load testing
+cat scripts/load_testing/LOAD_TESTING.md
+
+# Incluye:
+# - Instalación de k6
+# - Descripción de cada test
+# - Integración CI/CD
+# - Troubleshooting
+# - Mejores prácticas
+```
+
+---
+
+## 🔄 Backup y Restore
 
 ### Backup Automático
 ```bash
@@ -638,6 +1023,161 @@ docker logs inventario_retail_db
 ```bash
 # Verificar JWT_SECRET_KEY en .env.production
 # Regenerar tokens con nuevo secret
+```
+
+### Problemas de TLS/Certificados
+
+**Certificados expirados:**
+```bash
+# Verificar validez de certificados
+openssl x509 -in observability/prometheus/tls/prometheus.crt -text -noout | grep "Not After"
+
+# Si están a punto de expirar (< 30 días):
+cd observability/prometheus/tls
+./generate_certs.sh  # Generar nuevos certificados
+
+# Reiniciar servicios
+docker-compose -f ../docker-compose.observability.yml restart prometheus alertmanager
+```
+
+**Error de certificado en Prometheus:**
+```bash
+# Verificar que Prometheus puede conectar a Alertmanager con TLS
+docker exec prometheus curl --cacert /etc/prometheus/tls/ca.crt \
+  --cert /etc/prometheus/tls/prometheus.crt \
+  --key /etc/prometheus/tls/prometheus.key \
+  https://alertmanager:9093/api/v2/status
+
+# Si falla verificar:
+# 1. Archivos de certificados están en lugar correcto
+# 2. Permisos de archivos (.key en 600)
+# 3. Nombres de hosts en configuración coinciden con CN en certificados
+
+docker exec prometheus ls -la /etc/prometheus/tls/
+```
+
+**Error: "certificate verify failed":**
+```bash
+# Verificar que CA.crt es válido y accesible
+docker exec prometheus openssl verify -CAfile /etc/prometheus/tls/ca.crt \
+  /etc/prometheus/tls/prometheus.crt
+
+# Esperado: "OK"
+# Si falla, regenerar certificados:
+cd observability/prometheus/tls && ./generate_certs.sh
+```
+
+### Problemas de Encriptación
+
+**Error: "column does not exist api_key_encrypted":**
+```bash
+# La migración de cifrado no ha sido aplicada
+# Verificar si existe la extensión pgcrypto:
+docker exec inventario_retail_db psql -U postgres inventario_retail -c \
+  "SELECT EXISTS(SELECT 1 FROM pg_extension WHERE extname='pgcrypto')"
+
+# Si false (f), aplicar migración:
+docker exec inventario_retail_db psql -U postgres inventario_retail \
+  -f /docker-entrypoint-initdb.d/004_add_encryption.sql
+
+# Reiniciar servicios que usan BD
+docker-compose -f docker-compose.production.yml restart agente-deposito agente-negocio
+```
+
+**Error: "Failed to decrypt data":**
+```bash
+# La clave DATABASE_ENCRYPTION_KEY en .env es incorrecta
+# Causas:
+# 1. Clave no seteada (verificar: echo $DATABASE_ENCRYPTION_KEY)
+# 2. Clave con formato incorrecto (debe ser 64 caracteres hex)
+# 3. Clave cambió después de cifrar datos (imposible recuperar)
+
+# Verificar que está bien seteada:
+docker exec -e DATABASE_ENCRYPTION_KEY=$DATABASE_ENCRYPTION_KEY \
+  inventario_retail_db psql -U postgres inventario_retail -c \
+  "SELECT decrypt_data(api_key_encrypted, current_setting('DATABASE_ENCRYPTION_KEY')) FROM system_config LIMIT 1"
+
+# Si devuelve NULL, la clave es incorrecta
+```
+
+**Overhead de performance por cifrado:**
+```bash
+# Encriptación tiene overhead ~60-66%
+# Si performance degrada mucho:
+
+# Opción 1: Reducir datos cifrados (cifrar solo lo crítico)
+# Opción 2: Agregar índices en columnas buscadas
+# Opción 3: Cache más agresivo en Redis
+
+# Ver análisis detallado:
+cat security/DATA_ENCRYPTION.md
+```
+
+### Problemas de Load Testing
+
+**Error: "k6 no encontrado":**
+```bash
+# Instalar k6
+sudo apt update && sudo apt install k6
+
+# Verificar
+k6 version
+```
+
+**Error: "Connection refused":**
+```bash
+# Servicio no está respondiendo
+# Verificar que está up:
+curl http://localhost:8080/health
+
+# Si no responde:
+docker-compose -f docker-compose.production.yml ps
+
+# Reiniciar si es necesario:
+docker-compose -f docker-compose.production.yml restart dashboard
+```
+
+**Error: "401 Unauthorized" en tests:**
+```bash
+# API key inválida o no seteada
+# Verificar que se pasa correctamente:
+k6 run -e API_KEY=your-api-key-here test-health.js
+
+# Verificar que API key es correcta:
+grep DASHBOARD_API_KEY .env.production
+echo $DASHBOARD_API_KEY
+```
+
+**Tests fallan por umbrales de performance:**
+```bash
+# Los SLOs no se cumplen (ej: P95 > 300ms)
+
+# Causas comunes:
+# 1. Base de datos lenta: revisar queries, agregar índices
+# 2. CPU/memoria limitada: escalar recursos
+# 3. Network latency: usar misma región/AZ
+# 4. Logging excesivo: reducir nivel de log
+
+# Soluciones:
+# - Analizar resultados JSON:
+cat results/health-check-summary.json | jq '.metrics.http_req_duration'
+
+# - Reducir carga del test temporalmente:
+k6 run --vus 25 --duration 2m test-health.js
+
+# - Revisar logs mientras corre test:
+docker-compose -f docker-compose.production.yml logs -f dashboard &
+k6 run test-health.js
+```
+
+**Datos de prueba acumulándose:**
+```bash
+# El test test-inventory-write.js crea productos ficticios
+# Limpiar después de tests:
+docker exec -it inventario_retail_db psql -U postgres inventario_retail << EOF
+DELETE FROM productos WHERE sku LIKE 'TEST-SKU-%';
+COMMIT;
+EOF
 ```
 
 ### Logs de Debug
