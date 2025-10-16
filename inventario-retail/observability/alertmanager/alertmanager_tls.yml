@@ -1,0 +1,147 @@
+# Alertmanager Configuration for Mini Market System
+# WITH TLS ENABLED for secure communication
+# Routes alerts to Slack based on severity
+
+global:
+  resolve_timeout: 5m
+  # Slack webhook (set via environment variable)
+  slack_api_url: '${SLACK_WEBHOOK_URL}'
+
+# TLS configuration for incoming connections from Prometheus
+tls_config:
+  cert_file: /etc/alertmanager/tls/alertmanager.crt
+  key_file: /etc/alertmanager/tls/alertmanager.key
+  client_ca_file: /etc/alertmanager/tls/ca.crt
+  client_auth_type: "RequireAndVerifyClientCert"
+
+# Template for alert messages
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Routing configuration
+route:
+  # Default receiver for all alerts
+  receiver: 'slack-general'
+  
+  # Group alerts by these labels
+  group_by: ['alertname', 'severity', 'service']
+  
+  # Wait before sending first notification
+  group_wait: 10s
+  
+  # Wait before sending batch of new alerts
+  group_interval: 5m
+  
+  # Wait before re-sending resolved alerts
+  repeat_interval: 3h
+  
+  # Child routes for different severity levels
+  routes:
+    # CRITICAL alerts → Slack #alerts-critical (immediate)
+    - match:
+        severity: critical
+      receiver: 'slack-critical'
+      group_wait: 10s
+      repeat_interval: 30m
+      continue: true  # Also send to general channel
+    
+    # HIGH alerts → Slack #alerts-high
+    - match:
+        severity: high
+      receiver: 'slack-high'
+      group_wait: 30s
+      repeat_interval: 1h
+    
+    # MEDIUM alerts → Slack #alerts-medium (batched)
+    - match:
+        severity: medium
+      receiver: 'slack-medium'
+      group_wait: 1m
+      repeat_interval: 2h
+    
+    # LOW/INFO alerts → Slack #alerts-info (heavily batched)
+    - match:
+        severity: low
+      receiver: 'slack-info'
+      group_wait: 5m
+      repeat_interval: 12h
+
+# Alert receivers (Slack channels)
+receivers:
+  # General channel (catch-all)
+  - name: 'slack-general'
+    slack_configs:
+      - channel: '#alerts-general'
+        title: '{{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+        
+  # Critical alerts channel
+  - name: 'slack-critical'
+    slack_configs:
+      - channel: '#alerts-critical'
+        title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+        text: |
+          *Environment:* {{ .CommonLabels.environment }}
+          *Service:* {{ .GroupLabels.service }}
+          *Summary:* {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}
+          *Description:* {{ range .Alerts }}{{ .Annotations.description }}{{ end }}
+          *Runbook:* {{ range .Alerts }}{{ .Annotations.runbook_url }}{{ end }}
+        send_resolved: true
+        color: 'danger'
+        actions:
+          - type: button
+            text: 'View in Grafana'
+            url: '{{ .ExternalURL }}'
+          - type: button
+            text: 'Runbook'
+            url: '{{ range .Alerts }}{{ .Annotations.runbook_url }}{{ end }}'
+  
+  # High priority alerts channel
+  - name: 'slack-high'
+    slack_configs:
+      - channel: '#alerts-high'
+        title: '⚠️ HIGH: {{ .GroupLabels.alertname }}'
+        text: |
+          *Service:* {{ .GroupLabels.service }}
+          *Description:* {{ range .Alerts }}{{ .Annotations.description }}{{ end }}
+        send_resolved: true
+        color: 'warning'
+  
+  # Medium priority alerts channel
+  - name: 'slack-medium'
+    slack_configs:
+      - channel: '#alerts-medium'
+        title: 'ℹ️ MEDIUM: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+        color: '#439FE0'
+  
+  # Low/info alerts channel
+  - name: 'slack-info'
+    slack_configs:
+      - channel: '#alerts-info'
+        title: '📊 INFO: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: false  # Don't spam with resolutions for low priority
+        color: 'good'
+
+# Inhibition rules (suppress certain alerts when others are firing)
+inhibit_rules:
+  # If service is down, don't alert on high latency
+  - source_match:
+      severity: 'critical'
+      alertname: 'ServiceDown'
+    target_match:
+      severity: 'high'
+      alertname: 'HighLatency'
+    equal: ['service']
+  
+  # If database is down, don't alert on agent errors
+  - source_match:
+      severity: 'critical'
+      service: 'postgresql'
+    target_match:
+      severity: 'high'
+    equal: ['cluster']

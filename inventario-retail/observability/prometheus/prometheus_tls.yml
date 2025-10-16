@@ -1,0 +1,135 @@
+# Prometheus Configuration for Mini Market Multi-Agent System
+# WITH TLS ENABLED for secure communication with Alertmanager
+# This configuration uses TLS certificates for encrypted communication
+
+global:
+  scrape_interval: 15s           # Scrape every 15 seconds
+  evaluation_interval: 15s       # Evaluate rules every 15 seconds
+  external_labels:
+    cluster: 'minimarket-prod'
+    environment: 'production'
+
+# Alertmanager configuration with TLS
+alerting:
+  alertmanagers:
+    - scheme: https              # Use HTTPS instead of HTTP
+      tls_config:
+        ca_file: /etc/prometheus/tls/ca.crt
+        cert_file: /etc/prometheus/tls/prometheus.crt
+        key_file: /etc/prometheus/tls/prometheus.key
+        insecure_skip_verify: false  # Verify server certificate
+      static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load alert rules
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
+scrape_configs:
+  # ============================================
+  # 1. AGENTE DEPOSITO (Inventory Agent)
+  # ============================================
+  - job_name: 'agente_deposito'
+    static_configs:
+      - targets: ['agente-deposito:8001']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'deposito'
+      - target_label: service
+        replacement: 'agente_deposito'
+
+  # ============================================
+  # 2. AGENTE NEGOCIO (Business Logic Agent)
+  # ============================================
+  - job_name: 'agente_negocio'
+    static_configs:
+      - targets: ['agente-negocio:8002']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'negocio'
+      - target_label: service
+        replacement: 'agente_negocio'
+
+  # ============================================
+  # 3. ML SERVICE (OCR + Inflation Prediction)
+  # ============================================
+  - job_name: 'ml_service'
+    static_configs:
+      - targets: ['ml-service:8003']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'ml_service'
+      - target_label: service
+        replacement: 'ml_service'
+
+  # ============================================
+  # 4. DASHBOARD (FastAPI Web Dashboard)
+  # ============================================
+  - job_name: 'dashboard'
+    static_configs:
+      - targets: ['dashboard:8080']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'dashboard'
+      - target_label: service
+        replacement: 'dashboard'
+
+  # ============================================
+  # 5. PROMETHEUS (self-monitoring)
+  # ============================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ============================================
+  # 6. POSTGRESQL DATABASE
+  # ============================================
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'postgresql'
+      - target_label: service
+        replacement: 'postgresql'
+
+  # ============================================
+  # 7. REDIS CACHE
+  # ============================================
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'redis'
+      - target_label: service
+        replacement: 'redis'
+
+  # ============================================
+  # 8. NODE EXPORTER (System metrics)
+  # ============================================
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'host'
+      - target_label: service
+        replacement: 'node'
