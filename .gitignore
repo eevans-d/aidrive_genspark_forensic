@@ -64,3 +64,10 @@ data/*.db
 # Backups de DB movidas
 .backup_db_files/
 *.code-workspace
+
+# Load testing results (keep directory structure)
+inventario-retail/scripts/load_testing/results/*.log
+inventario-retail/scripts/load_testing/results/*.json
+inventario-retail/scripts/load_testing/results/*.txt
+!inventario-retail/scripts/load_testing/results/README.md
+!inventario-retail/scripts/load_testing/results/.gitkeep

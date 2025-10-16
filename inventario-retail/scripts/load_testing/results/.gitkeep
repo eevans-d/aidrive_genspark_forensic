@@ -1,0 +1,3 @@
+# Placeholder para resultados de load testing
+# Este archivo asegura que el directorio results/ sea trackeado por git
+# Los archivos .log, .json, .txt reales deben ser ignorados en .gitignore
