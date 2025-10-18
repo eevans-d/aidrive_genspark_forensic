@@ -1,0 +1,6 @@
+# Circuit Breaker Pattern Implementation
+pybreaker==1.0.1
+prometheus-client>=0.16.0
+
+# Existing dependencies (already in requirements.txt)
+# FastAPI, SQLAlchemy, Redis, etc.
