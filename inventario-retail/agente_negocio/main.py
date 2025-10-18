@@ -19,6 +19,7 @@ from .ocr.processor import OCRProcessor
 from .pricing.engine import PricingEngine
 from .invoice.processor import InvoiceProcessor
 from .integrations.deposito_client import DepositoClient
+from .services.openai_service import get_openai_service, check_openai_health
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -175,9 +176,171 @@ async def procesar_factura(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ============================================================================
+# DÍA 1: CIRCUIT BREAKER ENDPOINTS (New)
+# ============================================================================
+
+@app.post("/ai/enhance-ocr")
+async def enhance_ocr(
+    text: str,
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """
+    Mejorar texto OCR usando OpenAI con protección de circuit breaker.
+    
+    Features:
+    - Circuit breaker protection (abre después de 5 fallos en 60s)
+    - Fallback automático si OpenAI está down
+    - Prometheus metrics
+    - Structured logging
+    
+    Returns:
+        - success: bool (True si OpenAI disponible)
+        - data: str (texto mejorado o fallback)
+        - fallback: bool (True si se usó fallback)
+        - breaker_state: str (closed, open, half-open)
+        - latency: float (segundos)
+    """
+    import uuid
+    request_id = str(uuid.uuid4())
+    
+    try:
+        service = get_openai_service()
+        result = await service.enhance_ocr_text(text, request_id=request_id)
+        
+        logger.info(
+            f"OCR enhancement completed",
+            extra={
+                "request_id": request_id,
+                "status": "success" if result['success'] else "fallback",
+                "breaker_state": result['breaker_state'],
+                "latency": result['latency']
+            }
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error en enhance-ocr: {e}", extra={"request_id": request_id})
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/ai/pricing")
+async def generate_pricing(
+    item_data: dict,
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """
+    Generar pricing usando OpenAI con protección de circuit breaker.
+    
+    Features:
+    - Circuit breaker protection
+    - Fallback a algoritmo básico si OpenAI está down
+    - Smart pricing recommendations
+    
+    Request body:
+        {
+            "name": "Item name",
+            "category": "electronics",
+            "cost": 100.0,
+            "target_margin": "30%"
+        }
+    """
+    import uuid
+    request_id = str(uuid.uuid4())
+    
+    try:
+        service = get_openai_service()
+        result = await service.generate_pricing(item_data, request_id=request_id)
+        
+        logger.info(
+            f"Pricing generated",
+            extra={
+                "request_id": request_id,
+                "status": "success" if result['success'] else "fallback",
+                "breaker_state": result['breaker_state'],
+                "latency": result['latency']
+            }
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error en pricing: {e}", extra={"request_id": request_id})
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/ai/analyze-invoice")
+async def analyze_invoice(
+    invoice_text: str,
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """
+    Analizar factura usando OpenAI con protección de circuit breaker.
+    
+    Features:
+    - Extracción inteligente de datos
+    - Fallback a análisis manual si OpenAI down
+    - Circuit breaker protection
+    """
+    import uuid
+    request_id = str(uuid.uuid4())
+    
+    try:
+        service = get_openai_service()
+        result = await service.analyze_invoice(invoice_text, request_id=request_id)
+        
+        logger.info(
+            f"Invoice analyzed",
+            extra={
+                "request_id": request_id,
+                "status": "success" if result['success'] else "fallback",
+                "breaker_state": result['breaker_state'],
+                "latency": result['latency']
+            }
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error en analyze-invoice: {e}", extra={"request_id": request_id})
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/health/openai")
+async def openai_health():
+    """
+    Health check para OpenAI service y circuit breaker.
+    
+    No requiere autenticación (es un health check).
+    
+    Returns:
+        {
+            "service": "openai",
+            "status": "healthy" | "degraded",
+            "breaker_state": "closed" | "open" | "half-open",
+            "fail_counter": int,
+            "fail_max": int
+        }
+    """
+    try:
+        health = await check_openai_health()
+        return health
+    except Exception as e:
+        logger.error(f"Error en health check OpenAI: {e}")
+        return {
+            "service": "openai",
+            "status": "error",
+            "error": str(e)
+        }
+
+
 @app.on_event("startup")
 async def startup():
     logger.info("🧠 AgenteNegocio iniciado - Puerto 8001")
+    logger.info("🔌 OpenAI Circuit Breaker initialized")
+    health = await check_openai_health()
+    logger.info(f"   OpenAI health: {health['status']} (state: {health['breaker_state']})")
 
 
 if __name__ == "__main__":

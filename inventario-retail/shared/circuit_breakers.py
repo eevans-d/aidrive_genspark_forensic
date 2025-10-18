@@ -86,8 +86,7 @@ def circuit_breaker_listener(breaker: CircuitBreaker, state_change: str):
 
 openai_breaker = CircuitBreaker(
     fail_max=5,              # 5 fallos consecutivos para abrir
-    timeout_duration=60,     # 60 segundos antes de intentar half-open
-    expected_exception=Exception,
+    reset_timeout=60,        # 60 segundos antes de intentar half-open (recuperación)
     name="openai_api",
     listeners=[circuit_breaker_listener]
 )
@@ -99,8 +98,7 @@ openai_breaker = CircuitBreaker(
 
 db_breaker = CircuitBreaker(
     fail_max=3,              # 3 fallos → crítico (DB es más crítico)
-    timeout_duration=30,     # 30 segundos recovery
-    expected_exception=Exception,
+    reset_timeout=30,        # 30 segundos recovery
     name="postgresql",
     listeners=[circuit_breaker_listener]
 )
@@ -112,8 +110,7 @@ db_breaker = CircuitBreaker(
 
 redis_breaker = CircuitBreaker(
     fail_max=5,              # 5 fallos para abrir
-    timeout_duration=20,     # Redis recovery rápido
-    expected_exception=Exception,
+    reset_timeout=20,        # Redis recovery rápido
     name="redis_cache",
     listeners=[circuit_breaker_listener]
 )
@@ -125,8 +122,7 @@ redis_breaker = CircuitBreaker(
 
 s3_breaker = CircuitBreaker(
     fail_max=5,
-    timeout_duration=30,
-    expected_exception=Exception,
+    reset_timeout=30,
     name="s3_storage",
     listeners=[circuit_breaker_listener]
 )
