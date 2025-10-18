@@ -1,0 +1,11 @@
+# Circuit Breakers Implementation - Requirements
+
+# Python dependencies for circuit breaker implementation
+pybreaker==1.0.1      # Circuit breaker pattern implementation
+prometheus-client>=0.16.0  # Metrics already installed, ensure version
+
+# Note: Other dependencies already present in main requirements.txt:
+# - asyncio (stdlib)
+# - logging (stdlib)
+# - fastapi (already installed)
+# - httpx (already installed for HTTP calls)
