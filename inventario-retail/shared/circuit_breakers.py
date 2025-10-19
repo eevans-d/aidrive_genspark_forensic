@@ -48,36 +48,10 @@ circuit_breaker_fallback_calls = Counter(
 
 
 # ============================================================================
-# CIRCUIT BREAKER LISTENER
+# CIRCUIT BREAKER LISTENER (Disabled for pybreaker 1.0.1 compatibility)
 # ============================================================================
-
-def circuit_breaker_listener(breaker: CircuitBreaker, state_change: str):
-    """
-    Listener para capturar cambios de estado del circuit breaker.
-    
-    Args:
-        breaker: Instancia del circuit breaker
-        state_change: Nuevo estado ('open', 'half-open', 'closed')
-    """
-    logger.warning(
-        f"Circuit breaker '{breaker.name}' state change → {state_change}",
-        extra={
-            "breaker_name": breaker.name,
-            "new_state": state_change,
-            "fail_counter": breaker.fail_counter,
-            "fail_max": breaker.fail_max
-        }
-    )
-    
-    # Update Prometheus metric
-    state_map = {
-        'closed': 0,
-        'open': 1,
-        'half-open': 2
-    }
-    circuit_breaker_state.labels(breaker_name=breaker.name).set(
-        state_map.get(state_change, 0)
-    )
+# Note: pybreaker 1.0.1 has complex listener interface requirements.
+# We use Prometheus metrics directly instead.
 
 
 # ============================================================================
@@ -87,9 +61,11 @@ def circuit_breaker_listener(breaker: CircuitBreaker, state_change: str):
 openai_breaker = CircuitBreaker(
     fail_max=5,              # 5 fallos consecutivos para abrir
     reset_timeout=60,        # 60 segundos antes de intentar half-open (recuperación)
-    name="openai_api",
-    listeners=[circuit_breaker_listener]
+    name="openai_api"
 )
+
+
+
 
 
 # ============================================================================
@@ -99,8 +75,7 @@ openai_breaker = CircuitBreaker(
 db_breaker = CircuitBreaker(
     fail_max=3,              # 3 fallos → crítico (DB es más crítico)
     reset_timeout=30,        # 30 segundos recovery
-    name="postgresql",
-    listeners=[circuit_breaker_listener]
+    name="postgresql"
 )
 
 
@@ -111,8 +86,7 @@ db_breaker = CircuitBreaker(
 redis_breaker = CircuitBreaker(
     fail_max=5,              # 5 fallos para abrir
     reset_timeout=20,        # Redis recovery rápido
-    name="redis_cache",
-    listeners=[circuit_breaker_listener]
+    name="redis_cache"
 )
 
 
@@ -123,8 +97,7 @@ redis_breaker = CircuitBreaker(
 s3_breaker = CircuitBreaker(
     fail_max=5,
     reset_timeout=30,
-    name="s3_storage",
-    listeners=[circuit_breaker_listener]
+    name="s3_storage"
 )
 
 

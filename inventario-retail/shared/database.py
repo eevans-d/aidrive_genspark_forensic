@@ -222,6 +222,7 @@ class DatabaseManager:
 
     def restore_database(self, backup_path: str) -> bool:
         """Restaura BD desde backup"""
+        global engine
         try:
             import shutil
 
@@ -235,7 +236,6 @@ class DatabaseManager:
             shutil.copy2(backup_path, db_path)
 
             # Recrear engine
-            global engine
             engine = create_engine(
                 settings.DATABASE_URL,
                 echo=settings.DATABASE_ECHO,
