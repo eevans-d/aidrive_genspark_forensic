@@ -9,7 +9,6 @@ services:
       POSTGRES_USER: ${STAGING_DB_USER:-inventario_user}
       POSTGRES_PASSWORD: ${STAGING_DB_PASSWORD:-staging_secure_pass_2025}
       POSTGRES_DB: ${STAGING_DB_NAME:-inventario_retail_staging}
-      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pg_stat_statements -c max_connections=200"
     volumes:
       - postgres_staging_data:/var/lib/postgresql/data
       - ./inventario-retail/db/init_scripts:/docker-entrypoint-initdb.d
@@ -48,35 +47,35 @@ services:
       - "com.aidrive.service=cache"
       - "com.aidrive.environment=staging"
 
-  # LocalStack for S3 mocking
-  localstack:
-    image: localstack/localstack:latest
-    container_name: aidrive-localstack-staging
-    environment:
-      - SERVICES=s3
-      - DEBUG=1
-      - AWS_DEFAULT_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - S3_BUCKET_NAME=inventario-retail-bucket-staging
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - localstack_staging_data:/tmp/localstack
-      - ./scripts/init-s3.sh:/docker-entrypoint-initaws.d/init-s3.sh
-    ports:
-      - "${STAGING_S3_PORT:-4566}:4566"
-    healthcheck:
-      test: ["CMD", "awslocal", "s3", "ls"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-    networks:
-      - staging-network
-    labels:
-      - "com.aidrive.service=object-storage"
-      - "com.aidrive.environment=staging"
+  # LocalStack for S3 mocking (TEMPORARILY DISABLED - Port Issues)
+  # localstack:
+  #   image: localstack/localstack:latest
+  #   container_name: aidrive-localstack-staging
+  #   environment:
+  #     - SERVICES=s3
+  #     - DEBUG=1
+  #     - AWS_DEFAULT_REGION=us-east-1
+  #     - AWS_ACCESS_KEY_ID=test
+  #     - AWS_SECRET_ACCESS_KEY=test
+  #     - DOCKER_HOST=unix:///var/run/docker.sock
+  #     - S3_BUCKET_NAME=inventario-retail-bucket-staging
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - localstack_staging_data:/tmp/localstack
+  #     - ./scripts/init-s3.sh:/docker-entrypoint-initaws.d/init-s3.sh
+  #   ports:
+  #     - "${STAGING_S3_PORT:-4566}:4566"
+  #   healthcheck:
+  #     test: ["CMD", "awslocal", "s3", "ls"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 15s
+  #   networks:
+  #     - staging-network
+  #   labels:
+  #     - "com.aidrive.service=object-storage"
+  #     - "com.aidrive.environment=staging"
 
   # Prometheus for metrics collection
   prometheus:
@@ -110,7 +109,7 @@ services:
       - grafana_staging_data:/var/lib/grafana
       - ./inventario-retail/grafana/provisioning:/etc/grafana/provisioning:ro
     ports:
-      - "${STAGING_GRAFANA_PORT:-3001}:3000"
+      - "3003:3000"
     networks:
       - staging-network
     depends_on:
@@ -122,8 +121,8 @@ services:
   # Dashboard API Service
   dashboard:
     build:
-      context: .
-      dockerfile: inventario-retail/Dockerfile.dashboard
+      context: ./inventario-retail
+      dockerfile: web_dashboard/Dockerfile
       args:
         ENVIRONMENT: staging
     container_name: aidrive-dashboard-staging
@@ -207,7 +206,7 @@ services:
       ASYNC_TIMEOUT: 60
       
     ports:
-      - "${STAGING_API_PORT:-8080}:8080"
+      - "9000:8080"
     volumes:
       - ./inventario-retail/web_dashboard:/app/web_dashboard:ro
       - ./inventario-retail/shared:/app/shared:ro
@@ -216,8 +215,6 @@ services:
       postgres:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      localstack:
         condition: service_healthy
     networks:
       - staging-network
