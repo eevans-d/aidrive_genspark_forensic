@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 from datetime import datetime
-from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Form, Response
+from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Form, Response, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 from shared.security_headers import apply_fastapi_security
 from shared.errors import register_fastapi_error_handlers
@@ -20,6 +20,7 @@ from .pricing.engine import PricingEngine
 from .invoice.processor import InvoiceProcessor
 from .integrations.deposito_client import DepositoClient
 from .services.openai_service import get_openai_service, check_openai_health
+from .services.database_service import get_database_service, check_database_health
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -335,12 +336,240 @@ async def openai_health():
         }
 
 
+# ============================================================================
+# DÍA 1 HORAS 4-7: DATABASE CIRCUIT BREAKER ENDPOINTS
+# ============================================================================
+
+@app.get("/db/read")
+async def db_read(
+    query: str = Query(..., description="SQL SELECT query"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """
+    Ejecutar consulta SELECT con protección de circuit breaker.
+    
+    Features:
+    - Circuit breaker (abre después de 3 fallos en 30s)
+    - Fallback a cache si DB está down
+    - Modo read-only automático si hay múltiples fallos de escritura
+    - Prometheus metrics
+    
+    Query parameters:
+        query: SQL SELECT query (debe ser SELECT, no UPDATE/DELETE/INSERT)
+    
+    Returns:
+        {
+            "success": bool,
+            "data": list[dict],
+            "breaker_state": "closed" | "open" | "half-open",
+            "mode": "primary" | "fallback",
+            "write_mode_enabled": bool,
+            "latency": float
+        }
+    """
+    import uuid
+    request_id = str(uuid.uuid4())
+    
+    try:
+        if not query.strip().upper().startswith("SELECT"):
+            raise ValueError("Only SELECT queries allowed on /db/read endpoint")
+        
+        service = get_database_service()
+        result = await service.read_query(
+            query=query,
+            request_id=request_id,
+            timeout=30
+        )
+        
+        logger.info(
+            f"DB read completed",
+            extra={
+                "request_id": request_id,
+                "status": "success" if result.get('success') else "fallback",
+                "breaker_state": result.get('breaker_state'),
+                "rows": len(result.get('data', [])),
+                "latency": result.get('latency')
+            }
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error en db/read: {e}", extra={"request_id": request_id})
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/db/write")
+async def db_write(
+    query: str = Query(..., description="SQL INSERT/UPDATE/DELETE query"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """
+    Ejecutar consulta INSERT/UPDATE/DELETE con protección de circuit breaker.
+    
+    Features:
+    - Circuit breaker (abre después de 3 fallos en 30s)
+    - Activación automática de modo read-only si hay múltiples fallos
+    - Fallback con logging si DB está down
+    - Protección contra writes en modo read-only
+    
+    Query parameters:
+        query: SQL INSERT/UPDATE/DELETE query
+    
+    Returns:
+        {
+            "success": bool,
+            "rows_affected": int,
+            "breaker_state": "closed" | "open" | "half-open",
+            "write_mode_enabled": bool,
+            "fallback": bool,
+            "reason": str (si fallback),
+            "latency": float
+        }
+    """
+    import uuid
+    request_id = str(uuid.uuid4())
+    
+    try:
+        query_upper = query.strip().upper()
+        if not any(query_upper.startswith(cmd) for cmd in ["INSERT", "UPDATE", "DELETE", "ALTER", "CREATE"]):
+            raise ValueError("Only INSERT/UPDATE/DELETE/ALTER/CREATE queries allowed on /db/write endpoint")
+        
+        service = get_database_service()
+        result = await service.write_query(
+            query=query,
+            request_id=request_id,
+            timeout=30
+        )
+        
+        logger.info(
+            f"DB write completed",
+            extra={
+                "request_id": request_id,
+                "status": "success" if result.get('success') else "fallback",
+                "rows_affected": result.get('rows_affected', 0),
+                "write_mode": "enabled" if result.get('write_mode_enabled') else "read-only",
+                "breaker_state": result.get('breaker_state'),
+                "latency": result.get('latency')
+            }
+        )
+        
+        return result
+        
+    except ValueError as ve:
+        logger.warning(f"Validation error en db/write: {ve}", extra={"request_id": request_id})
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        logger.error(f"Error en db/write: {e}", extra={"request_id": request_id})
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/db/transaction")
+async def db_transaction(
+    operations: list = Body(..., description="List of SQL operations to execute atomically"),
+    current_user: dict = Depends(require_role(NEGOCIO_ROLE))
+):
+    """
+    Ejecutar múltiples operaciones SQL de forma atómica con circuit breaker.
+    
+    Features:
+    - Transacción ACID completa
+    - Rollback automático en caso de error
+    - Circuit breaker protection
+    - Fallback con logging
+    
+    Request body:
+        [
+            {"query": "INSERT INTO table ...", "params": []},
+            {"query": "UPDATE table ...", "params": []},
+            {"query": "DELETE FROM table ...", "params": []}
+        ]
+    
+    Returns:
+        {
+            "success": bool,
+            "operations_executed": int,
+            "results": list,
+            "breaker_state": "closed" | "open" | "half-open",
+            "write_mode_enabled": bool,
+            "fallback": bool,
+            "latency": float
+        }
+    """
+    import uuid
+    request_id = str(uuid.uuid4())
+    
+    try:
+        if not isinstance(operations, list) or len(operations) == 0:
+            raise ValueError("operations must be a non-empty list")
+        
+        service = get_database_service()
+        result = await service.transaction(
+            operations=operations,
+            request_id=request_id
+        )
+        
+        logger.info(
+            f"DB transaction completed",
+            extra={
+                "request_id": request_id,
+                "status": "success" if result.get('success') else "fallback",
+                "operations_executed": result.get('operations_executed', 0),
+                "breaker_state": result.get('breaker_state'),
+                "latency": result.get('latency')
+            }
+        )
+        
+        return result
+        
+    except ValueError as ve:
+        logger.warning(f"Validation error en db/transaction: {ve}", extra={"request_id": request_id})
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        logger.error(f"Error en db/transaction: {e}", extra={"request_id": request_id})
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/health/database")
+async def database_health():
+    """
+    Health check para Database service y circuit breaker.
+    
+    No requiere autenticación (es un health check).
+    
+    Returns:
+        {
+            "service": "database",
+            "status": "healthy" | "degraded" | "read-only",
+            "breaker_state": "closed" | "open" | "half-open",
+            "write_mode_enabled": bool,
+            "fail_counter": int,
+            "fail_max": int,
+            "connection_pool": {...},
+            "last_error": str | null
+        }
+    """
+    try:
+        health = await check_database_health()
+        return health
+    except Exception as e:
+        logger.error(f"Error en health check Database: {e}")
+        return {
+            "service": "database",
+            "status": "error",
+            "error": str(e)
+        }
+
+
 @app.on_event("startup")
 async def startup():
     logger.info("🧠 AgenteNegocio iniciado - Puerto 8001")
     logger.info("🔌 OpenAI Circuit Breaker initialized")
     health = await check_openai_health()
     logger.info(f"   OpenAI health: {health['status']} (state: {health['breaker_state']})")
+    logger.info("🗄️  Database Circuit Breaker initialized")
+    db_health = await check_database_health()
+    logger.info(f"   Database health: {db_health['status']} (state: {db_health['breaker_state']}, write_mode: {db_health['write_mode_enabled']})")
 
 
 if __name__ == "__main__":
