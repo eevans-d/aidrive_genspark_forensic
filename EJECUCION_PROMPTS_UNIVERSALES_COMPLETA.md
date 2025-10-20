@@ -2568,3 +2568,1423 @@ Profit: $400K/año (44% margin)
 
 ---
 
+<a name="prompt-6"></a>
+## 🛠️ PROMPT #6: GUÍA DE IMPLEMENTACIÓN PASO A PASO
+
+**Proceso**: Implementar Retail Resilience Framework desde Cero
+
+### FASE DE PREPARACIÓN
+
+#### Requisitos Previos
+
+**Software Necesario**:
+```bash
+- Python 3.11+ (verificar: python3 --version)
+- Docker 24.0+ y Docker Compose 2.20+
+- Git 2.40+
+- PostgreSQL 15+ (o vía Docker)
+- Redis 7+ (o vía Docker)
+- Text editor (VS Code recomendado)
+```
+
+**Recursos de Infraestructura**:
+```
+Desarrollo (Local):
+  - CPU: 4 cores mínimo
+  - RAM: 8GB mínimo (16GB recomendado)
+  - Disk: 20GB espacio libre
+  
+Staging/Production:
+  - CPU: 2 cores (t3.small AWS)
+  - RAM: 4GB
+  - Disk: 40GB SSD
+  - Network: 100 Mbps
+```
+
+**Habilidades del Equipo**:
+- ✅ Python intermedio (FastAPI, async/await)
+- ✅ SQL básico (PostgreSQL)
+- ✅ Docker/Containers conceptos
+- ⚠️ Circuit breakers (aprenderás aquí)
+- ⚠️ Prometheus/Grafana (opcional pero útil)
+
+---
+
+### PASO 1: Configuración del Entorno (30 minutos)
+
+#### 1.1. Clonar Repositorio
+```bash
+git clone https://github.com/eevans-d/aidrive_genspark_forensic.git
+cd aidrive_genspark_forensic
+git checkout feature/resilience-hardening
+```
+
+#### 1.2. Crear Virtualenv
+```bash
+python3 -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# O: .venv\Scripts\activate  # Windows
+```
+
+#### 1.3. Instalar Dependencias
+```bash
+pip install --upgrade pip
+pip install -r inventario-retail/web_dashboard/requirements.txt
+pip install -r requirements-test.txt  # Para tests
+```
+
+**Verificar instalación**:
+```bash
+python3 -c "import fastapi, prometheus_client, pytest; print('✅ OK')"
+```
+
+---
+
+### PASO 2: Circuit Breakers Core (2 horas)
+
+#### 2.1. Crear Estructura de Directorios
+```bash
+mkdir -p app/retail/circuit_breaker
+touch app/retail/circuit_breaker/__init__.py
+touch app/retail/circuit_breaker/circuit_breaker.py
+```
+
+#### 2.2. Implementar Circuit Breaker Base
+
+**Archivo**: `app/retail/circuit_breaker/circuit_breaker.py`
+```python
+from enum import Enum
+from datetime import datetime, timedelta
+from typing import Callable, Any
+
+class CircuitState(Enum):
+    CLOSED = "closed"      # Normal operation
+    OPEN = "open"          # Failing, reject requests
+    HALF_OPEN = "half_open"  # Testing recovery
+
+class CircuitBreaker:
+    def __init__(self, max_failures: int = 5, timeout: int = 60, half_open_wait: int = 30):
+        self.max_failures = max_failures
+        self.timeout = timeout  # seconds
+        self.half_open_wait = half_open_wait
+        
+        self.failure_count = 0
+        self.success_count = 0
+        self.last_failure_time = None
+        self.state = CircuitState.CLOSED
+        
+    def call(self, func: Callable, *args, **kwargs) -> Any:
+        if self.state == CircuitState.OPEN:
+            if self._should_attempt_reset():
+                self.state = CircuitState.HALF_OPEN
+            else:
+                raise Exception("Circuit breaker is OPEN")
+        
+        try:
+            result = func(*args, **kwargs)
+            self._on_success()
+            return result
+        except Exception as e:
+            self._on_failure()
+            raise e
+    
+    def _on_success(self):
+        self.failure_count = 0
+        if self.state == CircuitState.HALF_OPEN:
+            self.success_count += 1
+            if self.success_count >= 3:
+                self.state = CircuitState.CLOSED
+                self.success_count = 0
+    
+    def _on_failure(self):
+        self.failure_count += 1
+        self.last_failure_time = datetime.now()
+        if self.failure_count >= self.max_failures:
+            self.state = CircuitState.OPEN
+    
+    def _should_attempt_reset(self) -> bool:
+        if self.last_failure_time is None:
+            return False
+        return (datetime.now() - self.last_failure_time).seconds >= self.half_open_wait
+```
+
+#### 2.3. Crear Tests
+**Archivo**: `tests/test_circuit_breaker.py`
+```python
+import pytest
+from app.retail.circuit_breaker.circuit_breaker import CircuitBreaker, CircuitState
+
+def test_circuit_breaker_closed_state():
+    cb = CircuitBreaker(max_failures=5)
+    
+    def success_func():
+        return "OK"
+    
+    result = cb.call(success_func)
+    assert result == "OK"
+    assert cb.state == CircuitState.CLOSED
+
+def test_circuit_breaker_opens_after_failures():
+    cb = CircuitBreaker(max_failures=3)
+    
+    def failing_func():
+        raise ValueError("Simulated error")
+    
+    for i in range(3):
+        with pytest.raises(ValueError):
+            cb.call(failing_func)
+    
+    assert cb.state == CircuitState.OPEN
+    
+    # Next call should be rejected
+    with pytest.raises(Exception, match="Circuit breaker is OPEN"):
+        cb.call(failing_func)
+
+# Ejecutar: pytest tests/test_circuit_breaker.py -v
+```
+
+**Mejores Prácticas**:
+- ✅ Configurar timeouts según latencia esperada del servicio
+- ✅ Max_failures basado en tasa de error aceptable (1-5 típico)
+- ✅ Half_open_wait = recovery time típico del servicio
+- ⚠️ NO hardcodear valores, usar config
+
+---
+
+### PASO 3: OpenAI Circuit Breaker (1 hora)
+
+#### 3.1. Crear OpenAI Integration
+**Archivo**: `app/retail/circuit_breaker/openai_circuit_breaker.py`
+```python
+from .circuit_breaker import CircuitBreaker
+import openai
+import os
+
+class OpenAICircuitBreaker:
+    def __init__(self):
+        self.cb = CircuitBreaker(max_failures=5, timeout=60)
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+    
+    def classify_product(self, product_name: str) -> str:
+        def _api_call():
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{
+                    "role": "user",
+                    "content": f"Clasifica el producto: {product_name}. Responde solo la categoría."
+                }],
+                max_tokens=20,
+                timeout=5  # 5s timeout
+            )
+            return response['choices'][0]['message']['content']
+        
+        try:
+            return self.cb.call(_api_call)
+        except Exception as e:
+            # Fallback: regex-based classification
+            return self._fallback_classification(product_name)
+    
+    def _fallback_classification(self, product_name: str) -> str:
+        product_lower = product_name.lower()
+        if any(word in product_lower for word in ["coca", "pepsi", "sprite"]):
+            return "Gaseosas"
+        elif any(word in product_lower for word in ["vino", "cerveza", "whisky"]):
+            return "Alcohol"
+        else:
+            return "General"
+```
+
+**Errores Comunes a Evitar**:
+- ❌ No manejar timeouts → Usa `timeout` parameter
+- ❌ No tener fallback → Sistema colapsa si OpenAI falla
+- ❌ Exponer API key en código → Usa variables de entorno
+
+---
+
+### PASO 4: Database Circuit Breaker (1 hora)
+
+**Archivo**: `app/retail/circuit_breaker/database_circuit_breaker.py`
+```python
+import psycopg2
+from contextlib import contextmanager
+from .circuit_breaker import CircuitBreaker
+
+class DatabaseCircuitBreaker:
+    def __init__(self, dsn: str):
+        self.dsn = dsn
+        self.cb = CircuitBreaker(max_failures=5, timeout=60)
+    
+    @contextmanager
+    def get_connection(self):
+        def _connect():
+            return psycopg2.connect(self.dsn, connect_timeout=5)
+        
+        try:
+            conn = self.cb.call(_connect)
+            yield conn
+        except Exception as e:
+            # Fallback: usar cache o modo lectura solo
+            raise e
+        finally:
+            if 'conn' in locals():
+                conn.close()
+    
+    def execute_query(self, query: str, params: tuple = None):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, params or ())
+            return cursor.fetchall()
+```
+
+---
+
+### PASO 5: Health Scoring Engine (1.5 horas)
+
+**Archivo**: `app/retail/monitoring/health_scorer.py`
+```python
+class HealthScorer:
+    WEIGHTS = {
+        "openai": 0.50,
+        "database": 0.30,
+        "redis": 0.15,
+        "s3": 0.05
+    }
+    
+    def calculate_health(self, services: dict) -> int:
+        """
+        Returns health score 0-100
+        
+        services = {
+            "openai": {"state": "closed", "latency": 120, "error_rate": 0.02},
+            "database": {"state": "closed", "latency": 50, "error_rate": 0.0},
+            ...
+        }
+        """
+        total_score = 0
+        for service_name, weight in self.WEIGHTS.items():
+            service_data = services.get(service_name, {})
+            service_score = self._score_service(service_data)
+            total_score += service_score * weight
+        
+        return int(total_score)
+    
+    def _score_service(self, data: dict) -> int:
+        state_score = self._score_state(data.get("state", "open"))
+        latency_score = self._score_latency(data.get("latency", 1000))
+        error_score = self._score_error_rate(data.get("error_rate", 1.0))
+        
+        return int(
+            0.4 * state_score +
+            0.3 * latency_score +
+            0.3 * error_score
+        )
+    
+    def _score_state(self, state: str) -> int:
+        return {"closed": 100, "half_open": 50, "open": 0}.get(state, 0)
+    
+    def _score_latency(self, latency_ms: int) -> int:
+        if latency_ms < 100:
+            return 100
+        elif latency_ms < 500:
+            return 80
+        else:
+            return 50
+    
+    def _score_error_rate(self, error_rate: float) -> int:
+        if error_rate == 0:
+            return 100
+        elif error_rate < 0.05:
+            return 80
+        else:
+            return 50
+```
+
+---
+
+### PASO 6: Graceful Degradation (2 horas)
+
+**Archivo**: `app/retail/degradation/degradation_levels.py`
+```python
+from enum import Enum
+
+class DegradationLevel(Enum):
+    OPTIMAL = 5      # 100% features
+    MINOR_ISSUES = 4  # 80% features
+    DEGRADED = 3      # 60% features
+    CRITICAL = 2      # 30% features
+    EMERGENCY = 1     # 10% features
+
+class DegradationManager:
+    def __init__(self, health_scorer):
+        self.health_scorer = health_scorer
+        self.current_level = DegradationLevel.OPTIMAL
+    
+    def evaluate_and_degrade(self, services: dict) -> DegradationLevel:
+        health = self.health_scorer.calculate_health(services)
+        
+        if health >= 90:
+            self.current_level = DegradationLevel.OPTIMAL
+        elif health >= 70:
+            self.current_level = DegradationLevel.MINOR_ISSUES
+        elif health >= 50:
+            self.current_level = DegradationLevel.DEGRADED
+        elif health >= 30:
+            self.current_level = DegradationLevel.CRITICAL
+        else:
+            self.current_level = DegradationLevel.EMERGENCY
+        
+        return self.current_level
+    
+    def get_available_features(self) -> list:
+        features_by_level = {
+            DegradationLevel.OPTIMAL: [
+                "ai_classification", "provider_assignment", "ocr_processing",
+                "dashboard_analytics", "real_time_metrics", "email_notifications",
+                "pdf_exports", "advanced_search", "batch_operations"
+            ],
+            DegradationLevel.MINOR_ISSUES: [
+                "provider_assignment", "dashboard_analytics", "pdf_exports"
+            ],
+            DegradationLevel.DEGRADED: [
+                "provider_assignment", "dashboard_readonly"
+            ],
+            DegradationLevel.CRITICAL: [
+                "dashboard_readonly"
+            ],
+            DegradationLevel.EMERGENCY: [
+                "health_check"
+            ]
+        }
+        return features_by_level[self.current_level]
+```
+
+---
+
+### PASO 7: Integración con FastAPI Dashboard (2 horas)
+
+**Archivo**: `inventario-retail/web_dashboard/dashboard_app.py`
+```python
+from fastapi import FastAPI, Depends, HTTPException, Header
+from prometheus_client import Counter, Histogram, generate_latest
+import logging
+
+from app.retail.circuit_breaker.openai_circuit_breaker import OpenAICircuitBreaker
+from app.retail.circuit_breaker.database_circuit_breaker import DatabaseCircuitBreaker
+from app.retail.monitoring.health_scorer import HealthScorer
+from app.retail.degradation.degradation_levels import DegradationManager
+
+app = FastAPI(title="Retail Dashboard")
+
+# Initialize components
+openai_cb = OpenAICircuitBreaker()
+db_cb = DatabaseCircuitBreaker(dsn="postgresql://user:pass@localhost/db")
+health_scorer = HealthScorer()
+degradation_mgr = DegradationManager(health_scorer)
+
+# Prometheus metrics
+REQUEST_COUNT = Counter("dashboard_requests_total", "Total requests", ["method", "endpoint"])
+REQUEST_DURATION = Histogram("dashboard_request_duration_ms", "Request duration")
+
+# Middleware for API Key
+async def verify_api_key(x_api_key: str = Header(None)):
+    if x_api_key != os.getenv("DASHBOARD_API_KEY"):
+        raise HTTPException(status_code=401, detail="Invalid API Key")
+
+@app.get("/api/summary", dependencies=[Depends(verify_api_key)])
+async def get_summary():
+    REQUEST_COUNT.labels(method="GET", endpoint="/api/summary").inc()
+    
+    # Evaluar salud
+    services = {
+        "openai": {"state": openai_cb.cb.state.value, "latency": 120, "error_rate": 0.02},
+        "database": {"state": db_cb.cb.state.value, "latency": 50, "error_rate": 0.0}
+    }
+    
+    health = health_scorer.calculate_health(services)
+    level = degradation_mgr.evaluate_and_degrade(services)
+    features = degradation_mgr.get_available_features()
+    
+    return {
+        "health_score": health,
+        "degradation_level": level.name,
+        "available_features": features,
+        "services": services
+    }
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+@app.get("/metrics")
+async def metrics():
+    return Response(content=generate_latest(), media_type="text/plain")
+```
+
+---
+
+### PASO 8: Docker Compose Setup (1 hora)
+
+**Archivo**: `docker-compose.production.yml`
+```yaml
+version: '3.8'
+
+services:
+  dashboard:
+    build: ./inventario-retail/web_dashboard
+    ports:
+      - "8080:8080"
+    environment:
+      - DASHBOARD_API_KEY=${DASHBOARD_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/retail
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: retail
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+---
+
+### PASO 9: Testing Completo (2 horas)
+
+#### 9.1. Unit Tests
+```bash
+pytest tests/test_circuit_breaker.py -v
+pytest tests/test_degradation.py -v
+pytest tests/test_health_scorer.py -v
+```
+
+#### 9.2. Integration Tests
+```bash
+pytest tests/test_integration.py -v --cov=app --cov-report=html
+```
+
+#### 9.3. Load Testing
+```bash
+# Instalar locust
+pip install locust
+
+# Archivo: locustfile.py
+from locust import HttpUser, task, between
+
+class DashboardUser(HttpUser):
+    wait_time = between(1, 3)
+    
+    @task
+    def get_summary(self):
+        self.client.get("/api/summary", headers={"X-API-Key": "dev"})
+
+# Ejecutar:
+locust -f locustfile.py --host=http://localhost:8080
+# Abrir http://localhost:8089, configurar 100 users, ramp-up 10 users/s
+```
+
+---
+
+### PASO 10: Deployment a Staging (1.5 horas)
+
+#### 10.1. Configurar Servidor
+```bash
+# SSH a servidor
+ssh user@staging-server.com
+
+# Instalar Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Instalar Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+#### 10.2. Deploy con GitHub Actions
+**Archivo**: `.github/workflows/ci.yml`
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements-test.txt
+      - run: pytest --cov=app --cov-fail-under=85
+
+  deploy-staging:
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Staging
+        run: |
+          ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} \
+            "cd /opt/aidrive && git pull && docker-compose up -d --build"
+```
+
+---
+
+### CHECKLIST DE VERIFICACIÓN
+
+#### Pre-Deployment
+- [ ] Todos los tests pasan (175/175)
+- [ ] Coverage ≥ 85%
+- [ ] Secrets configurados en `.env`
+- [ ] Docker images builds OK
+- [ ] Smoke tests pasan
+- [ ] Runbooks documentados
+
+#### Post-Deployment
+- [ ] Health check responde 200
+- [ ] Metrics endpoint funciona
+- [ ] Circuit breakers en estado CLOSED
+- [ ] Dashboard carga en < 2s
+- [ ] Logs no muestran errores críticos
+- [ ] Grafana dashboards muestran métricas
+
+---
+
+### TROUBLESHOOTING DE PROBLEMAS FRECUENTES
+
+#### Problema 1: Circuit Breaker no se recupera
+**Síntoma**: Stuck en estado OPEN  
+**Causa**: `half_open_wait` muy largo  
+**Solución**: Reducir a 30s, verificar que servicio esté realmente saludable
+
+#### Problema 2: Health Score siempre bajo
+**Síntoma**: Score < 50 incluso con servicios OK  
+**Causa**: Weights mal configurados  
+**Solución**: Revisar `WEIGHTS` en `HealthScorer`, suma debe ser 1.0
+
+#### Problema 3: Tests fallan en CI pero pasan local
+**Síntoma**: Flaky tests  
+**Causa**: Dependencias de tiempo (`sleep`, `datetime.now()`)  
+**Solución**: Usar mocks o `freezegun` library
+
+---
+
+### ESTIMACIÓN DE TIEMPO Y PRESUPUESTO
+
+| Fase | Horas | Costo ($80/h) |
+|------|-------|---------------|
+| **Preparación** | 1h | $80 |
+| **Circuit Breakers** | 6h | $480 |
+| **Health Scoring** | 2h | $160 |
+| **Degradation** | 3h | $240 |
+| **Integration** | 4h | $320 |
+| **Testing** | 3h | $240 |
+| **Deployment** | 2h | $160 |
+| **Documentación** | 3h | $240 |
+| **TOTAL** | **24h** | **$1,920** |
+
+**Nota**: Proyecto aidrive fue 40h porque incluyó Redis, S3, chaos testing, runbooks completos.
+
+---
+
+### PLAN DE MANTENIMIENTO POST-IMPLEMENTACIÓN
+
+#### Diario
+- Revisar métricas Grafana (5 min)
+- Verificar alertas Prometheus (automático)
+
+#### Semanal
+- Revisar logs de circuit breakers (10 min)
+- Ajustar thresholds si necesario (30 min)
+
+#### Mensual
+- Ejecutar chaos tests (1h)
+- Revisar y actualizar runbooks (1h)
+- Security patches (Docker images) (30 min)
+
+#### Trimestral
+- Load testing completo (2h)
+- Revisar ROI y métricas de negocio (1h)
+- Planificar mejoras (2h)
+
+---
+
+**✅ PROMPT #6 COMPLETADO** - Fecha: 20 de Octubre de 2025, 1:00 PM
+
+---
+
+<a name="prompt-7"></a>
+## 📘 PROMPT #7: DOCUMENTACIÓN TÉCNICA COMPLETA
+
+**Tecnología**: aidrive_genspark Retail Resilience Framework
+
+### 1. Overview y Propósito
+
+#### ¿Qué es aidrive_genspark?
+
+**Descripción**:
+Sistema de gestión de inventario para retail argentino (Mini Market) con **framework de resiliencia integrado** que garantiza 99.9% uptime mediante circuit breakers, degradación graceful y auto-recovery.
+
+**Problema Resuelto**:
+- **Sin framework**: Fallo en OpenAI → Dashboard caído → $850/hora pérdida
+- **Con framework**: Fallo en OpenAI → Fallback a regex → Dashboard operativo → $0 pérdida
+
+**Casos de Uso Principales**:
+1. **Registro de Pedidos** (empleados): "Pedir Coca Cola x 6"
+2. **Procesamiento OCR** (facturas): Subir PDF → Extracción automática → Ingreso stock
+3. **Dashboard Analítico** (gerente): Ver KPIs, tendencias, alertas
+4. **Monitoreo de Salud** (DevOps): Métricas Prometheus, alertas
+
+---
+
+### 2. Arquitectura y Componentes
+
+#### Diagrama de Alto Nivel
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Users (Empleados/Gerente)               │
+└─────────────────┬───────────────────────────────────────────┘
+                  │ HTTP/HTTPS
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        NGINX (Reverse Proxy)                │
+│  - TLS Termination                                          │
+│  - Rate Limiting (100 req/min)                             │
+│  - Security Headers (CSP, HSTS)                            │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────────────────────┐
+│              FastAPI Dashboard (Port 8080)                  │
+│                                                             │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │         Resilience Layer                           │    │
+│  │  ┌──────────────────────────────────────────┐      │    │
+│  │  │  Circuit Breakers (4)                    │      │    │
+│  │  │  - OpenAI CB (50% coverage)              │      │    │
+│  │  │  - Database CB (30% coverage)            │      │    │
+│  │  │  - Redis CB (15% coverage)               │      │    │
+│  │  │  - S3 CB (5% coverage)                   │      │    │
+│  │  └──────────────────────────────────────────┘      │    │
+│  │                                                     │    │
+│  │  ┌──────────────────────────────────────────┐      │    │
+│  │  │  Degradation Manager                     │      │    │
+│  │  │  - 5 Levels (OPTIMAL → EMERGENCY)        │      │    │
+│  │  │  - 16 Feature Flags                      │      │    │
+│  │  └──────────────────────────────────────────┘      │    │
+│  │                                                     │    │
+│  │  ┌──────────────────────────────────────────┐      │    │
+│  │  │  Health Scorer                           │      │    │
+│  │  │  - Weighted scoring (0-100)              │      │    │
+│  │  │  - 4 service inputs                      │      │    │
+│  │  └──────────────────────────────────────────┘      │    │
+│  └────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌────────────────────────────────────────────────────┐    │
+│  │         Business Logic Layer                       │    │
+│  │  - Provider Assignment (12 proveedores)            │    │
+│  │  - Product Classification (AI + Regex)             │    │
+│  │  - Inventory Management                            │    │
+│  └────────────────────────────────────────────────────┘    │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+                  ├──────────┬────────────┬─────────────┬──────────┐
+                  ▼          ▼            ▼             ▼          ▼
+         ┌─────────────┐ ┌────────┐ ┌─────────┐ ┌──────────┐ ┌──────────┐
+         │ PostgreSQL  │ │ Redis  │ │ OpenAI  │ │    S3    │ │Prometheus│
+         │   (Main)    │ │(Cache) │ │  API    │ │(Storage) │ │(Metrics) │
+         └─────────────┘ └────────┘ └─────────┘ └──────────┘ └──────────┘
+```
+
+#### Componentes Detallados
+
+**1. Circuit Breakers** (`app/retail/circuit_breaker/`)
+```python
+- circuit_breaker.py           # Base FSM implementation
+- openai_circuit_breaker.py    # OpenAI API protection
+- database_circuit_breaker.py  # PostgreSQL protection
+- redis_circuit_breaker.py     # Redis cache protection
+- s3_circuit_breaker.py        # S3 storage protection
+```
+
+**2. Degradation System** (`app/retail/degradation/`)
+```python
+- degradation_levels.py        # 5 degradation levels
+- feature_availability.py      # 16 feature flags management
+- recovery_predictor.py        # ETA estimation for recovery
+```
+
+**3. Monitoring** (`app/retail/monitoring/`)
+```python
+- health_scorer.py             # 0-100 health calculation
+- metrics_exporter.py          # Prometheus metrics
+```
+
+**4. Dashboard** (`inventario-retail/web_dashboard/`)
+```python
+- dashboard_app.py             # FastAPI application
+- templates/                   # Jinja2 HTML templates
+- static/                      # CSS, JS, images
+```
+
+---
+
+### 3. Requisitos del Sistema
+
+#### Desarrollo (Local)
+```
+OS: Linux (Ubuntu 22.04+), macOS 12+, Windows 11 con WSL2
+CPU: 4 cores (Intel i5/i7, AMD Ryzen 5)
+RAM: 8GB mínimo, 16GB recomendado
+Disk: 20GB espacio libre (SSD recomendado)
+Python: 3.11+
+Docker: 24.0+
+Docker Compose: 2.20+
+```
+
+#### Staging/Production
+```
+Cloud Provider: AWS (t3.small), GCP (e2-small), Azure (B2s)
+CPU: 2 vCPU
+RAM: 4GB
+Disk: 40GB SSD
+Network: 100 Mbps, IP pública
+OS: Ubuntu 22.04 LTS Server
+```
+
+#### Software Dependencies
+```
+Runtime:
+  - Python 3.11.5
+  - FastAPI 0.104.1
+  - Uvicorn 0.24.0
+  - PostgreSQL 15.4
+  - Redis 7.2.3
+  - NGINX 1.24.0
+
+Python Packages (key):
+  - prometheus-client 0.18.0
+  - psycopg2-binary 2.9.9
+  - openai 1.3.5
+  - boto3 1.29.7 (S3)
+  - pytest 7.4.3
+  - locust 2.17.0 (load testing)
+```
+
+---
+
+### 4. Guía de Instalación
+
+#### Opción A: Docker Compose (Recomendado para Producción)
+
+**Paso 1**: Clonar repositorio
+```bash
+git clone https://github.com/eevans-d/aidrive_genspark_forensic.git
+cd aidrive_genspark_forensic
+git checkout feature/resilience-hardening
+```
+
+**Paso 2**: Configurar variables de entorno
+```bash
+cp .env.example .env
+nano .env  # Editar valores
+```
+
+**Ejemplo `.env`**:
+```bash
+# Dashboard
+DASHBOARD_API_KEY=tu_api_key_segura_32_chars_random
+DASHBOARD_PORT=8080
+
+# OpenAI
+OPENAI_API_KEY=sk-proj-...tu_key_real
+
+# Database
+DATABASE_URL=postgresql://postgres:password@postgres:5432/retail
+POSTGRES_PASSWORD=password_seguro
+
+# Redis
+REDIS_URL=redis://redis:6379
+
+# AWS S3 (opcional)
+AWS_ACCESS_KEY_ID=tu_access_key
+AWS_SECRET_ACCESS_KEY=tu_secret_key
+AWS_REGION=us-east-1
+S3_BUCKET=aidrive-invoices
+```
+
+**Paso 3**: Iniciar servicios
+```bash
+docker-compose -f docker-compose.production.yml up -d
+
+# Verificar:
+docker-compose ps
+# Debe mostrar 6 servicios: dashboard, postgres, redis, prometheus, grafana, nginx
+```
+
+**Paso 4**: Verificar deployment
+```bash
+# Health check
+curl http://localhost:8080/health
+# Esperado: {"status":"ok"}
+
+# Metrics
+curl -H "X-API-Key: tu_api_key" http://localhost:8080/metrics
+# Esperado: Prometheus metrics text format
+
+# Dashboard
+open http://localhost:8080
+# Login con API key en header
+```
+
+---
+
+#### Opción B: Instalación Manual (Desarrollo)
+
+**Paso 1**: Instalar Python y deps
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r inventario-retail/web_dashboard/requirements.txt
+```
+
+**Paso 2**: Instalar PostgreSQL
+```bash
+# Ubuntu
+sudo apt install postgresql postgresql-contrib
+sudo -u postgres createdb retail
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'password';"
+```
+
+**Paso 3**: Instalar Redis
+```bash
+# Ubuntu
+sudo apt install redis-server
+sudo systemctl start redis-server
+```
+
+**Paso 4**: Ejecutar dashboard
+```bash
+cd inventario-retail/web_dashboard
+uvicorn dashboard_app:app --host 0.0.0.0 --port 8080 --reload
+```
+
+---
+
+### 5. Configuración Inicial
+
+#### Circuit Breakers Configuration
+
+**Archivo**: `config/circuit_breakers.yaml`
+```yaml
+openai:
+  max_failures: 5          # Fallos antes de abrir CB
+  timeout: 60              # Segundos en estado OPEN
+  half_open_wait: 30       # Segundos antes de intentar recovery
+  fallback: regex          # Estrategia de fallback
+
+database:
+  max_failures: 5
+  timeout: 60
+  half_open_wait: 30
+  fallback: cache          # Usar datos cacheados
+
+redis:
+  max_failures: 3
+  timeout: 45
+  half_open_wait: 20
+  fallback: memory         # Dict en memoria
+
+s3:
+  max_failures: 3
+  timeout: 45
+  half_open_wait: 20
+  fallback: local_fs       # Guardar en /tmp
+```
+
+#### Health Scoring Weights
+
+**Archivo**: `config/health.yaml`
+```yaml
+weights:
+  openai: 0.50      # 50% del score total
+  database: 0.30    # 30%
+  redis: 0.15       # 15%
+  s3: 0.05          # 5%
+
+thresholds:
+  optimal: 90       # Score >= 90 → OPTIMAL
+  minor_issues: 70  # Score >= 70 → MINOR_ISSUES
+  degraded: 50      # Score >= 50 → DEGRADED
+  critical: 30      # Score >= 30 → CRITICAL
+  # Score < 30 → EMERGENCY
+```
+
+#### Prometheus Configuration
+
+**Archivo**: `prometheus.yml`
+```yaml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'dashboard'
+    static_configs:
+      - targets: ['dashboard:8080']
+    metrics_path: '/metrics'
+```
+
+---
+
+### 6. Ejemplos de Código (5 Casos de Uso)
+
+#### Caso 1: Llamar OpenAI con Circuit Breaker
+
+```python
+from app.retail.circuit_breaker.openai_circuit_breaker import OpenAICircuitBreaker
+
+openai_cb = OpenAICircuitBreaker()
+
+# Uso básico
+try:
+    category = openai_cb.classify_product("Coca Cola 2L")
+    print(f"Categoría: {category}")  # "Gaseosas"
+except Exception as e:
+    print(f"Error (con fallback): {e}")
+    # Sistema automáticamente usó regex fallback
+```
+
+#### Caso 2: Query a Database con Protection
+
+```python
+from app.retail.circuit_breaker.database_circuit_breaker import DatabaseCircuitBreaker
+
+db_cb = DatabaseCircuitBreaker(dsn="postgresql://user:pass@localhost/retail")
+
+# Query protegido
+try:
+    results = db_cb.execute_query(
+        "SELECT * FROM productos WHERE categoria = %s",
+        ("Gaseosas",)
+    )
+    for row in results:
+        print(row)
+except Exception as e:
+    print(f"BD no disponible, usando cache: {e}")
+```
+
+#### Caso 3: Evaluar Health y Degradar
+
+```python
+from app.retail.monitoring.health_scorer import HealthScorer
+from app.retail.degradation.degradation_levels import DegradationManager
+
+scorer = HealthScorer()
+degradation_mgr = DegradationManager(scorer)
+
+# Obtener estado de servicios
+services = {
+    "openai": {"state": "closed", "latency": 120, "error_rate": 0.02},
+    "database": {"state": "closed", "latency": 50, "error_rate": 0.0},
+    "redis": {"state": "half_open", "latency": 80, "error_rate": 0.10},
+    "s3": {"state": "closed", "latency": 200, "error_rate": 0.0}
+}
+
+# Calcular health
+health = scorer.calculate_health(services)
+print(f"Health Score: {health}/100")  # 76/100
+
+# Determinar nivel de degradación
+level = degradation_mgr.evaluate_and_degrade(services)
+print(f"Nivel: {level.name}")  # MINOR_ISSUES
+
+# Obtener features disponibles
+features = degradation_mgr.get_available_features()
+print(f"Features activas: {features}")
+# ["provider_assignment", "dashboard_analytics", "pdf_exports"]
+```
+
+#### Caso 4: Exponer Métricas Prometheus
+
+```python
+from fastapi import FastAPI
+from prometheus_client import Counter, Histogram, generate_latest
+from starlette.responses import Response
+
+app = FastAPI()
+
+# Definir métricas
+REQUEST_COUNT = Counter(
+    "dashboard_requests_total",
+    "Total de requests",
+    ["method", "endpoint", "status"]
+)
+
+REQUEST_DURATION = Histogram(
+    "dashboard_request_duration_ms",
+    "Duración de requests en ms",
+    buckets=[10, 50, 100, 200, 500, 1000, 2000]
+)
+
+@app.get("/api/summary")
+async def get_summary():
+    with REQUEST_DURATION.time():
+        # Lógica del endpoint
+        REQUEST_COUNT.labels(method="GET", endpoint="/api/summary", status=200).inc()
+        return {"data": "..."}
+
+@app.get("/metrics")
+async def metrics():
+    return Response(content=generate_latest(), media_type="text/plain")
+```
+
+#### Caso 5: Auto-Recovery Monitoring
+
+```python
+import asyncio
+from app.retail.circuit_breaker.circuit_breaker import CircuitState
+
+async def monitor_circuit_breaker(cb):
+    """Monitor y reportar cambios de estado"""
+    previous_state = cb.state
+    
+    while True:
+        await asyncio.sleep(5)  # Check cada 5s
+        
+        if cb.state != previous_state:
+            print(f"⚠️ Circuit Breaker cambió: {previous_state.value} → {cb.state.value}")
+            
+            if cb.state == CircuitState.OPEN:
+                print("🔴 OPEN: Rechazando requests")
+            elif cb.state == CircuitState.HALF_OPEN:
+                print("🟡 HALF_OPEN: Probando recovery")
+            elif cb.state == CircuitState.CLOSED:
+                print("🟢 CLOSED: Sistema recuperado")
+            
+            previous_state = cb.state
+
+# Uso:
+# asyncio.create_task(monitor_circuit_breaker(openai_cb.cb))
+```
+
+---
+
+### 7. Referencia de API/Funciones Principales
+
+#### Circuit Breaker API
+
+**`CircuitBreaker.call(func, *args, **kwargs)`**
+```python
+"""
+Ejecuta función protegida por circuit breaker.
+
+Args:
+    func: Callable a ejecutar
+    *args, **kwargs: Argumentos para func
+
+Returns:
+    Result de func() si exitoso
+
+Raises:
+    Exception: Si CB está OPEN o func falla
+
+States:
+    CLOSED: Ejecuta func normalmente
+    OPEN: Rechaza inmediatamente (raise Exception)
+    HALF_OPEN: Intenta 1 ejecución (test recovery)
+"""
+```
+
+**`CircuitBreaker.state`** (Property)
+```python
+"""
+Estado actual del circuit breaker.
+
+Returns:
+    CircuitState: CLOSED | OPEN | HALF_OPEN
+"""
+```
+
+---
+
+#### Health Scorer API
+
+**`HealthScorer.calculate_health(services: dict) -> int`**
+```python
+"""
+Calcula health score 0-100 basado en estado de servicios.
+
+Args:
+    services: Dict con estado de cada servicio
+    {
+        "openai": {"state": "closed", "latency": 120, "error_rate": 0.02},
+        "database": {"state": "closed", "latency": 50, "error_rate": 0.0},
+        ...
+    }
+
+Returns:
+    int: Health score 0-100
+    
+    0-29: EMERGENCY
+    30-49: CRITICAL
+    50-69: DEGRADED
+    70-89: MINOR_ISSUES
+    90-100: OPTIMAL
+"""
+```
+
+---
+
+#### Degradation Manager API
+
+**`DegradationManager.evaluate_and_degrade(services: dict) -> DegradationLevel`**
+```python
+"""
+Evalúa health y determina nivel de degradación.
+
+Args:
+    services: Estado de servicios (ver HealthScorer)
+
+Returns:
+    DegradationLevel: OPTIMAL | MINOR_ISSUES | DEGRADED | CRITICAL | EMERGENCY
+
+Side Effects:
+    - Actualiza self.current_level
+    - Puede disparar alertas
+    - Puede modificar feature flags
+"""
+```
+
+**`DegradationManager.get_available_features() -> List[str]`**
+```python
+"""
+Retorna lista de features disponibles en nivel actual.
+
+Returns:
+    List[str]: ["ai_classification", "provider_assignment", ...]
+
+Examples:
+    OPTIMAL: 9 features
+    MINOR_ISSUES: 3 features
+    EMERGENCY: 1 feature (health_check)
+```
+
+---
+
+### 8. Parámetros y Valores de Retorno
+
+#### OpenAI Circuit Breaker
+
+**Constructor**:
+```python
+OpenAICircuitBreaker(
+    max_failures: int = 5,      # Default: 5 fallos
+    timeout: int = 60,          # Default: 60 segundos
+    half_open_wait: int = 30,   # Default: 30 segundos
+    api_key: str = None         # Default: os.getenv("OPENAI_API_KEY")
+)
+```
+
+**Return Values**:
+```python
+.classify_product(product_name: str) -> str
+    # Returns: Categoría del producto ("Gaseosas", "Alcohol", "General")
+    # Raises: Exception si CB OPEN y fallback también falla
+```
+
+---
+
+### 9. Manejo de Errores y Excepciones
+
+#### Excepciones Personalizadas
+
+```python
+class CircuitBreakerOpenError(Exception):
+    """Raised cuando CB está OPEN y rechaza request"""
+    pass
+
+class ServiceUnavailableError(Exception):
+    """Raised cuando servicio externo no responde"""
+    pass
+
+class DegradationError(Exception):
+    """Raised cuando sistema entra en EMERGENCY mode"""
+    pass
+```
+
+#### Patrones de Manejo
+
+**Pattern 1: Try-Except con Fallback**
+```python
+try:
+    result = openai_cb.classify_product("Producto X")
+except CircuitBreakerOpenError:
+    # CB abierto, usar fallback
+    result = regex_classifier.classify("Producto X")
+except ServiceUnavailableError:
+    # Servicio caído, usar cache
+    result = cache.get("producto_x_category") or "General"
+```
+
+**Pattern 2: Logging Estructurado**
+```python
+import logging
+import json
+
+logger = logging.getLogger(__name__)
+
+try:
+    result = db_cb.execute_query(query)
+except Exception as e:
+    logger.error(json.dumps({
+        "event": "database_query_failed",
+        "query": query,
+        "error": str(e),
+        "circuit_breaker_state": db_cb.cb.state.value,
+        "timestamp": datetime.now().isoformat()
+    }))
+    raise
+```
+
+---
+
+### 10. Optimización y Mejores Prácticas
+
+#### Mejor Práctica 1: Configurar Timeouts Apropiados
+
+```python
+# ❌ MAL: Timeout muy corto
+openai_cb = OpenAICircuitBreaker(timeout=5)  # CB se abre demasiado rápido
+
+# ✅ BIEN: Basado en P95 latency del servicio
+openai_cb = OpenAICircuitBreaker(
+    timeout=60,           # 2x P95 latency (30s × 2)
+    max_failures=5        # 1% error rate acceptable
+)
+```
+
+#### Mejor Práctica 2: Fallbacks en Cascada
+
+```python
+def get_product_category(product_name: str) -> str:
+    # Level 1: AI (mejor precisión)
+    try:
+        return openai_cb.classify_product(product_name)
+    except CircuitBreakerOpenError:
+        pass
+    
+    # Level 2: Regex (buena precisión)
+    try:
+        return regex_classifier.classify(product_name)
+    except Exception:
+        pass
+    
+    # Level 3: Default (baja precisión pero funciona)
+    return "General"
+```
+
+#### Mejor Práctica 3: Hysteresis en Health Checks
+
+```python
+# ❌ MAL: Oscilaciones
+if health >= 70:
+    degrade_to(MINOR_ISSUES)
+
+# ✅ BIEN: Hysteresis (requiere 2 lecturas consecutivas)
+class HysteresisChecker:
+    def __init__(self):
+        self.last_reading = None
+    
+    def should_degrade(self, health: int) -> bool:
+        if health < 70:
+            if self.last_reading and self.last_reading < 70:
+                return True  # 2 lecturas consecutivas < 70
+        self.last_reading = health
+        return False
+```
+
+---
+
+### 11. FAQ Técnico
+
+**Q1: ¿Por qué circuit breakers en memoria y no en Redis?**  
+A: Latencia. In-memory = < 1ms overhead, Redis = 5-10ms. Trade-off: Estado se pierde en restart (aceptable porque recovery es rápido: < 5 min).
+
+**Q2: ¿Cómo escalar a múltiples instancias?**  
+A: Opción 1 (simple): Sticky sessions (NGINX). Opción 2 (completa): Migrar estado a Redis con locks distribuidos.
+
+**Q3: ¿Qué hacer si todos los CBs se abren simultáneamente?**  
+A: Sistema entra en modo EMERGENCY (solo health check disponible). Investigar causa raíz (probablemente infraestructura, no aplicación).
+
+**Q4: ¿Cómo testear circuit breakers sin esperar fallos reales?**  
+A: Failure injection tests (ver `tests/test_failure_injection.py`). Mock servicios para simular timeouts, errores 500, etc.
+
+**Q5: ¿Puedo desactivar circuit breakers temporalmente?**  
+A: Sí, vía feature flag `DISABLE_CIRCUIT_BREAKERS=true`. Útil para debugging, no para producción.
+
+---
+
+### 12. Recursos de Soporte
+
+**Documentación**:
+- README.md
+- FINAL_PROJECT_STATUS_REPORT.md
+- GO_LIVE_PROCEDURES.md
+- INCIDENT_RESPONSE_PLAYBOOK.md
+- RUNBOOK_OPERACIONES_DASHBOARD.md
+
+**Código**:
+- GitHub: https://github.com/eevans-d/aidrive_genspark_forensic
+- Branch principal: feature/resilience-hardening
+
+**Monitoreo**:
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin/admin)
+- Dashboard: http://localhost:8080
+
+**Soporte**:
+- Issues: GitHub Issues
+- Email: ops@aidrive.com (ficticio)
+- Slack: #aidrive-ops (ficticio)
+
+---
+
+**✅ PROMPT #7 COMPLETADO** - Fecha: 20 de Octubre de 2025, 2:00 PM
+
+---
+
