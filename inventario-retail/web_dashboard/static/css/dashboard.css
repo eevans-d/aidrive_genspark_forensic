@@ -25,3 +25,265 @@ body {
 .status-inactive { background-color:#f8d7da; color:#721c24; }
 .toast-region { z-index:1080; min-width:300px; }
 .audio-hidden { display:none; }
+
+/* ============================================
+   WebSocket Notification Toast Styles (SEMANA 2.3)
+   ============================================ */
+
+/* Toast Container */
+#notification-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 420px;
+    pointer-events: none;
+}
+
+/* Individual Toast */
+.notification-toast {
+    background: white;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    margin-bottom: 12px;
+    pointer-events: auto;
+    animation: slideInRight 0.3s ease-out;
+    transition: all 0.3s ease;
+}
+
+.notification-toast:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translateX(-4px);
+}
+
+/* Toast Type Variants */
+.notification-toast.error {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+}
+
+.notification-toast.warning {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+}
+
+.notification-toast.success {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+}
+
+.notification-toast.info {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.notification-toast.critical {
+    border-left-color: #8b5cf6;
+    background: #f8f0ff;
+}
+
+/* Toast Header */
+.notification-toast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.notification-toast-subject {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2937;
+    flex: 1;
+    margin-right: 8px;
+}
+
+.notification-toast-timestamp {
+    font-size: 11px;
+    color: #9ca3af;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Toast Close Button */
+.notification-toast-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 18px;
+    padding: 0;
+    margin: -4px -4px -4px 8px;
+    cursor: pointer;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.notification-toast-close:hover {
+    color: #6b7280;
+}
+
+/* Toast Message */
+.notification-toast-message {
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.notification-toast.error .notification-toast-message {
+    color: #7f1d1d;
+}
+
+.notification-toast.warning .notification-toast-message {
+    color: #78350f;
+}
+
+.notification-toast.success .notification-toast-message {
+    color: #166534;
+}
+
+.notification-toast.info .notification-toast-message {
+    color: #1e40af;
+}
+
+.notification-toast.critical .notification-toast-message {
+    color: #5b21b6;
+}
+
+/* Toast Footer (Action) */
+.notification-toast-action {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.notification-toast-action button {
+    font-size: 12px;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.notification-toast-action button:hover {
+    background: #d1d5db;
+}
+
+.notification-toast-action button.primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.notification-toast-action button.primary:hover {
+    background: #2563eb;
+}
+
+/* Animation: Slide In From Right */
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Animation: Slide Out To Right */
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+.notification-toast.exiting {
+    animation: slideOutRight 0.3s ease-out forwards;
+}
+
+/* Notification Bell Icon in Navbar */
+.navbar-notification-bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 20px;
+    transition: color 0.2s;
+}
+
+.navbar-notification-bell:hover {
+    color: #28a745;
+}
+
+.navbar-notification-bell:active {
+    transform: scale(0.95);
+}
+
+/* Notification Counter Badge */
+.notification-counter {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    border: 2px solid white;
+    animation: counterPulse 0.3s ease-out;
+}
+
+.notification-counter.hidden {
+    display: none;
+}
+
+@keyframes counterPulse {
+    0% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 576px) {
+    #notification-toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification-toast {
+        margin-bottom: 8px;
+        padding: 12px;
+    }
+    
+    .notification-toast-subject {
+        font-size: 13px;
+    }
+    
+    .notification-toast-message {
+        font-size: 12px;
+    }
+}

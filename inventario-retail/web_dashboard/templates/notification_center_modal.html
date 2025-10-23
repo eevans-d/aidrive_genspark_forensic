@@ -1,0 +1,436 @@
+<!-- Notification Center Modal (SEMANA 2.3) -->
+<div class="modal fade" id="notificationCenterModal" tabindex="-1" aria-labelledby="notificationCenterLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="notificationCenterLabel">
+                    <i class="fas fa-bell"></i> Centro de Notificaciones
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Filter Tabs -->
+                <ul class="nav nav-tabs mb-3" id="notificationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" 
+                                data-bs-target="#all-notifications" type="button" role="tab">
+                            <i class="fas fa-list"></i> Todas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="unread-tab" data-bs-toggle="tab" 
+                                data-bs-target="#unread-notifications" type="button" role="tab">
+                            <i class="fas fa-circle"></i> No leídas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="read-tab" data-bs-toggle="tab" 
+                                data-bs-target="#read-notifications" type="button" role="tab">
+                            <i class="fas fa-check"></i> Leídas
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="notificationTabContent">
+                    <!-- All Notifications Tab -->
+                    <div class="tab-pane fade show active" id="all-notifications" role="tabpanel">
+                        <div id="all-notifications-list" class="notification-list">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando notificaciones...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unread Notifications Tab -->
+                    <div class="tab-pane fade" id="unread-notifications" role="tabpanel">
+                        <div id="unread-notifications-list" class="notification-list">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando notificaciones...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Read Notifications Tab -->
+                    <div class="tab-pane fade" id="read-notifications" role="tabpanel">
+                        <div id="read-notifications-list" class="notification-list">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando notificaciones...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination (if needed) -->
+                <nav id="notification-pagination" class="mt-3" style="display: none;">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item"><a class="page-link" href="#" id="prev-page">Anterior</a></li>
+                        <li class="page-item active"><span class="page-link" id="current-page">1</span></li>
+                        <li class="page-item"><a class="page-link" href="#" id="next-page">Siguiente</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="mark-all-read-btn">
+                    <i class="fas fa-check-double"></i> Marcar todas como leídas
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="preferences-btn">
+                    <i class="fas fa-cog"></i> Preferencias
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Item Template (for cloning) -->
+<template id="notification-item-template">
+    <div class="notification-item card mb-2" data-notification-id="">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <div class="notification-item-header d-flex align-items-center mb-2">
+                        <span class="notification-type-badge badge me-2"></span>
+                        <h6 class="notification-item-subject mb-0"></h6>
+                        <small class="notification-item-timestamp ms-auto text-muted"></small>
+                    </div>
+                    <p class="notification-item-message mb-2 text-dark"></p>
+                    <div class="notification-item-meta d-flex gap-2 align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-tag"></i>
+                            <span class="notification-item-priority"></span>
+                        </small>
+                    </div>
+                </div>
+                <div class="notification-item-actions ms-3">
+                    <button class="btn btn-sm btn-light mark-read-btn" title="Mark as read/unread">
+                        <i class="fas fa-circle"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light delete-btn" title="Delete notification">
+                        <i class="fas fa-trash-alt text-danger"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- CSS Styles for Notification Items -->
+<style>
+    .notification-list {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        border: none;
+        border-left: 4px solid #ccc;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .notification-item:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateX(4px);
+    }
+
+    .notification-item.unread {
+        background-color: #f0f7ff;
+        border-left-color: #3b82f6;
+    }
+
+    .notification-item.read {
+        opacity: 0.8;
+    }
+
+    .notification-type-badge {
+        font-size: 10px;
+        padding: 3px 6px;
+        border-radius: 3px;
+    }
+
+    .notification-type-badge.notification {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .notification-type-badge.alert {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .notification-type-badge.info {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .notification-type-badge.warning {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .notification-type-badge.error {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .notification-item-subject {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .notification-item-message {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .notification-item-timestamp {
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .notification-item-actions {
+        display: flex;
+        gap: 4px;
+    }
+
+    .notification-item-actions .btn-sm {
+        padding: 4px 6px;
+        font-size: 12px;
+    }
+
+    .notification-empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #9ca3af;
+    }
+
+    .notification-empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    .notification-empty-state p {
+        margin: 0;
+        font-size: 14px;
+    }
+</style>
+
+<!-- JavaScript for Notification Center -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationCenterModal = document.getElementById('notificationCenterModal');
+        const allNotificationsList = document.getElementById('all-notifications-list');
+        const unreadNotificationsList = document.getElementById('unread-notifications-list');
+        const readNotificationsList = document.getElementById('read-notifications-list');
+        const markAllReadBtn = document.getElementById('mark-all-read-btn');
+        const preferencesBtn = document.getElementById('preferences-btn');
+        const notificationItemTemplate = document.getElementById('notification-item-template');
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentFilter = 'all';
+
+        // Load notifications when modal opens
+        if (notificationCenterModal) {
+            notificationCenterModal.addEventListener('show.bs.modal', function() {
+                loadNotifications('all');
+            });
+        }
+
+        // Tab switching
+        const tabs = document.querySelectorAll('#notificationTabs button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.getAttribute('data-bs-target');
+                let filter = 'all';
+                if (target.includes('unread')) filter = 'unread';
+                if (target.includes('read')) filter = 'read';
+                
+                currentPage = 1;
+                currentFilter = filter;
+                loadNotifications(filter);
+            });
+        });
+
+        // Mark all as read button
+        markAllReadBtn.addEventListener('click', function() {
+            const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+            unreadNotifications.forEach(item => {
+                const notificationId = item.getAttribute('data-notification-id');
+                if (notificationId && window.notificationManager) {
+                    window.notificationManager.markAsRead(notificationId);
+                    item.classList.remove('unread');
+                    item.classList.add('read');
+                    updateCounter();
+                }
+            });
+        });
+
+        // Preferences button
+        preferencesBtn.addEventListener('click', function() {
+            // Trigger preferences modal when implemented
+            if (window.notificationPreferencesModal) {
+                const prefsModal = new bootstrap.Modal(document.getElementById('notificationPreferencesModal'));
+                prefsModal.show();
+            }
+        });
+
+        // Load notifications from API
+        async function loadNotifications(filter = 'all') {
+            try {
+                const apiKey = document.querySelector('meta[name="x-api-key"]')?.getAttribute('content') || 'dev';
+                const params = new URLSearchParams({
+                    status: filter === 'unread' ? 'unread' : (filter === 'read' ? 'read' : 'all'),
+                    page: currentPage,
+                    limit: 10
+                });
+
+                const response = await fetch(`/api/notifications?${params}`, {
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load notifications');
+
+                const data = await response.json();
+                const notifications = data.notifications || [];
+                totalPages = data.total_pages || 1;
+
+                renderNotifications(notifications, filter);
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                showNotificationsError(filter, 'Error al cargar notificaciones');
+            }
+        }
+
+        // Render notifications list
+        function renderNotifications(notifications, filter) {
+            let targetList;
+            if (filter === 'unread') targetList = unreadNotificationsList;
+            else if (filter === 'read') targetList = readNotificationsList;
+            else targetList = allNotificationsList;
+
+            targetList.innerHTML = '';
+
+            if (notifications.length === 0) {
+                targetList.innerHTML = `
+                    <div class="notification-empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No hay notificaciones</p>
+                    </div>
+                `;
+                return;
+            }
+
+            notifications.forEach(notif => {
+                const clone = notificationItemTemplate.content.cloneNode(true);
+                const item = clone.querySelector('.notification-item');
+                
+                item.setAttribute('data-notification-id', notif.id);
+                if (!notif.is_read) item.classList.add('unread');
+                else item.classList.add('read');
+
+                // Fill in notification details
+                clone.querySelector('.notification-type-badge').textContent = notif.type.toUpperCase();
+                clone.querySelector('.notification-type-badge').classList.add(`notification-type-badge-${notif.type}`);
+                clone.querySelector('.notification-item-subject').textContent = notif.subject;
+                clone.querySelector('.notification-item-message').textContent = notif.message;
+                clone.querySelector('.notification-item-timestamp').textContent = formatTimestamp(notif.created_at);
+                clone.querySelector('.notification-item-priority').textContent = notif.priority.toUpperCase();
+
+                // Mark as read button
+                const markReadBtn = clone.querySelector('.mark-read-btn');
+                markReadBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (window.notificationManager) {
+                        window.notificationManager.markAsRead(notif.id);
+                        item.classList.toggle('unread');
+                        item.classList.toggle('read');
+                        updateCounter();
+                    }
+                });
+
+                // Delete button
+                const deleteBtn = clone.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (confirm('¿Eliminar notificación?')) {
+                        deleteNotification(notif.id);
+                    }
+                });
+
+                targetList.appendChild(clone);
+            });
+        }
+
+        // Delete notification
+        async function deleteNotification(notificationId) {
+            try {
+                const apiKey = document.querySelector('meta[name="x-api-key"]')?.getAttribute('content') || 'dev';
+                const response = await fetch(`/api/notifications/${notificationId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to delete notification');
+
+                // Reload current filter
+                loadNotifications(currentFilter);
+                updateCounter();
+            } catch (error) {
+                console.error('Error deleting notification:', error);
+                alert('Error al eliminar notificación');
+            }
+        }
+
+        // Format timestamp
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Ahora';
+            if (diffMins < 60) return `Hace ${diffMins}m`;
+            if (diffHours < 24) return `Hace ${diffHours}h`;
+            if (diffDays < 7) return `Hace ${diffDays}d`;
+            return date.toLocaleDateString('es-ES');
+        }
+
+        // Update unread counter
+        function updateCounter() {
+            if (window.notificationManager) {
+                window.notificationManager.updateUnreadCount();
+            }
+        }
+
+        // Show error message
+        function showNotificationsError(filter, message) {
+            let targetList;
+            if (filter === 'unread') targetList = unreadNotificationsList;
+            else if (filter === 'read') targetList = readNotificationsList;
+            else targetList = allNotificationsList;
+
+            targetList.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> ${message}
+                </div>
+            `;
+        }
+    });
+</script>

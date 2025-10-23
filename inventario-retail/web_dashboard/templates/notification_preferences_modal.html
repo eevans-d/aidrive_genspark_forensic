@@ -1,0 +1,386 @@
+<!-- Notification Preferences Modal (SEMANA 2.3) -->
+<div class="modal fade" id="notificationPreferencesModal" tabindex="-1" aria-labelledby="preferencesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title" id="preferencesLabel">
+                    <i class="fas fa-cog"></i> Preferencias de Notificaciones
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="preferencesForm">
+                    <!-- Notification Channels Section -->
+                    <div class="section mb-4">
+                        <h6 class="text-dark mb-3">
+                            <i class="fas fa-bell"></i> Canales de Notificación
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="channel-email" 
+                                           name="channels" value="email" checked>
+                                    <label class="form-check-label" for="channel-email">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="channel-sms" 
+                                           name="channels" value="sms" checked>
+                                    <label class="form-check-label" for="channel-sms">
+                                        <i class="fas fa-comment"></i> SMS
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="channel-push" 
+                                           name="channels" value="push" checked>
+                                    <label class="form-check-label" for="channel-push">
+                                        <i class="fas fa-bell"></i> Push Web
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="channel-websocket" 
+                                           name="channels" value="websocket" checked>
+                                    <label class="form-check-label" for="channel-websocket">
+                                        <i class="fas fa-wifi"></i> WebSocket (Tiempo Real)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Notification Types Section -->
+                    <div class="section mb-4">
+                        <h6 class="text-dark mb-3">
+                            <i class="fas fa-folder"></i> Tipos de Notificación
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="type-inventory" 
+                                           name="notification_types" value="inventory" checked>
+                                    <label class="form-check-label" for="type-inventory">
+                                        <span class="badge bg-primary">Inventario</span> Cambios de stock
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="type-sales" 
+                                           name="notification_types" value="sales" checked>
+                                    <label class="form-check-label" for="type-sales">
+                                        <span class="badge bg-success">Ventas</span> Transacciones
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="type-alerts" 
+                                           name="notification_types" value="alerts" checked>
+                                    <label class="form-check-label" for="type-alerts">
+                                        <span class="badge bg-warning">Alertas</span> Condiciones críticas
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="type-system" 
+                                           name="notification_types" value="system" checked>
+                                    <label class="form-check-label" for="type-system">
+                                        <span class="badge bg-secondary">Sistema</span> Mensajes del sistema
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Priority Section -->
+                    <div class="section mb-4">
+                        <h6 class="text-dark mb-3">
+                            <i class="fas fa-exclamation"></i> Filtrar por Prioridad
+                        </h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="priority-all" 
+                                   name="priority_filter" value="all" checked>
+                            <label class="form-check-label" for="priority-all">
+                                Todas las prioridades
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="priority-critical" 
+                                   name="priority_filter" value="critical">
+                            <label class="form-check-label" for="priority-critical">
+                                <i class="fas fa-circle text-danger"></i> Solo críticas
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="priority-high" 
+                                   name="priority_filter" value="high">
+                            <label class="form-check-label" for="priority-high">
+                                <i class="fas fa-circle text-warning"></i> Alta o crítica
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Quiet Hours Section -->
+                    <div class="section mb-4">
+                        <h6 class="text-dark mb-3">
+                            <i class="fas fa-moon"></i> Horas de Quietud
+                        </h6>
+                        <p class="text-muted small">No enviar notificaciones en estos horarios</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="quiet-start" class="form-label">Inicio</label>
+                                <input type="time" class="form-control" id="quiet-start" 
+                                       name="quiet_start" value="22:00">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="quiet-end" class="form-label">Fin</label>
+                                <input type="time" class="form-control" id="quiet-end" 
+                                       name="quiet_end" value="07:00">
+                            </div>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="quiet-enabled" 
+                                   name="quiet_enabled" checked>
+                            <label class="form-check-label" for="quiet-enabled">
+                                Activar horas de quietud
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Frequency Section -->
+                    <div class="section mb-4">
+                        <h6 class="text-dark mb-3">
+                            <i class="fas fa-hourglass-half"></i> Frecuencia de Notificaciones
+                        </h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="frequency" 
+                                   id="frequency-instant" value="instant" checked>
+                            <label class="form-check-label" for="frequency-instant">
+                                Instantánea (en tiempo real)
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="frequency" 
+                                   id="frequency-digest-daily" value="digest_daily">
+                            <label class="form-check-label" for="frequency-digest-daily">
+                                Resumen diario (una vez al día)
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="frequency" 
+                                   id="frequency-digest-weekly" value="digest_weekly">
+                            <label class="form-check-label" for="frequency-digest-weekly">
+                                Resumen semanal (una vez a la semana)
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Data Management Section -->
+                    <div class="section mb-4">
+                        <h6 class="text-dark mb-3">
+                            <i class="fas fa-database"></i> Gestión de Datos
+                        </h6>
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="clear-all-notifications">
+                            <i class="fas fa-trash-alt"></i> Eliminar todas las notificaciones
+                        </button>
+                        <small class="text-muted d-block mt-2">Esta acción no se puede deshacer</small>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="save-preferences-btn">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS for Preferences Modal -->
+<style>
+    #notificationPreferencesModal .section {
+        padding: 12px 0;
+    }
+
+    #notificationPreferencesModal .section h6 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    #notificationPreferencesModal .form-check {
+        margin-bottom: 8px;
+    }
+
+    #notificationPreferencesModal .form-check-label {
+        font-size: 14px;
+        color: #374151;
+        margin-left: 6px;
+    }
+
+    #notificationPreferencesModal .badge {
+        font-size: 10px;
+        margin-right: 6px;
+    }
+</style>
+
+<!-- JavaScript for Preferences Modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const preferencesForm = document.getElementById('preferencesForm');
+        const saveBtn = document.getElementById('save-preferences-btn');
+        const clearBtn = document.getElementById('clear-all-notifications');
+        const preferencesModal = document.getElementById('notificationPreferencesModal');
+
+        // Load preferences from API when modal opens
+        if (preferencesModal) {
+            preferencesModal.addEventListener('show.bs.modal', function() {
+                loadPreferences();
+            });
+        }
+
+        // Save preferences
+        saveBtn.addEventListener('click', async function() {
+            const formData = new FormData(preferencesForm);
+            const preferences = {
+                channels: Array.from(document.querySelectorAll('input[name="channels"]:checked'))
+                    .map(el => el.value),
+                notification_types: Array.from(document.querySelectorAll('input[name="notification_types"]:checked'))
+                    .map(el => el.value),
+                quiet_enabled: document.getElementById('quiet-enabled').checked,
+                quiet_start: document.getElementById('quiet-start').value,
+                quiet_end: document.getElementById('quiet-end').value,
+                frequency: document.querySelector('input[name="frequency"]:checked')?.value || 'instant'
+            };
+
+            try {
+                const apiKey = document.querySelector('meta[name="x-api-key"]')?.getAttribute('content') || 'dev';
+                const response = await fetch('/api/notification-preferences', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    },
+                    body: JSON.stringify(preferences)
+                });
+
+                if (!response.ok) throw new Error('Failed to save preferences');
+
+                alert('Preferencias guardadas exitosamente');
+                bootstrap.Modal.getInstance(preferencesModal).hide();
+            } catch (error) {
+                console.error('Error saving preferences:', error);
+                alert('Error al guardar preferencias');
+            }
+        });
+
+        // Clear all notifications
+        clearBtn.addEventListener('click', async function() {
+            if (!confirm('¿Está seguro de que desea eliminar TODAS las notificaciones? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const apiKey = document.querySelector('meta[name="x-api-key"]')?.getAttribute('content') || 'dev';
+                const response = await fetch('/api/notifications', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to clear notifications');
+
+                alert('Todas las notificaciones han sido eliminadas');
+                bootstrap.Modal.getInstance(preferencesModal).hide();
+
+                // Reload notification center if open
+                if (document.getElementById('notificationCenterModal')?.classList.contains('show')) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Error clearing notifications:', error);
+                alert('Error al eliminar notificaciones');
+            }
+        });
+
+        // Load preferences from API
+        async function loadPreferences() {
+            try {
+                const apiKey = document.querySelector('meta[name="x-api-key"]')?.getAttribute('content') || 'dev';
+                const response = await fetch('/api/notification-preferences', {
+                    headers: {
+                        'X-API-Key': apiKey
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load preferences');
+
+                const data = await response.json();
+                const prefs = data.preferences || {};
+
+                // Set channel preferences
+                if (prefs.channels) {
+                    document.querySelectorAll('input[name="channels"]').forEach(el => {
+                        el.checked = prefs.channels.includes(el.value);
+                    });
+                }
+
+                // Set notification type preferences
+                if (prefs.notification_types) {
+                    document.querySelectorAll('input[name="notification_types"]').forEach(el => {
+                        el.checked = prefs.notification_types.includes(el.value);
+                    });
+                }
+
+                // Set quiet hours
+                if (prefs.quiet_start) {
+                    document.getElementById('quiet-start').value = prefs.quiet_start;
+                }
+                if (prefs.quiet_end) {
+                    document.getElementById('quiet-end').value = prefs.quiet_end;
+                }
+                if (prefs.quiet_enabled !== undefined) {
+                    document.getElementById('quiet-enabled').checked = prefs.quiet_enabled;
+                }
+
+                // Set frequency
+                if (prefs.frequency) {
+                    const frequencyEl = document.querySelector(`input[name="frequency"][value="${prefs.frequency}"]`);
+                    if (frequencyEl) frequencyEl.checked = true;
+                }
+            } catch (error) {
+                console.error('Error loading preferences:', error);
+                // Use defaults if load fails
+            }
+        }
+    });
+</script>
