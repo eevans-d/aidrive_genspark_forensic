@@ -12,7 +12,7 @@ Fecha: 2025-01-18
 Versión: 1.0
 """
 
-from fastapi import FastAPI, Request, HTTPException, Depends, Header, Query, UploadFile
+from fastapi import FastAPI, Request, HTTPException, Depends, Header, Query, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -28,6 +28,7 @@ import threading
 import time
 import re
 import logging
+import asyncio
 import uuid
 import contextvars
 from starlette.middleware.trustedhost import TrustedHostMiddleware
@@ -1541,6 +1542,8 @@ from services.notification_service import (
     NotificationPriority
 )
 
+from services.websocket_manager import get_websocket_manager
+
 
 @app.post("/api/notifications/send")
 async def send_notification(
@@ -1862,6 +1865,254 @@ async def set_notification_preferences(
             }
         )
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ========================================
+# WebSocket Endpoint - SEMANA 2.2
+# ========================================
+
+@app.websocket("/ws/notifications")
+async def websocket_notifications_endpoint(
+    websocket: WebSocket,
+    user_id: int = Query(...),
+    api_key: Optional[str] = Query(None)
+):
+    """
+    WebSocket endpoint para notificaciones en tiempo real
+    
+    Connection:
+        ws://localhost:8080/ws/notifications?user_id=123&api_key=dev
+    
+    Message Types:
+        • notification: Nueva notificación
+        • unread_count: Contador de no leídas
+        • mark_read: Marcar como leída
+        • ping: Keep-alive
+        • pong: Response to ping
+    
+    Requiere:
+        • user_id: ID del usuario (query param)
+        • api_key: API key válida (query param)
+    """
+    request_id = str(uuid.uuid4())
+    start_time = time.time()
+    
+    # Validar API key
+    expected_key = os.getenv("DASHBOARD_API_KEY", "dev")
+    if api_key != expected_key:
+        await websocket.close(code=1008, reason="Unauthorized")
+        logger.warning(
+            f"🚫 WebSocket unauthorized connection attempt",
+            extra={
+                "request_id": request_id,
+                "user_id": user_id,
+                "reason": "Invalid API key"
+            }
+        )
+        return
+    
+    try:
+        # Aceptar conexión
+        await websocket.accept()
+        
+        # Registrar conexión
+        manager = get_websocket_manager()
+        await manager.connect(user_id, websocket)
+        
+        # Enviar confirmación de conexión
+        initial_message = {
+            "type": "connection_established",
+            "data": {
+                "user_id": user_id,
+                "message": "Connected to notification server"
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        await websocket.send_json(initial_message)
+        
+        # Enviar contador inicial de no leídas
+        service = get_notification_service()
+        unread_count = await service.get_unread_count(user_id)
+        
+        unread_message = {
+            "type": "unread_count",
+            "data": {
+                "unread_count": unread_count
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        await websocket.send_json(unread_message)
+        
+        # Metrics
+        with _metrics_lock:
+            _metrics["requests_total"] += 1
+            if "websocket_connections" not in _metrics:
+                _metrics["websocket_connections"] = 0
+            _metrics["websocket_connections"] += 1
+        
+        logger.info(
+            f"✅ WebSocket connected",
+            extra={
+                "request_id": request_id,
+                "user_id": user_id,
+                "active_connections": manager.get_connection_count(user_id)
+            }
+        )
+        
+        # Bucle de recepción de mensajes
+        while True:
+            try:
+                # Recibir mensaje del cliente con timeout
+                data = await asyncio.wait_for(
+                    websocket.receive_text(),
+                    timeout=300  # 5 minutos
+                )
+                
+                message = json.loads(data)
+                message_type = message.get("type")
+                
+                # Procesar diferentes tipos de mensajes
+                if message_type == "ping":
+                    # Keep-alive ping
+                    await websocket.send_json({
+                        "type": "pong",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                    logger.debug(
+                        "🏓 Ping/Pong",
+                        extra={"request_id": request_id, "user_id": user_id}
+                    )
+                
+                elif message_type == "mark_read":
+                    # Marcar notificación como leída
+                    notification_id = message.get("notification_id")
+                    if notification_id:
+                        await service.mark_as_read(notification_id, user_id)
+                        
+                        # Enviar confirmación
+                        await websocket.send_json({
+                            "type": "notification_read_confirmation",
+                            "data": {
+                                "notification_id": notification_id
+                            },
+                            "timestamp": datetime.utcnow().isoformat()
+                        })
+                        
+                        # Actualizar contador
+                        new_unread = await service.get_unread_count(user_id)
+                        await manager.send_unread_count(user_id, new_unread)
+                        
+                        logger.debug(
+                            "✅ Notification marked as read",
+                            extra={
+                                "request_id": request_id,
+                                "user_id": user_id,
+                                "notification_id": notification_id
+                            }
+                        )
+                
+                elif message_type == "get_unread_count":
+                    # Solicitar contador de no leídas
+                    unread = await service.get_unread_count(user_id)
+                    await websocket.send_json({
+                        "type": "unread_count",
+                        "data": {
+                            "unread_count": unread
+                        },
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                    logger.debug(
+                        "📊 Unread count requested",
+                        extra={
+                            "request_id": request_id,
+                            "user_id": user_id,
+                            "count": unread
+                        }
+                    )
+            
+            except asyncio.TimeoutError:
+                # Timeout sin mensajes - enviar ping
+                logger.debug(
+                    "⏱️ WebSocket timeout, sending ping",
+                    extra={"request_id": request_id, "user_id": user_id}
+                )
+                try:
+                    await websocket.send_json({
+                        "type": "ping",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to send ping",
+                        extra={
+                            "request_id": request_id,
+                            "user_id": user_id,
+                            "error": str(e)
+                        }
+                    )
+                    break
+            
+            except json.JSONDecodeError as e:
+                logger.warning(
+                    f"Invalid JSON received",
+                    extra={
+                        "request_id": request_id,
+                        "user_id": user_id,
+                        "error": str(e)
+                    }
+                )
+            
+            except Exception as e:
+                logger.warning(
+                    f"Error processing WebSocket message",
+                    extra={
+                        "request_id": request_id,
+                        "user_id": user_id,
+                        "error": str(e)
+                    }
+                )
+                break
+    
+    except WebSocketDisconnect:
+        # Cliente desconectado
+        manager = get_websocket_manager()
+        await manager.disconnect(user_id, websocket)
+        
+        duration_ms = (time.time() - start_time) * 1000
+        
+        logger.info(
+            f"✅ WebSocket disconnected",
+            extra={
+                "request_id": request_id,
+                "user_id": user_id,
+                "duration_ms": round(duration_ms, 2),
+                "remaining_connections": manager.get_connection_count(user_id)
+            }
+        )
+        
+        with _metrics_lock:
+            _metrics["websocket_connections"] -= 1
+    
+    except Exception as e:
+        manager = get_websocket_manager()
+        await manager.disconnect(user_id, websocket)
+        
+        logger.error(
+            f"❌ WebSocket error",
+            extra={
+                "request_id": request_id,
+                "user_id": user_id,
+                "error": str(e)
+            }
+        )
+        
+        with _metrics_lock:
+            _metrics["websocket_connections"] -= 1
+        
+        try:
+            await websocket.close(code=1011, reason=str(e))
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

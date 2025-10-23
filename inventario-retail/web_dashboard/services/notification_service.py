@@ -211,6 +211,48 @@ class NotificationService:
                     result["errors"].append(error_msg)
                     logger.error(error_msg)
 
+            # Broadcast via WebSocket si hay conexiones activas
+            try:
+                # Lazy import para evitar circular dependencies
+                from services.websocket_manager import get_websocket_manager
+                
+                manager = get_websocket_manager()
+                notification_data = {
+                    "id": notification_id,
+                    "type": notification_type.value,
+                    "subject": subject,
+                    "message": message,
+                    "priority": priority.value,
+                    "created_at": datetime.utcnow().isoformat()
+                }
+                
+                broadcast_result = await manager.broadcast_notification(
+                    user_id,
+                    notification_data
+                )
+                
+                if broadcast_result["sent"] > 0:
+                    result["channels_sent"].append("websocket")
+                    logger.info(
+                        f"📡 WebSocket broadcast successful",
+                        extra={
+                            "request_id": request_id,
+                            "user_id": user_id,
+                            "notification_id": notification_id,
+                            "sent": broadcast_result["sent"]
+                        }
+                    )
+            except Exception as e:
+                # WebSocket broadcasting es opcional, no fallar si no funciona
+                logger.warning(
+                    f"⚠️ WebSocket broadcast failed",
+                    extra={
+                        "request_id": request_id,
+                        "user_id": user_id,
+                        "error": str(e)
+                    }
+                )
+
             return result
 
         except Exception as e:
