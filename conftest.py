@@ -1,5 +1,11 @@
 import os
+import sys
 from pathlib import Path
+import pytest
+from fastapi.testclient import TestClient
+
+# Agregar el directorio de dashboard al path
+sys.path.insert(0, str(Path(__file__).parent / 'inventario-retail' / 'web_dashboard'))
 
 IGNORED_PATTERNS = [
     str(Path('inventario-retail/tests/agente_deposito')),  # servicios depósito fuera de alcance
@@ -16,3 +22,10 @@ def pytest_ignore_collect(path):  # type: ignore
         if pattern in p:
             return True
     return False
+
+
+@pytest.fixture
+def client():
+    """Fixture que proporciona TestClient para la aplicación FastAPI"""
+    from dashboard_app import app
+    return TestClient(app)

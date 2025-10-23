@@ -1,0 +1,779 @@
+<!-- OCR Preview Modal
+     Componente modal para validación de facturas OCR
+     Permite editar campos, ver confianza y warnings
+-->
+
+<div id="ocr-preview-modal" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeOCRPreview()"></div>
+    
+    <div class="modal-content">
+        <!-- Header -->
+        <div class="modal-header">
+            <h3 class="modal-title">📄 Preview Factura OCR</h3>
+            <button class="modal-close-btn" onclick="closeOCRPreview()" aria-label="Cerrar">
+                <span>×</span>
+            </button>
+        </div>
+        
+        <!-- Body -->
+        <div class="modal-body">
+            
+            <!-- Confidence Badge -->
+            <div class="confidence-container">
+                <div class="confidence-badge" id="confidence-badge">
+                    <div class="confidence-meter">
+                        <div class="confidence-bar" id="confidence-bar"></div>
+                    </div>
+                    <div class="confidence-info">
+                        <span class="confidence-label">Confianza OCR:</span>
+                        <span class="confidence-value" id="confidence-value">0%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Preview Data Table -->
+            <div class="preview-section">
+                <h4 class="section-title">📋 Datos Detectados</h4>
+                
+                <div class="preview-fields">
+                    <!-- Proveedor -->
+                    <div class="field-group">
+                        <label class="field-label">
+                            <span class="field-name">Proveedor</span>
+                            <span class="field-confidence" id="conf-proveedor"></span>
+                        </label>
+                        <div class="field-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="field-proveedor" 
+                                class="field-input editable-field"
+                                placeholder="Nombre del proveedor"
+                                readonly
+                            >
+                            <button class="field-edit-btn" onclick="editField('proveedor')" title="Editar">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Fecha -->
+                    <div class="field-group">
+                        <label class="field-label">
+                            <span class="field-name">Fecha</span>
+                            <span class="field-confidence" id="conf-fecha"></span>
+                        </label>
+                        <div class="field-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="field-fecha" 
+                                class="field-input editable-field"
+                                placeholder="YYYY-MM-DD"
+                                readonly
+                            >
+                            <button class="field-edit-btn" onclick="editField('fecha')" title="Editar">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="field-group">
+                        <label class="field-label">
+                            <span class="field-name">Total</span>
+                            <span class="field-confidence" id="conf-total"></span>
+                        </label>
+                        <div class="field-input-wrapper">
+                            <div class="currency-input">
+                                <span class="currency-symbol">$</span>
+                                <input 
+                                    type="number" 
+                                    id="field-total" 
+                                    class="field-input editable-field"
+                                    placeholder="0.00"
+                                    step="0.01"
+                                    readonly
+                                >
+                            </div>
+                            <button class="field-edit-btn" onclick="editField('total')" title="Editar">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Cantidad de Items -->
+                    <div class="field-group">
+                        <label class="field-label">
+                            <span class="field-name">Cantidad de Items</span>
+                            <span class="field-confidence" id="conf-items"></span>
+                        </label>
+                        <div class="field-input-wrapper">
+                            <input 
+                                type="number" 
+                                id="field-items-count" 
+                                class="field-input readonly"
+                                placeholder="0"
+                                readonly
+                            >
+                            <button class="field-detail-btn" onclick="toggleItemsDetail()" title="Ver detalles">👁️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Items Detail (Collapsible) -->
+            <div id="items-detail-section" class="items-detail-section" style="display: none;">
+                <h4 class="section-title">📦 Productos Detectados</h4>
+                <div id="items-detail-list" class="items-list">
+                    <!-- Items se generarán dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Warnings Section -->
+            <div id="ocr-warnings-section" class="warnings-section" style="display: none;">
+                <h4 class="section-title">⚠️ Advertencias</h4>
+                <ul id="ocr-warnings-list" class="warnings-list">
+                    <!-- Warnings se generarán dinámicamente -->
+                </ul>
+            </div>
+            
+            <!-- Suggestions Section -->
+            <div id="ocr-suggestions-section" class="suggestions-section" style="display: none;">
+                <h4 class="section-title">💡 Sugerencias</h4>
+                <ul id="ocr-suggestions-list" class="suggestions-list">
+                    <!-- Sugerencias se generarán dinámicamente -->
+                </ul>
+            </div>
+            
+        </div>
+        
+        <!-- Footer -->
+        <div class="modal-footer">
+            <div class="footer-actions">
+                <button class="btn btn-secondary" onclick="editAllFields()">
+                    ✏️ Editar Todo
+                </button>
+                <button class="btn btn-cancel" onclick="closeOCRPreview()">
+                    ❌ Cancelar
+                </button>
+                <button class="btn btn-primary" id="confirm-ocr-btn" onclick="confirmOCR()">
+                    ✅ Confirmar y Procesar
+                </button>
+            </div>
+            <div class="footer-info">
+                <small>ID: <span id="ocr-request-id">-</span></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inline Edit Mode Modal (para edición individual) -->
+<div id="inline-edit-modal" class="inline-edit-modal" style="display: none;">
+    <div class="inline-edit-content">
+        <div class="inline-edit-header">
+            <h4 id="inline-edit-title">Editar Campo</h4>
+            <button class="inline-close-btn" onclick="cancelInlineEdit()">×</button>
+        </div>
+        <div class="inline-edit-body">
+            <input type="text" id="inline-edit-input" class="inline-edit-input" placeholder="Ingresa el valor">
+        </div>
+        <div class="inline-edit-footer">
+            <button class="btn btn-cancel" onclick="cancelInlineEdit()">Cancelar</button>
+            <button class="btn btn-primary" onclick="confirmInlineEdit()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ============================================
+   OCR Preview Modal - Main Styles
+   ============================================ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease-out;
+    z-index: 2001;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   Modal Header
+   ============================================ */
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* ============================================
+   Modal Body
+   ============================================ */
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ============================================
+   Confidence Badge
+   ============================================ */
+
+.confidence-container {
+    margin-bottom: 24px;
+}
+
+.confidence-badge {
+    padding: 16px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.confidence-meter {
+    width: 100%;
+    height: 24px;
+    background-color: #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.confidence-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    min-width: 2px;
+}
+
+.confidence-bar.low {
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.confidence-bar.medium {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.confidence-bar.high {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.confidence-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.confidence-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.confidence-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #667eea;
+}
+
+/* ============================================
+   Preview Fields
+   ============================================ */
+
+.preview-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.field-name {
+    flex: 1;
+}
+
+.field-confidence {
+    font-size: 11px;
+    color: #999;
+    font-weight: 400;
+}
+
+.field-input-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.field-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s;
+    background-color: #f9fafb;
+}
+
+.field-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.field-input.readonly {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.currency-input {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    overflow: hidden;
+}
+
+.currency-symbol {
+    padding: 10px 12px;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.currency-input .field-input {
+    border: none;
+    background: transparent;
+    padding: 8px;
+    margin: 0;
+}
+
+.field-edit-btn,
+.field-detail-btn {
+    padding: 8px 10px;
+    border: none;
+    background-color: #f3f4f6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.field-edit-btn:hover,
+.field-detail-btn:hover {
+    background-color: #e5e7eb;
+    transform: scale(1.05);
+}
+
+/* ============================================
+   Items Detail Section
+   ============================================ */
+
+.items-detail-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item-entry {
+    padding: 10px;
+    background-color: white;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+    font-size: 13px;
+}
+
+.item-entry-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+.item-entry-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* ============================================
+   Warnings & Suggestions
+   ============================================ */
+
+.warnings-section,
+.suggestions-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.warnings-section {
+    background-color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+}
+
+.suggestions-section {
+    background-color: #dbeafe;
+    border-left: 4px solid #3b82f6;
+}
+
+.warnings-list,
+.suggestions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.warnings-list li,
+.suggestions-list li {
+    padding: 8px 0;
+    font-size: 13px;
+    color: #374151;
+}
+
+.warnings-list li::before {
+    content: "⚠️ ";
+    margin-right: 8px;
+    font-weight: 600;
+}
+
+.suggestions-list li::before {
+    content: "💡 ";
+    margin-right: 8px;
+    font-weight: 600;
+}
+
+/* ============================================
+   Modal Footer
+   ============================================ */
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.footer-info {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563;
+}
+
+.btn-cancel {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.btn-cancel:hover {
+    background-color: #d1d5db;
+}
+
+/* ============================================
+   Inline Edit Modal
+   ============================================ */
+
+.inline-edit-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 3000;
+    min-width: 300px;
+    animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.inline-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.inline-edit-header h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #111827;
+}
+
+.inline-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.inline-edit-body {
+    margin-bottom: 20px;
+}
+
+.inline-edit-input {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.inline-edit-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.inline-edit-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .preview-fields {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .footer-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.hidden {
+    display: none !important;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+.mb-4 {
+    margin-bottom: 16px;
+}
+</style>

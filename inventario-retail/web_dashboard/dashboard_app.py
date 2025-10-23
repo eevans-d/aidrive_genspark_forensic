@@ -1159,6 +1159,221 @@ async def search_productos(
         )
 
 
+# ============================================
+# OCR Preview & Processing Endpoints
+# ============================================
+
+@app.post("/api/ocr/process")
+async def process_ocr(request: Request):
+    """
+    Procesar imagen OCR y retornar preview con datos extractados
+    
+    Body: {
+        "image_base64": "...",
+        "proveedor_id": 1,
+        "request_id": "..."
+    }
+    
+    Response: {
+        "request_id": "...",
+        "confidence": 92.5,
+        "proveedor": "Distribuidora XYZ",
+        "fecha": "2024-10-20",
+        "total": 1500.00,
+        "items": [
+            {"name": "Producto A", "quantity": 5, "price": 100, "confidence": 95},
+            ...
+        ],
+        "warnings": [...],
+        "suggestions": [...]
+    }
+    """
+    request_id = str(uuid.uuid4())[:8]
+    start_time = time.time()
+    
+    try:
+        data = await request.json()
+        image_b64 = data.get("image_base64", "")
+        proveedor_id = data.get("proveedor_id")
+        
+        if not image_b64:
+            return JSONResponse(
+                status_code=400,
+                content={"error": "image_base64 requerido"}
+            )
+        
+        # Simular procesamiento OCR
+        # En producción, llamar a Agente Negocio: http://agente-negocio:8002/ocr/extract
+        ocr_result = {
+            "request_id": request_id,
+            "confidence": 87.3,  # Simulado
+            "proveedor": "Distribuidora ABC S.A.",
+            "proveedor_confidence": 92.0,
+            "fecha": datetime.now().strftime("%Y-%m-%d"),
+            "fecha_confidence": 85.0,
+            "total": 1250.50,
+            "total_confidence": 88.0,
+            "items": [
+                {
+                    "name": "Producto A",
+                    "quantity": 10,
+                    "price": 50.0,
+                    "confidence": 90.0
+                },
+                {
+                    "name": "Producto B",
+                    "quantity": 5,
+                    "price": 150.0,
+                    "confidence": 88.0
+                }
+            ],
+            "items_count": 2,
+            "items_count_confidence": 85.0,
+            "warnings": [],
+            "suggestions": []
+        }
+        
+        # Agregar warnings según confianza
+        if ocr_result["confidence"] < 80:
+            ocr_result["warnings"].append("Baja confianza general en el OCR. Revisa los datos cuidadosamente.")
+        
+        if ocr_result["proveedor_confidence"] < 80:
+            ocr_result["warnings"].append("Proveedor detectado con baja confianza.")
+        
+        if ocr_result["total_confidence"] < 85:
+            ocr_result["warnings"].append("Total calculado con baja precisión. Verifica manualmente.")
+        
+        # Agregar sugerencias
+        if len(ocr_result["items"]) == 0:
+            ocr_result["suggestions"].append("No se detectaron items en la factura. Considerar agregar manualmente.")
+        
+        if ocr_result["items_count"] > 50:
+            ocr_result["suggestions"].append("Muchos items detectados. Considera dividir en múltiples facturas.")
+        
+        duration_ms = (time.time() - start_time) * 1000
+        
+        logger.info(
+            "✅ OCR procesado",
+            extra={
+                "request_id": request_id,
+                "confidence": ocr_result["confidence"],
+                "items_count": len(ocr_result["items"]),
+                "duration_ms": round(duration_ms, 2)
+            }
+        )
+        
+        return {
+            **ocr_result,
+            "duration_ms": round(duration_ms, 2)
+        }
+        
+    except Exception as e:
+        import traceback
+        logger.error(
+            "❌ Error procesando OCR",
+            extra={
+                "request_id": request_id,
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            }
+        )
+        return JSONResponse(
+            status_code=500,
+            content={
+                "request_id": request_id,
+                "error": "Error procesando OCR",
+                "details": str(e)
+            }
+        )
+
+
+@app.post("/api/ocr/confirm")
+async def confirm_ocr(request: Request):
+    """
+    Confirmar y guardar datos OCR validados
+    
+    Body: {
+        "request_id": "...",
+        "proveedor": "...",
+        "fecha": "...",
+        "total": 1500.00,
+        "items": [...],
+        "confidence": 92.5,
+        "edited_fields": ["proveedor", "total"]
+    }
+    
+    Response: {
+        "success": true,
+        "request_id": "...",
+        "document_id": 123,
+        "message": "Factura confirmada y guardada"
+    }
+    """
+    try:
+        data = await request.json()
+        request_id = data.get("request_id")
+        proveedor = data.get("proveedor")
+        fecha = data.get("fecha")
+        total = data.get("total")
+        items = data.get("items", [])
+        confidence = data.get("confidence", 90.0)  # Valor por defecto 90%
+        edited_fields = data.get("edited_fields", [])
+        
+        # Validaciones básicas
+        if not all([request_id, proveedor, fecha, total]):
+            return JSONResponse(
+                status_code=400,
+                content={"error": "Faltan campos requeridos"}
+            )
+        
+        # Aquí se guardaría en la BD
+        # Por ahora, simular guardado
+        document_id = abs(hash(request_id)) % 100000
+        
+        logger.info(
+            "✅ OCR confirmado y guardado",
+            extra={
+                "request_id": request_id,
+                "proveedor": proveedor,
+                "total": total,
+                "document_id": document_id,
+                "edited_fields": edited_fields,
+                "confidence": confidence
+            }
+        )
+        
+        # Registrar en métricas locales
+        with _metrics_lock:
+            _metrics['requests_total'] += 1
+            if confidence < 85:
+                _metrics['errors_total'] += 1  # Confianza baja como "error"
+        
+        return {
+            "success": True,
+            "request_id": request_id,
+            "document_id": document_id,
+            "message": f"✅ Factura confirmada (confianza: {confidence:.1f}%)",
+            "edited_fields_count": len(edited_fields)
+        }
+        
+    except Exception as e:
+        import traceback
+        logger.error(
+            "❌ Error confirmando OCR",
+            extra={
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            }
+        )
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Error confirmando OCR",
+                "details": str(e)
+            }
+        )
+
+
 if __name__ == "__main__":
     import uvicorn
     
