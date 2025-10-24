@@ -8,11 +8,26 @@ import uuid
 import logging
 from datetime import datetime
 from typing import Dict, Any, Optional, List
+from importlib import import_module
 
 # ✅ Path-based import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from forensic_analysis.phases.phase_1_data_validation import Phase1DataValidation
+# Dynamic imports para manejar hyphen en 'inventario-retail'
+_phase1_mod = import_module('inventario-retail.forensic_analysis.phases.phase_1_data_validation')
+Phase1DataValidation = _phase1_mod.Phase1DataValidation
+
+_phase2_mod = import_module('inventario-retail.forensic_analysis.phases.phase_2_consistency_check')
+Phase2ConsistencyCheck = _phase2_mod.Phase2ConsistencyCheck
+
+_phase3_mod = import_module('inventario-retail.forensic_analysis.phases.phase_3_pattern_analysis')
+Phase3PatternAnalysis = _phase3_mod.Phase3PatternAnalysis
+
+_phase4_mod = import_module('inventario-retail.forensic_analysis.phases.phase_4_performance_metrics')
+Phase4PerformanceMetrics = _phase4_mod.Phase4PerformanceMetrics
+
+_phase5_mod = import_module('inventario-retail.forensic_analysis.phases.phase_5_reporting')
+Phase5Reporting = _phase5_mod.Phase5Reporting
 
 logger = logging.getLogger("forensic.orchestrator")
 
@@ -26,28 +41,26 @@ class ForensicOrchestrator:
     - Gestionar errores y rollback
     - Generar reporte ejecutivo completo
     
-    Fases:
-    1. Data Validation (implementada)
-    2. Anomaly Detection (TODO v1.1 - Issue #TD-006)
-    3. Pattern Analysis (TODO v1.1 - Issue #TD-006)
-    4. Correlation (TODO v1.1 - Issue #TD-006)
-    5. Reporting (TODO v1.1 - Issue #TD-006)
+    Fases Implementadas (v1.0 MVP):
+    1. Data Validation - Validación de estructura y valores
+    2. Consistency Check - Integridad referencial
+    3. Pattern Analysis - Detección de anomalías y patrones
+    4. Performance Metrics - Análisis de KPIs y bottlenecks
+    5. Reporting - Consolidación y reportes ejecutivos
     """
     
     def __init__(self):
         """
-        Inicializa orquestador con fases disponibles.
+        Inicializa orquestador con todas las 5 fases.
         
-        v1.0: Solo Phase1
-        v1.1: Fases 2-5 completas
+        v1.0: Phases 1-5 complete implementation
         """
         self.phases = [
             Phase1DataValidation(),
-            # TODO(v1.1): Issue #TD-006 - Implementar fases 2-5
-            # Phase2AnomalyDetection(),
-            # Phase3PatternAnalysis(),
-            # Phase4Correlation(),
-            # Phase5Reporting()
+            Phase2ConsistencyCheck(),
+            Phase3PatternAnalysis(),
+            Phase4PerformanceMetrics(),
+            Phase5Reporting()
         ]
         
         logger.info(f"ForensicOrchestrator initialized with {len(self.phases)} phase(s)")

@@ -6,11 +6,13 @@ import sys
 import os
 from typing import Dict, Any, List
 import logging
+from importlib import import_module
 
 # ✅ Path-based import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
-from forensic_analysis.phases.base_phase import ForensicPhase
+_base_mod = import_module('inventario-retail.forensic_analysis.phases.base_phase')
+ForensicPhase = _base_mod.ForensicPhase
 
 logger = logging.getLogger("forensic.phase1")
 
