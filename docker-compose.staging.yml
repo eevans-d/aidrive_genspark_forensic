@@ -209,6 +209,7 @@ services:
       - "9000:8080"
     volumes:
       - ./inventario-retail/web_dashboard:/app/web_dashboard:ro
+      - ./inventario-retail/forensic_analysis:/app/forensic_analysis:ro
       - ./inventario-retail/shared:/app/shared:ro
       - ./logs/staging:/app/logs
     depends_on:

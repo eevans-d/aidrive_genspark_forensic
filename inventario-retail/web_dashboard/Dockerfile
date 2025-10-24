@@ -32,7 +32,7 @@ RUN mkdir -p /root/.pip && \
 COPY web_dashboard/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt
 
-# Copiar código con ownership
+# Copiar código con ownership (incluir forensic module)
 COPY --chown=dashboarduser:dashboarduser . /app
 
 # Cambiar a usuario no-root
