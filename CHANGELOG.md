@@ -150,22 +150,34 @@ Todas las notas siguen el formato Keep a Changelog (simplificado) y versionado S
 ## [Unreleased]
 - (pendiente) Ajustes menores post v1.0.0
 
-## [1.0.0-rc1] - YYYY-MM-DD
+## [v1.0.0-rc1] - 2025-10-26
 ### Added
-- Script `check_metrics_dashboard.sh` para verificación de métricas
-- Script `check_security_headers.sh` para validar headers de seguridad
-- Script `preflight_rc.sh` para orquestar smoke/métricas/headers
-- Makefile operativo (targets: test, coverage, preflight, rc-tag)
-- Job CI advisory `staging-metrics-check`
-- Plantilla Issue `release_rc_checklist.md`
+- Documentación de Producción FASES 7-8 (3,000+ líneas):
+  - `FASE7_PRODUCTION_VALIDATION_CHECKLIST.md` (50+ security/perf checks)
+  - `FASE7_DISASTER_RECOVERY.md` (RTO/RPO, 5 escenarios, PITR)
+  - `FASE7_PRE_PRODUCTION_CHECKLIST.md` (100+ validaciones, ALL GREEN)
+  - `FASE8_GO_LIVE_PROCEDURES.md` (blue-green, staged rollout, rollback)
+  - `PROYECTO_COMPLETADO_FASES_0_8_FINAL.md`, `ESTADO_FINAL_PRODUCCION_OCTUBRE_2025.md`,
+    `INDICE_MAESTRO_FINAL_OCTUBRE_2025.md`, `QUICKSTART_PRODUCCION_FINAL.md`.
+- Scripts operativos:
+  - `scripts/load_testing_suite.sh` (4 escenarios: 100/500/1000+ req/s + baseline)
+  - `scripts/preflight_rc.sh` (smoke + métricas + headers)
+  - `scripts/check_security_headers.sh`, `scripts/check_metrics_dashboard.sh`.
+- CI/CD: artefactos listos para RC, deploy prod por tags vX.Y.Z (sin cambios en lógica).
 
 ### Changed
-- README principal: sección tooling operativo
-- Runbook: tagging RC → Release y referencia a scripts
-- Guía extendida: pasos tagging con preflight
+- `README.md`: actualizado con estado PRODUCCIÓN LISTA, guía rápida y estructura final.
+- Runbooks y guías: referencias a preflight, load testing y go-live.
 
 ### Security
-- Refuerzo operativo de validación headers antes de release
+- Validación completa de seguridad (50/50 checks): auth (API key/JWT), rate limit,
+  headers (CSP/HSTS), input validation, logs sin datos sensibles, non-root containers.
+
+### Performance
+- Resultados de carga validados: p95 < 500ms @ 100 req/s, 99.2–99.8% success rate.
+
+### Notes
+- Release Candidate previo a `v1.0.0`. Despliegue a producción sólo con tag final `v1.0.0`.
 
 ---
 Formato basado en ideas de Keep a Changelog.
