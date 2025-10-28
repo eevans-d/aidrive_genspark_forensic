@@ -5,8 +5,13 @@ import importlib.util
 from pathlib import Path
 from fastapi.testclient import TestClient
 
-os.environ.setdefault("DASHBOARD_API_KEY", "test-key")
-os.environ.setdefault("DASHBOARD_RATELIMIT_ENABLED", "false")
+# Forzar API key y desactivar rate limit para este módulo de pruebas
+os.environ["DASHBOARD_API_KEY"] = "test-key"
+os.environ["DASHBOARD_RATELIMIT_ENABLED"] = "false"
+
+# Helper para leer la API key efectiva del entorno en cada request
+def _key():
+    return os.getenv("DASHBOARD_API_KEY", "test-key")
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
@@ -34,17 +39,17 @@ def test_dashboard_home_error_branch(monkeypatch):
 
 def test_api_top_products_clamp_and_filters():
     # limit fuera de rango -> debe clamp a 100
-    r = client.get("/api/top-products?limit=9999", headers={"X-API-Key": "test-key"})
+    r = client.get("/api/top-products?limit=9999", headers={"X-API-Key": _key()})
     assert r.status_code == 200
     assert isinstance(r.json(), list)
 
     # limit negativo -> clamp a 1
-    r2 = client.get("/api/top-products?limit=-5", headers={"X-API-Key": "test-key"})
+    r2 = client.get("/api/top-products?limit=-5", headers={"X-API-Key": _key()})
     assert r2.status_code == 200
 
 
 def test_metrics_endpoint_generates_lines():
-    r = client.get("/metrics", headers={"X-API-Key": "test-key"})
+    r = client.get("/metrics", headers={"X-API-Key": _key()})
     assert r.status_code == 200
     body = r.text.splitlines()
     assert any(l.startswith("dashboard_requests_total") for l in body)
@@ -55,7 +60,7 @@ def test_csv_exports_and_error_paths(monkeypatch):
     def providers_error():
         return [{"error": "falla"}]
     monkeypatch.setattr(analytics, "get_provider_stats", providers_error)
-    r = client.get("/api/export/providers.csv", headers={"X-API-Key": "test-key"})
+    r = client.get("/api/export/providers.csv", headers={"X-API-Key": _key()})
     assert r.status_code == 200
     assert "error,message" in r.text
 
@@ -66,7 +71,7 @@ def test_csv_exports_and_error_paths(monkeypatch):
             {"producto": "B", "cantidad_total": 4, "pedidos": 2, "proveedor": "P2"},
         ]
     monkeypatch.setattr(analytics, "get_top_products", top_products_mock)
-    r2 = client.get("/api/export/top-products.csv", headers={"X-API-Key": "test-key"})
+    r2 = client.get("/api/export/top-products.csv", headers={"X-API-Key": _key()})
     assert r2.status_code == 200
     assert "producto,cantidad_total,pedidos,proveedor" in r2.text
 
@@ -75,7 +80,7 @@ def test_health_check_error_branch(monkeypatch):
     def boom():
         raise RuntimeError("db caída")
     monkeypatch.setattr(analytics, "get_dashboard_summary", boom)
-    r = client.get("/health", headers={"X-API-Key": "test-key"})
+    r = client.get("/health", headers={"X-API-Key": _key()})
     # Health sin API key estricta (aquí no se exige) pero devolvemos 503 por la excepción
     assert r.status_code == 503
     assert r.json()["status"] == "unhealthy"
