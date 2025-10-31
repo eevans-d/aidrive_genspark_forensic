@@ -1,0 +1,55 @@
+{
+  "todos": {
+    "Coordinator": {
+      "1": {
+        "id": "1",
+        "content": "Acceso y mapeo inicial del repositorio GitHub",
+        "details": "1. Conectar al repositorio 'aidrive_genspark_forensic' usando GitHub MCP. 2. Mapear estructura completa del proyecto. 3. Identificar archivos principales, configuración, dependencias.",
+        "status": "pending",
+        "priority": "high"
+      },
+      "2": {
+        "id": "2",
+        "content": "Análisis técnico exhaustivo del código",
+        "details": "1. Análisis de arquitectura y diseño. 2. Revisión de calidad del código. 3. Identificación de errores, bugs y conflictos. 4. Evaluación de dependencias y vulnerabilidades. 5. Análisis de patrones y mejores prácticas.",
+        "status": "pending",
+        "priority": "high"
+      },
+      "3": {
+        "id": "3",
+        "content": "Evaluación de infraestructura y deployment",
+        "details": "1. Revisar configuración de deployment actual. 2. Evaluar CI/CD pipelines. 3. Analizar configuraciones de base de datos y servicios externos. 4. Identificar gaps en automatización.",
+        "status": "pending",
+        "priority": "high"
+      },
+      "4": {
+        "id": "4",
+        "content": "Análisis de documentación y testing",
+        "details": "1. Evaluar completitud de documentación. 2. Revisar cobertura de tests. 3. Analizar calidad de comentarios y docstrings. 4. Verificar existencia de README, API docs, etc.",
+        "status": "pending",
+        "priority": "medium"
+      },
+      "5": {
+        "id": "5",
+        "content": "Diagnóstico integral y identificación de problemas",
+        "details": "1. Consolidar todos los hallazgos. 2. Clasificar problemas por criticidad. 3. Identificar oportunidades de optimización. 4. Evaluar cumplimiento con estándares de producción.",
+        "status": "pending",
+        "priority": "high"
+      },
+      "6": {
+        "id": "6",
+        "content": "Diseño de hoja de ruta y blueprint",
+        "details": "1. Crear roadmap detallado hasta producción. 2. Definir fases y milestones. 3. Estimar tiempos y recursos. 4. Priorizar tareas críticas. 5. Diseñar checklist completo de producción.",
+        "status": "pending",
+        "priority": "high"
+      },
+      "7": {
+        "id": "7",
+        "content": "Generación de reporte final ejecutivo",
+        "details": "1. Compilar análisis completo en reporte ejecutivo. 2. Incluir hallazgos, recomendaciones y roadmap. 3. Crear visualizaciones de progreso. 4. Entregar blueprint accionable.",
+        "status": "pending",
+        "priority": "high"
+      }
+    }
+  }
+}
