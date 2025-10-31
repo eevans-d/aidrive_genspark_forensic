@@ -3,43 +3,50 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "Implementación Sistema Mini Market - Desarrollo Completo",
-        "details": "DESARROLLAR sistema agéntico completo para Mini Market según roadmap generado. FASE 1: Fundación - Base de datos, APIs Maxiconsumo, precios automáticos. FASE 2: Stock Inteligente - Alertas, asignación automática. FASE 3: Analytics - Dashboard, análisis predictivo. FASE 4: Go-Live - Despliegue producción. Stack: Supabase + React + Automatización",
-        "status": "pending",
+        "content": "Implementación Sistema Mini Market + Depósito - Desarrollo Completo",
+        "details": "DESARROLLAR sistema agéntico completo Mini Market + Depósito + Tareas. FASE 1: Fundación - Base datos, APIs Maxiconsumo, precios automáticos. FASE 2: Stock + Depósito - Alertas, gestión entradas/salidas depósito. FASE 3: Dashboard + Tareas - Interfaz completa, sistema tareas pendientes, notificaciones. FASE 4: Go-Live - Despliegue producción.",
+        "status": "in_progress",
         "priority": "high"
       },
       "2": {
         "id": "2",
         "content": "Obtener credenciales Supabase",
-        "details": "OBTENER credenciales de Supabase para base de datos, autenticación, edge functions, y storage del sistema Mini Market. ESENCIAL para desarrollo backend.",
+        "details": "OBTENER credenciales de Supabase para base de datos, autenticación, edge functions, y storage del sistema Mini Market + Depósito. ESENCIAL para desarrollo backend.",
         "status": "pending",
         "priority": "high"
       },
       "3": {
         "id": "3",
-        "content": "Configurar base de datos Mini Market",
-        "details": "CREAR esquema base de datos: tabla proveedores, tabla productos, tabla precios_historicos, tabla stock_deposito, tabla productos_faltantes, tabla asignaciones_proveedores. Incluir índices y relaciones.",
+        "content": "Configurar base de datos completa",
+        "details": "CREAR esquema base de datos: proveedores, productos, precios_historicos, stock_deposito, productos_faltantes, tareas_pendientes, movimientos_deposito, personal, notificaciones. Incluir índices y relaciones.",
         "status": "pending",
         "priority": "high"
       },
       "4": {
         "id": "4",
         "content": "Desarrollar APIs integración Maxiconsumo",
-        "details": "CREAR edge functions para scraping/automación de precios desde Maxiconsumo Necochea. Sistema de actualización automática de precios, manejo de errores, logging, y notificaciones.",
+        "details": "CREAR edge functions para scraping/automación de precios desde Maxiconsumo Necochea. Sistema actualización automática, manejo errores, logging, notificaciones.",
         "status": "pending",
         "priority": "high"
       },
       "5": {
         "id": "5",
-        "content": "Sistema gestión stock inteligente",
-        "details": "DESARROLLAR sistema de alertas automáticas de stock bajo, gestión productos faltantes, asignación automática a proveedores según base de datos configurada.",
+        "content": "Sistema gestión stock inteligente + Depósito",
+        "details": "DESARROLLAR alertas automáticas stock bajo, gestión productos faltantes, asignación automática proveedores, sistema entradas/salidas depósito, actualización automática stock.",
         "status": "pending",
         "priority": "high"
       },
       "6": {
         "id": "6",
-        "content": "Dashboard operativo Mini Market",
-        "details": "CREAR interfaz web completa: gestión precios, visualización stock, dashboard proveedores, reportes automáticos, sistema de alertas, gestión productos faltantes.",
+        "content": "Sistema tareas pendientes con notificaciones",
+        "details": "CREAR sistema tareas: creación por personal, notificaciones automáticas cada 1-2h hasta completar, registro quién completó/canceló, historial seguimiento, escalación.",
+        "status": "pending",
+        "priority": "high"
+      },
+      "7": {
+        "id": "7",
+        "content": "Dashboard operativo completo",
+        "details": "CREAR interfaz web: gestión precios, stock, dashboard proveedores, reportes automáticos, sistema alertas, gestión productos faltantes, módulo tareas, módulo depósito, módulo personal.",
         "status": "pending",
         "priority": "high"
       }
