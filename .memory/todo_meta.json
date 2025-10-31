@@ -3,37 +3,51 @@
     "Coordinator": {
       "1": {
         "id": "1",
-        "content": "Sprint 4 Optimizado: Migración de Datos con Catálogo Real",
-        "details": "1. Analizar catálogo completo (32 categorías, cientos de productos reales)\n2. Diseñar estrategia de migración masiva\n3. Implementar lógica de redondeo de precios (terminan en 0 o 00)\n4. Poblar base de datos con productos, categorías, proveedores\n5. Validar integridad de datos migrados\n6. Generar reporte de migración",
-        "status": "completed",
+        "content": "Sprint 5: Implementación de APIs Core del Sistema",
+        "details": "1. Análisis de especificaciones técnicas del Sprint 2\n2. Desarrollo de APIs RESTful para productos, categorías, proveedores\n3. Implementación de APIs para precios y pedidos\n4. APIs para gestión de inventario y stock\n5. Sistema de autenticación y autorización\n6. Testing completo de APIs\n7. Documentación de APIs",
+        "status": "pending",
         "priority": "high"
       },
       "2": {
         "id": "2",
-        "content": "Análisis del Catálogo Real",
-        "details": "1. Procesar archivo listas_precios_mini_m.md\n2. Extraer 32 categorías organizadas\n3. Identificar productos únicos por categoría\n4. Mapear estructura de datos necesaria\n5. Preparar datos para migración",
-        "status": "completed",
+        "content": "Análisis de Especificaciones APIs",
+        "details": "1. Revisar docs/sprint_2/apis_internas_especificacion.md\n2. Analizar endpoints requeridos\n3. Definir estructura de datos para requests/responses\n4. Mapear APIs con base de datos actual\n5. Identificar validaciones necesarias",
+        "status": "pending",
         "priority": "high"
       },
       "3": {
         "id": "3",
-        "content": "Implementación de Lógica de Redondeo",
-        "details": "1. Crear función SQL para redondear precios\n2. Aplicar regla: precios terminan en 0 o 00\n3. Implementar en funciones PL/pgSQL existentes\n4. Validar con ejemplos: 2300, 2350, 4500, 8600, 12300, 43200",
-        "status": "completed",
+        "content": "Desarrollo APIs de Productos y Categorías",
+        "details": "1. GET /api/categorias - Listar categorías\n2. GET /api/productos - Listar productos con filtros\n3. GET /api/productos/{id} - Obtener producto específico\n4. POST /api/productos - Crear nuevo producto\n5. PUT /api/productos/{id} - Actualizar producto\n6. DELETE /api/productos/{id} - Eliminar producto\n7. GET /api/productos/categoria/{categoria_id} - Productos por categoría",
+        "status": "pending",
         "priority": "high"
       },
       "4": {
         "id": "4",
-        "content": "Migración Masiva de Datos",
-        "details": "1. Insertar 32 categorías en tabla categorias\n2. Migrar productos con datos completos\n3. Configurar proveedor 'Maxiconsumo Necochea'\n4. Poblar precios_proveedor con estructura\n5. Crear datos de prueba para testing",
-        "status": "completed",
+        "content": "Desarrollo APIs de Proveedores y Precios",
+        "details": "1. GET /api/proveedores - Listar proveedores\n2. GET /api/precios - Listar precios vigentes\n3. POST /api/precios - Asignar precio (con redondeo automático)\n4. PUT /api/precios/{id} - Actualizar precio\n5. GET /api/precios/producto/{producto_id} - Precios por producto\n6. GET /api/precios/proveedor/{proveedor_id} - Precios por proveedor",
+        "status": "pending",
         "priority": "high"
       },
       "5": {
         "id": "5",
-        "content": "Validación y Reportes",
-        "details": "1. Verificar integridad referencial\n2. Probar funciones PL/pgSQL con datos reales\n3. Validar triggers de auditoría\n4. Generar reporte de migración\n5. Documentar proceso completado",
-        "status": "completed",
+        "content": "APIs de Gestión de Inventario",
+        "details": "1. GET /api/stock - Consultar stock disponible\n2. POST /api/stock/movimiento - Registrar movimiento de stock\n3. GET /api/stock/producto/{id} - Stock por producto\n4. GET /api/stock/minimo - Productos bajo stock mínimo\n5. POST /api/stock/ajuste - Ajustar stock (con auditoría)\n6. GET /api/deposito - Consulta de depósito",
+        "status": "pending",
+        "priority": "high"
+      },
+      "6": {
+        "id": "6",
+        "content": "Sistema de Autenticación y Seguridad",
+        "details": "1. Implementar JWT tokens con Supabase Auth\n2. Crear roles: admin, deposito, ventas\n3. Middleware de autorización por endpoint\n4. Validación de permisos por rol\n5. Auditoría de accesos a APIs\n6. Rate limiting y seguridad",
+        "status": "pending",
+        "priority": "high"
+      },
+      "7": {
+        "id": "7",
+        "content": "Testing y Documentación de APIs",
+        "details": "1. Testing unitario de cada endpoint\n2. Testing de integración\n3. Testing de autenticación\n4. Generar documentación OpenAPI 3.1\n5. Crear colección Postman\n6. Documentar ejemplos de uso",
+        "status": "pending",
         "priority": "medium"
       }
     }
