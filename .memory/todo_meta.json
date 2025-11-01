@@ -1,54 +1,47 @@
 {
   "todos": {
     "Coordinator": {
-      "6.1": {
-        "id": "6.1",
-        "content": "Investigar sitio web de Maxiconsumo Necochea",
-        "details": "1. Analizar estructura del sitio web\n2. Identificar productos y categorías disponibles\n3. Determinar método de scraping óptimo\n4. Documentar endpoints y patrones de datos\n5. Crear plan de extracción de precios",
-        "status": "completed",
-        "priority": "high"
-      },
-      "6.2": {
-        "id": "6.2",
-        "content": "Implementar web scraper avanzado",
-        "details": "1. Crear scraper para sitio de Maxiconsumo\n2. Manejar diferentes formatos de productos\n3. Implementar rate limiting y buenas prácticas\n4. Crear sistema de detección de cambios\n5. Manejar errores y reintentos automáticos",
-        "status": "completed",
-        "priority": "high"
-      },
-      "6.3": {
-        "id": "6.3",
-        "content": "Sistema de comparación de precios",
-        "details": "1. Crear tabla de precios proveedores\n2. Implementar lógica de comparación\n3. Identificar mejores precios por producto\n4. Generar alertas de cambios significativos\n5. Crear dashboard de comparación",
-        "status": "completed",
-        "priority": "medium"
-      },
-      "6.4": {
-        "id": "6.4",
-        "content": "API para consulta de precios del proveedor",
-        "details": "1. GET /proveedor/precios - Lista precios actuales\n2. GET /proveedor/productos - Productos disponibles\n3. GET /proveedor/comparacion - Comparación con sistema\n4. POST /proveedor/sincronizar - Trigger sincronización manual\n5. Documentar endpoints en OpenAPI",
-        "status": "completed",
-        "priority": "medium"
-      },
-      "6.5": {
-        "id": "6.5",
-        "content": "Sistema de cron jobs automático",
-        "details": "1. Configurar job diario para actualización de precios\n2. Job semanal para análisis de tendencias\n3. Job de alertas en tiempo real\n4. Configurar notificaciones por email/SMS\n5. Dashboard de monitoreo de tareas",
-        "status": "pending",
-        "priority": "medium"
-      },
-      "6.6": {
-        "id": "6.6",
-        "content": "Testing con datos reales de Maxiconsumo",
-        "details": "1. Testing del scraper con sitio real\n2. Validar extracción de precios\n3. Probar sistema de alertas\n4. Testing de cron jobs\n5. Documentar métricas y performance",
-        "status": "pending",
-        "priority": "high"
-      },
       "6.7": {
         "id": "6.7",
-        "content": "Documentación completa Sprint 6",
-        "details": "1. Documentar API endpoints\n2. Guía de configuración de scraping\n3. Manual de troubleshooting\n4. Métricas y KPIs del sistema\n5. Plan de mantenimiento y actualización",
+        "content": "META-ANÁLISIS EXHAUSTIVO DEL SISTEMA",
+        "details": "1. Auditoría completa del código (997 líneas scraper + 910 líneas API)\n2. Análisis de arquitectura y patrones de diseño\n3. Revisión de seguridad y vulnerabilidades\n4. Análisis de performance y bottlenecks\n5. Validación de escalabilidad y robustez\n6. Detección de code smells y anti-patrones\n7. Análisis de dependencias y riesgos\n8. Evaluación de maintainability y extensibilidad",
         "status": "completed",
-        "priority": "low"
+        "priority": "high"
+      },
+      "6.8": {
+        "id": "6.8",
+        "content": "TESTING AVANZADO Y VALIDACIÓN",
+        "details": "1. Unit testing exhaustivo (95% coverage mínimo)\n2. Integration testing completo\n3. Performance testing (carga, stress, endurance)\n4. Security testing (penetration, injection, authentication)\n5. Edge cases testing y boundary conditions\n6. Regression testing suite\n7. Cross-browser compatibility testing\n8. API contract testing y schema validation\n9. Database integrity testing\n10. Error handling y recovery testing",
+        "status": "completed",
+        "priority": "high"
+      },
+      "6.9": {
+        "id": "6.9",
+        "content": "OPTIMIZACIÓN Y MEJORA DE ROBUSTEZ",
+        "details": "1. Optimización de performance del web scraper\n2. Mejora de rate limiting y anti-detection\n3. Optimización de queries SQL y funciones PL/pgSQL\n4. Implementación de caching inteligente\n5. Mejora de error handling y logging\n6. Implementación de circuit breakers\n7. Mejora de memory management\n8. Optimización de edge functions deployment\n9. Implementación de retry logic avanzado\n10. Mejora de data validation y sanitization",
+        "status": "completed",
+        "priority": "high"
+      },
+      "6.10": {
+        "id": "6.10",
+        "content": "COMPLETAR CRON JOBS AUTOMÁTICOS",
+        "details": "1. Job diario de actualización de precios (02:00 AM)\n2. Job semanal de análisis de tendencias (Domingos 03:00)\n3. Job de alertas en tiempo real (changes > 15%)\n4. Sistema de notificaciones (email + SMS)\n5. Dashboard de monitoreo de tareas\n6. Logs centralizados y rotación\n7. Health checks automáticos\n8. Recovery automático en caso de fallos\n9. Escalabilidad horizontal de jobs\n10. Documentación completa de cron jobs",
+        "status": "pending",
+        "priority": "high"
+      },
+      "6.11": {
+        "id": "6.11",
+        "content": "TESTING CON DATOS REALES MAXICONSUMO",
+        "details": "1. Scraping completo del catálogo Maxiconsumo\n2. Validación de extracción de precios en tiempo real\n3. Testing de detección de cambios y actualizaciones\n4. Validación de sistema de alertas automático\n5. Testing de sincronización bidireccional\n6. Performance testing con +40,000 productos\n7. Validación de accuracy de datos (95%+ mínimo)\n8. Testing de límites y rate limiting\n9. Validación de manejo de errores en producción\n10. Documentación de métricas reales de producción",
+        "status": "pending",
+        "priority": "high"
+      },
+      "6.12": {
+        "id": "6.12",
+        "content": "VALIDACIÓN Y DOCUMENTACIÓN FINAL",
+        "details": "1. Auditoría final de cumplimiento de requerimientos\n2. Documentación técnica completa actualizada\n3. Guías de troubleshooting expandidas\n4. Runbooks de operaciones y mantenimiento\n5. Métricas y KPIs documentados\n6. Plan de monitoreo y alertas\n7. Procedimientos de backup y recovery\n8. Guías de deployment y rollback\n9. Documentación de APIs actualizada\n10. Training materials para usuarios finales",
+        "status": "pending",
+        "priority": "medium"
       }
     }
   }

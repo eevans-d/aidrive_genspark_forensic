@@ -1,0 +1,53 @@
+{
+  "name": "mini-market-sprint6-testing-suite",
+  "version": "1.0.0",
+  "description": "Sistema de Testing Exhaustivo - Mini Market Sprint 6",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:unit": "jest tests/unit --coverage",
+    "test:integration": "jest tests/integration",
+    "test:performance": "jest tests/performance",
+    "test:security": "jest tests/security",
+    "test:api-contracts": "jest tests/api-contracts",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:security && npm run test:api-contracts",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "generate-report": "node scripts/generate-test-report.js",
+    "benchmark": "node tests/performance/benchmark-runner.js"
+  },
+  "dependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "puppeteer": "^21.5.0",
+    "loadtest": "^5.2.0",
+    "artillery": "^2.0.0",
+    "sql-injection-tester": "^1.0.0",
+    "js-yaml": "^4.1.0",
+    "swagger-parser": "^10.0.3",
+    "faker": "^5.5.3",
+    "sinon": "^15.2.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "**/*.{js,ts}",
+      "!**/node_modules/**",
+      "!**/coverage/**",
+      "!**/tests/**"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.{js,ts}",
+      "**/tests/**/*.spec.{js,ts}"
+    ],
+    "collectCoverageFrom": [
+      "/workspace/supabase/functions/**/*.ts"
+    ]
+  }
+}
