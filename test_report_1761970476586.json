@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-01T04:14:36.501Z",
+  "totalTests": 68,
+  "passed": 45,
+  "failed": 3,
+  "skipped": 0,
+  "suites": {
+    "Sistema de Archivos": {
+      "passed": 7,
+      "failed": 1,
+      "total": 8
+    },
+    "Edge Functions": {
+      "passed": 4,
+      "failed": 1,
+      "total": 5
+    },
+    "Base de Datos": {
+      "passed": 10,
+      "failed": 0,
+      "total": 10
+    },
+    "Cron Jobs": {
+      "passed": 5,
+      "failed": 0,
+      "total": 5
+    },
+    "Notificaciones": {
+      "passed": 7,
+      "failed": 0,
+      "total": 7
+    },
+    "Health Monitoring": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "Dashboard": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "Documentación": {
+      "passed": 1,
+      "failed": 1,
+      "total": 2
+    },
+    "Entorno": {
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "Quality Assurance": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    }
+  },
+  "summary": {},
+  "errors": [],
+  "coverage": {}
+}
