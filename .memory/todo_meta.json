@@ -1,26 +1,54 @@
 {
   "todos": {
     "Coordinator": {
-      "1": {
-        "id": "1",
-        "content": "Sprint 6: Integración Maxiconsumo Necochea",
-        "details": "1. Desarrollo de web scraping para precios de Maxiconsumo\n2. Implementación de actualización automática de precios\n3. Sistema de comparación de precios entre proveedores\n4. Alertas de cambios de precio significativos\n5. APIs para gestión de proveedores externos\n6. Testing con datos reales de Maxiconsumo\n7. Documentación de integración",
+      "6.1": {
+        "id": "6.1",
+        "content": "Investigar sitio web de Maxiconsumo Necochea",
+        "details": "1. Analizar estructura del sitio web\n2. Identificar productos y categorías disponibles\n3. Determinar método de scraping óptimo\n4. Documentar endpoints y patrones de datos\n5. Crear plan de extracción de precios",
+        "status": "completed",
+        "priority": "high"
+      },
+      "6.2": {
+        "id": "6.2",
+        "content": "Implementar web scraper avanzado",
+        "details": "1. Crear scraper para sitio de Maxiconsumo\n2. Manejar diferentes formatos de productos\n3. Implementar rate limiting y buenas prácticas\n4. Crear sistema de detección de cambios\n5. Manejar errores y reintentos automáticos",
+        "status": "completed",
+        "priority": "high"
+      },
+      "6.3": {
+        "id": "6.3",
+        "content": "Sistema de comparación de precios",
+        "details": "1. Crear tabla de precios proveedores\n2. Implementar lógica de comparación\n3. Identificar mejores precios por producto\n4. Generar alertas de cambios significativos\n5. Crear dashboard de comparación",
+        "status": "completed",
+        "priority": "medium"
+      },
+      "6.4": {
+        "id": "6.4",
+        "content": "API para consulta de precios del proveedor",
+        "details": "1. GET /proveedor/precios - Lista precios actuales\n2. GET /proveedor/productos - Productos disponibles\n3. GET /proveedor/comparacion - Comparación con sistema\n4. POST /proveedor/sincronizar - Trigger sincronización manual\n5. Documentar endpoints en OpenAPI",
+        "status": "completed",
+        "priority": "medium"
+      },
+      "6.5": {
+        "id": "6.5",
+        "content": "Sistema de cron jobs automático",
+        "details": "1. Configurar job diario para actualización de precios\n2. Job semanal para análisis de tendencias\n3. Job de alertas en tiempo real\n4. Configurar notificaciones por email/SMS\n5. Dashboard de monitoreo de tareas",
+        "status": "pending",
+        "priority": "medium"
+      },
+      "6.6": {
+        "id": "6.6",
+        "content": "Testing con datos reales de Maxiconsumo",
+        "details": "1. Testing del scraper con sitio real\n2. Validar extracción de precios\n3. Probar sistema de alertas\n4. Testing de cron jobs\n5. Documentar métricas y performance",
         "status": "pending",
         "priority": "high"
       },
-      "2": {
-        "id": "2",
-        "content": "Sprint 7: Dashboard Analítico Avanzado",
-        "details": "1. Métricas de ventas en tiempo real\n2. Análisis de productos más vendidos\n3. Reportes de rentabilidad por categoría\n4. Predicciones de demanda\n5. Dashboard ejecutivo con KPIs\n6. Exportación de reportes (PDF, Excel)\n7. Notificaciones inteligentes",
-        "status": "pending",
-        "priority": "medium"
-      },
-      "3": {
-        "id": "3",
-        "content": "Sprint 8: Sistema de Gestión Avanzada",
-        "details": "1. Gestión de proveedores con performance tracking\n2. Sistema de pedidos automáticos\n3. Control de vencimiento de productos\n4. Planificación de compras inteligente\n5. Gestión de promociones y descuentos\n6. Sistema de fidelización de clientes\n7. Integración con sistemas contables",
-        "status": "pending",
-        "priority": "medium"
+      "6.7": {
+        "id": "6.7",
+        "content": "Documentación completa Sprint 6",
+        "details": "1. Documentar API endpoints\n2. Guía de configuración de scraping\n3. Manual de troubleshooting\n4. Métricas y KPIs del sistema\n5. Plan de mantenimiento y actualización",
+        "status": "completed",
+        "priority": "low"
       }
     }
   }

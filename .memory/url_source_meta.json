@@ -1,5 +1,5 @@
 {
-  "_source_id": 58,
+  "_source_id": 64,
   "sources": {
     "Mapeo de Procesos Existentes Mini Market": {
       "https://www.skunexus.com/receiving-inventory-process-guide": {
@@ -419,6 +419,50 @@
         "url": "https://www.varseno.com/ci-cd-github-actions-nodejs-deploy/",
         "title": "Build CI/CD Pipeline for Node.js with GitHub Actions [2025 Guide]",
         "info": "Guía completa para construir pipeline CI/CD con GitHub Actions para Node.js, requisitos, configuración, gestión de secretos, YAML workflows y mejores prácticas 2025"
+      }
+    },
+    "Investigación Maxiconsumo Necochea - Análisis de Scraping": {
+      "https://www.maxiconsumo.com/": {
+        "id": 59,
+        "publisher": "Maxiconsumo S.A.",
+        "url": "https://www.maxiconsumo.com/",
+        "title": "Sitio Web Principal de Maxiconsumo",
+        "info": "Estructura principal del sitio, navegación, tipos de precios por bulto y unitario, sistema de clientes (Guest, Consumidor Final, Categorizado), medios de pago disponibles"
+      },
+      "https://maxiconsumo.com/sucursales/": {
+        "id": 60,
+        "publisher": "Maxiconsumo S.A.",
+        "url": "https://maxiconsumo.com/sucursales/",
+        "title": "Página de Sucursales de Maxiconsumo",
+        "info": "Información detallada de la sucursal Necochea (dirección: Calle 75 N° 2915, teléfono: 02262-42-9645/9486/9124, horarios: L-S 8-19hs, D 9-17hs)"
+      },
+      "https://maxiconsumo.com/sucursal_necochea/almacen.html": {
+        "id": 61,
+        "publisher": "Maxiconsumo S.A.",
+        "url": "https://maxiconsumo.com/sucursal_necochea/almacen.html",
+        "title": "Categoría Almacén - Sucursal Necochea",
+        "info": "3,183 productos en Almacén, 8 categorías principales (Almacén, Bebidas, Frescos, Congelados, Limpieza, Perfumería, Mascotas, Hogar y Bazar, Electro), estructura de navegación detallada"
+      },
+      "https://maxiconsumo.com/sucursal_necochea/bebidas.html": {
+        "id": 62,
+        "publisher": "Maxiconsumo S.A.",
+        "url": "https://maxiconsumo.com/sucursal_necochea/bebidas.html",
+        "title": "Categoría Bebidas - Sucursal Necochea",
+        "info": "1,112 productos en Bebidas, 13 subcategorías (Aguas: 78, Amargos: 28, Aperitivos: 64, Bebidas Blancas: 163, Gaseosas: 91, Vinos: 362, etc.)"
+      },
+      "https://maxiconsumo.com/sucursal_necochea/limpieza.html": {
+        "id": 63,
+        "publisher": "Maxiconsumo S.A.",
+        "url": "https://maxiconsumo.com/sucursal_necochea/limpieza.html",
+        "title": "Categoría Limpieza - Sucursal Necochea",
+        "info": "1,097 productos en Limpieza, 7 subcategorías principales, 1,218 productos en disponibilidad crítica, inventario dinámico"
+      },
+      "https://maxiconsumo.com/ofertas": {
+        "id": 64,
+        "publisher": "Maxiconsumo S.A.",
+        "url": "https://maxiconsumo.com/ofertas",
+        "title": "Página de Ofertas de Maxiconsumo",
+        "info": "Estructura de ofertas: semanales, diarias ('Solo por hoy'), fin de semana, temáticas, bancarias, PDFs descargables, revistas con precios por bulto"
       }
     }
   }

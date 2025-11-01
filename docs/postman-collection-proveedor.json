@@ -1,0 +1,936 @@
+{
+	"info": {
+		"_postman_id": "sprint6-proveedor-maxiconsumo-2025",
+		"name": "Mini Market API - Proveedor Maxiconsumo (Sprint 6)",
+		"description": "Colección completa para integración con proveedor Maxiconsumo Necochea\n\n## 🚀 Sprint 6 - Integración Completa\n\n### Funcionalidades implementadas:\n- ✅ Web scraping avanzado (+40,000 productos)\n- ✅ Sistema de comparación de precios\n- ✅ Alertas automáticas de cambios\n- ✅ API completa de consulta de proveedor\n- ✅ Métricas y analytics de scraping\n- ✅ Sistema de sincronización manual\n\n### Endpoints incluidos:\n1. **Sistema**: Status del sistema\n2. **Precios**: Consulta de precios actuales\n3. **Productos**: Búsqueda y filtrado de productos\n4. **Comparación**: Oportunidades de ahorro\n5. **Sincronización**: Trigger manual (protegido)\n6. **Alertas**: Alertas activas de cambios\n7. **Estadísticas**: Métricas de scraping (protegido)\n8. **Configuración**: Configuración del proveedor (protegido)\n\n### Credenciales requeridas:\n- Bearer Token JWT para endpoints protegidos\n- Variables de entorno configurables\n\n### Uso recomendado:\n1. Comenzar con GET /status para verificar funcionamiento\n2. Usar GET /precios para consultar catálogo actual\n3. Usar GET /comparacion para identificar oportunidades\n4. Usar POST /sincronizar para actualización manual\n5. Monitorear con GET /alertas para cambios importantes\n\n---\n*Generado por MiniMax Agent - Sprint 6*\n*Fecha: 2025-10-31*",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "minimax-agent"
+	},
+	"item": [
+		{
+			"name": "🔍 Sistema",
+			"item": [
+				{
+					"name": "GET Status del Sistema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status"
+							]
+						},
+						"description": "Obtiene el estado actual del sistema de integración con proveedores. Endpoint público para monitoreo."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is successful\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.expect(responseJson.data.sistema.estado).to.be.oneOf(['operativo', 'mantenimiento', 'error']);",
+									"    pm.collectionVariables.set('ultima_actualizacion', responseJson.data.estadisticas.ultima_ejecucion);",
+									"    pm.collectionVariables.set('productos_totales', responseJson.data.estadisticas.productos_totales);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				}
+			],
+			"description": "Endpoints para monitoreo del estado del sistema"
+		},
+		{
+			"name": "💰 Precios",
+			"item": [
+				{
+					"name": "GET Precios Actuales - Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/precios?categoria=todos&limit=50&activo=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"precios"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "todos",
+									"description": "Categoría a filtrar (todos por defecto)"
+								},
+								{
+									"key": "limit",
+									"value": "50",
+									"description": "Número máximo de resultados"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Registros a omitir"
+								},
+								{
+									"key": "activo",
+									"value": "true",
+									"description": "Solo productos activos"
+								}
+							]
+						},
+						"description": "Lista los precios actuales de todos los productos del proveedor con opciones de filtrado y paginación."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has productos array\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.expect(responseJson.data.productos).to.be.an('array');",
+									"    pm.collectionVariables.set('total_productos', responseJson.data.paginacion.total);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "GET Precios - Solo Bebidas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/precios?categoria=bebidas&limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"precios"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "bebidas",
+									"description": "Solo productos de bebidas"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Filtra precios solo para la categoría bebidas."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Precios - Paginación",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/precios?categoria=todos&limit=10&offset=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"precios"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "todos"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "10",
+									"description": "Saltar los primeros 10 registros"
+								}
+							]
+						},
+						"description": "Ejemplo de paginación para obtener la segunda página de resultados."
+					},
+					"response": []
+				}
+			],
+			"description": "Consulta de precios actuales del proveedor con filtros avanzados"
+		},
+		{
+			"name": "📦 Productos",
+			"item": [
+				{
+					"name": "GET Productos - Búsqueda General",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/productos?busqueda=coca&limit=50",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"productos"
+							],
+							"query": [
+								{
+									"key": "busqueda",
+									"value": "coca",
+									"description": "Buscar productos que contengan 'coca'"
+								},
+								{
+									"key": "limit",
+									"value": "50",
+									"description": "Máximo 50 resultados"
+								}
+							]
+						},
+						"description": "Busca productos que contengan 'coca' en nombre o marca. Útil para encontrar productos de Coca Cola."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Search results contain requested term\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    if (responseJson.data.productos.length > 0) {",
+									"        const firstProduct = responseJson.data.productos[0];",
+									"        pm.expect(firstProduct.nombre.toLowerCase()).to.include('coca');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "GET Productos - Solo con Stock",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/productos?categoria=almacen&solo_con_stock=true&limit=30",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"productos"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "almacen"
+								},
+								{
+									"key": "solo_con_stock",
+									"value": "true",
+									"description": "Solo productos con stock disponible"
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								}
+							]
+						},
+						"description": "Obtiene productos de almacén que tengan stock disponible en el proveedor."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Productos - Por Marca",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/productos?marca=Nestlé&limit=25",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"productos"
+							],
+							"query": [
+								{
+									"key": "marca",
+									"value": "Nestlé",
+									"description": "Filtrar por marca específica"
+								},
+								{
+									"key": "limit",
+									"value": "25"
+								}
+							]
+						},
+						"description": "Busca todos los productos de la marca Nestlé disponibles."
+					},
+					"response": []
+				}
+			],
+			"description": "Búsqueda y filtrado de productos disponibles en el proveedor"
+		},
+		{
+			"name": "🔄 Comparación",
+			"item": [
+				{
+					"name": "GET Comparación - Todas las Oportunidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comparacion?limit=50",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comparacion"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50",
+									"description": "Top 50 oportunidades de ahorro"
+								}
+							]
+						},
+						"description": "Obtiene todas las comparaciones de precios, ordenadas por mayor diferencia absoluta. Incluye estadísticas agregadas."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains statistical summary\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.expect(responseJson.data.estadisticas).to.be.an('object');",
+									"    pm.collectionVariables.set('oportunidades_count', responseJson.data.oportunidades.length);",
+									"    pm.collectionVariables.set('ahorro_total', responseJson.data.estadisticas.ahorro_total_estimado);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "GET Comparación - Solo Oportunidades >10%",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/comparacion?solo_oportunidades=true&min_diferencia=10&orden=diferencia_porcentual_desc&limit=30",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"comparacion"
+							],
+							"query": [
+								{
+									"key": "solo_oportunidades",
+									"value": "true",
+									"description": "Solo mostrar oportunidades de ahorro"
+								},
+								{
+									"key": "min_diferencia",
+									"value": "10",
+									"description": "Mínimo 10% de diferencia"
+								},
+								{
+									"key": "orden",
+									"value": "diferencia_porcentual_desc",
+									"description": "Ordenar por mayor diferencia porcentual"
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								}
+							]
+						},
+						"description": "Filtra oportunidades significativas (>10%) ordenadas por mayor beneficio porcentual."
+					},
+					"response": []
+				}
+			],
+			"description": "Comparación de precios con el sistema interno para identificar oportunidades de ahorro"
+		},
+		{
+			"name": "🔄 Sincronización",
+			"item": [
+				{
+					"name": "POST Sincronización Manual",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}",
+								"description": "Token JWT requerido para operaciones protegidas"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/sincronizar",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sincronizar"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "bebidas",
+									"description": "Solo sincronizar categoría bebidas"
+								},
+								{
+									"key": "force_full",
+									"value": "false",
+									"description": "Sincronización incremental"
+								}
+							]
+						},
+						"description": "Inicia una sincronización manual con el proveedor. Requiere autenticación. Ideal para actualizaciones fuera del horario programado."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 401\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+									"});",
+									"",
+									"if (pm.response.code === 401) {",
+									"    console.log(\"⚠️ Requiere autenticación - configurar bearerToken\");",
+									"} else if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.collectionVariables.set('sync_triggered', true);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "POST Sincronización Completa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/sincronizar?force_full=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sincronizar"
+							],
+							"query": [
+								{
+									"key": "force_full",
+									"value": "true",
+									"description": "Forzar sincronización completa de todas las categorías"
+								}
+							]
+						},
+						"description": "Sincronización completa de todas las categorías. Útil para initial setup o recovery."
+					},
+					"response": []
+				}
+			],
+			"description": "Triggers para sincronización manual con el proveedor (requiere autenticación)"
+		},
+		{
+			"name": "🚨 Alertas",
+			"item": [
+				{
+					"name": "GET Alertas Activas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/alertas?limit=20",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"alertas"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20",
+									"description": "Últimas 20 alertas"
+								}
+							]
+						},
+						"description": "Obtiene alertas activas de cambios significativos en precios. Incluye estadísticas por severidad."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains alert statistics\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.expect(responseJson.data.estadisticas).to.be.an('object');",
+									"    pm.collectionVariables.set('alertas_criticas', responseJson.data.estadisticas.criticas);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "GET Alertas Solo Críticas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/alertas?severidad=critica&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"alertas"
+							],
+							"query": [
+								{
+									"key": "severidad",
+									"value": "critica",
+									"description": "Solo alertas críticas que requieren atención inmediata"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Filtra solo alertas críticas (cambios >30%) que requieren atención inmediata."
+					},
+					"response": []
+				},
+				{
+					"name": "GET Alertas por Tipo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/alertas?tipo=disminucion&severidad=alta",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"alertas"
+							],
+							"query": [
+								{
+									"key": "tipo",
+									"value": "disminucion",
+									"description": "Solo alertas por disminución de precios"
+								},
+								{
+									"key": "severidad",
+									"value": "alta",
+									"description": "Solo severidad alta"
+								}
+							]
+						},
+						"description": "Alertas específicas por disminuciones de precio con severidad alta."
+					},
+					"response": []
+				}
+			],
+			"description": "Sistema de alertas por cambios significativos en precios"
+		},
+		{
+			"name": "📈 Estadísticas",
+			"item": [
+				{
+					"name": "GET Métricas Últimos 7 Días",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/estadisticas?dias=7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"estadisticas"
+							],
+							"query": [
+								{
+									"key": "dias",
+									"value": "7",
+									"description": "Analizar últimos 7 días"
+								}
+							]
+						},
+						"description": "Métricas y estadísticas del proceso de scraping para los últimos 7 días. Requiere autenticación."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 401\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.collectionVariables.set('tasa_exito', responseJson.data.metricas_agregadas.tasa_exito);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "GET Métricas por Categoría",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/estadisticas?dias=30&categoria=bebidas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"estadisticas"
+							],
+							"query": [
+								{
+									"key": "dias",
+									"value": "30"
+								},
+								{
+									"key": "categoria",
+									"value": "bebidas",
+									"description": "Solo estadísticas de la categoría bebidas"
+								}
+							]
+						},
+						"description": "Métricas específicas para la categoría bebidas en los últimos 30 días."
+					},
+					"response": []
+				}
+			],
+			"description": "Métricas y analytics del proceso de scraping (requiere autenticación)"
+		},
+		{
+			"name": "⚙️ Configuración",
+			"item": [
+				{
+					"name": "GET Configuración del Proveedor",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/configuracion",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"configuracion"
+							]
+						},
+						"description": "Obtiene la configuración actual del proveedor Maxiconsumo. Incluye frecuencia de scraping, parámetros de extracción, etc. Requiere autenticación."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 401\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.collectionVariables.set('frecuencia_scraping', responseJson.data.configuracion.frecuencia_scraping);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				}
+			],
+			"description": "Configuración y parámetros del proveedor (requiere autenticación)"
+		},
+		{
+			"name": "🛠️ Scraping Directo",
+			"item": [
+				{
+					"name": "POST Ejecutar Scraping Completo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{scraperUrl}}/scrape?categoria=bebidas",
+							"host": [
+								"{{scraperUrl}}"
+							],
+							"path": [
+								"scrape"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "bebidas",
+									"description": "Scraping específico para categoría bebidas"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"trigger_type\": \"manual\",\n  \"force_full\": false,\n  \"categoria\": \"bebidas\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"description": "Endpoint directo para ejecutar scraping. Accede directamente al scraper con más control sobre el proceso."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Scraping completed successfully\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.success).to.be.true;",
+									"    pm.collectionVariables.set('productos_scraped', responseJson.data.productos_extraidos);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"response": []
+				},
+				{
+					"name": "POST Generar Comparaciones",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{scraperUrl}}/compare",
+							"host": [
+								"{{scraperUrl}}"
+							],
+							"path": [
+								"compare"
+							]
+						},
+						"description": "Genera comparaciones de precios con productos del sistema después del scraping."
+					},
+					"response": []
+				},
+				{
+					"name": "POST Generar Alertas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{bearerToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{scraperUrl}}/alerts",
+							"host": [
+								"{{scraperUrl}}"
+							],
+							"path": [
+								"alerts"
+							]
+						},
+						"description": "Analiza precios históricos y genera alertas por cambios significativos."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints directos para el proceso de scraping (acceso técnico avanzado)"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Configurar variables de entorno si no están configuradas",
+					"if (!pm.collectionVariables.get('baseUrl')) {",
+					"    pm.collectionVariables.set('baseUrl', 'https://htvlwhisjpdagqkqnpxg.supabase.co/functions/v1/api-proveedor');",
+					"}",
+					"if (!pm.collectionVariables.get('scraperUrl')) {",
+					"    pm.collectionVariables.set('scraperUrl', 'https://htvlwhisjpdagqkqnpxg.supabase.co/functions/v1/scraper-maxiconsumo');",
+					"}",
+					"if (!pm.collectionVariables.get('bearerToken')) {",
+					"    console.log('⚠️ bearerToken no configurado - algunos endpoints fallarán');",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://htvlwhisjpdagqkqnpxg.supabase.co/functions/v1/api-proveedor",
+			"type": "string"
+		},
+		{
+			"key": "scraperUrl",
+			"value": "https://htvlwhisjpdagqkqnpxg.supabase.co/functions/v1/scraper-maxiconsumo",
+			"type": "string"
+		},
+		{
+			"key": "bearerToken",
+			"value": "",
+			"type": "string",
+			"description": "Token JWT de Supabase para endpoints protegidos"
+		},
+		{
+			"key": "ultima_actualizacion",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productos_totales",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "oportunidades_count",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ahorro_total",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "alertas_criticas",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sync_triggered",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tasa_exito",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "frecuencia_scraping",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "total_productos",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productos_scraped",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

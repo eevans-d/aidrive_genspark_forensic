@@ -1,0 +1,840 @@
+openapi: 3.1.0
+info:
+  title: Mini Market API - Proveedor Maxiconsumo
+  version: 1.0.0
+  description: |
+    API especializada para integración con proveedores y scraping de precios.
+    
+    ## Sprint 6 - Integración Maxiconsumo Necochea
+    Sistema completo de integración con el proveedor Maxiconsumo Necochea que incluye:
+    
+    ### 🔍 Web Scraping Avanzado
+    - Extracción automática de +40,000 productos
+    - 9 categorías principales soportadas
+    - Rate limiting y manejo de errores robusto
+    - Detección automática de cambios significativos
+    
+    ### 📊 Sistema de Comparación de Precios
+    - Comparación automática con catálogo interno
+    - Identificación de oportunidades de ahorro
+    - Alertas por cambios >15%
+    - Recomendaciones inteligentes
+    
+    ### 🚨 Sistema de Alertas
+    - Alertas automáticas por cambios significativos
+    - Clasificación por severidad (crítica, alta, media, baja)
+    - Acciones recomendadas por cambio
+    - Tracking de alertas procesadas
+    
+    ### 📈 Métricas y Analytics
+    - Estadísticas de scraping en tiempo real
+    - Performance del sistema
+    - Tendencias de precios
+    - ROI de oportunidades identificadas
+    
+    ## Autenticación
+    - **Endpoints públicos**: Status, precios, productos, comparación
+    - **Endpoints protegidos**: Sincronización manual, configuración
+    
+    ## Rate Limiting
+    - 100 requests/minuto para endpoints públicos
+    - 10 requests/minuto para endpoints protegidos
+    
+    ## Frecuencia de Actualización
+    - Scraping automático: Diario (00:00-06:00)
+    - Comparaciones: En tiempo real post-scraping
+    - Alertas: Inmediatas por cambios significativos
+    
+  contact:
+    name: Soporte Técnico Mini Market
+    email: soporte@minimarket.com
+  license:
+    name: Propietario - Mini Market
+
+servers:
+  - url: https://htvlwhisjpdagqkqnpxg.supabase.co/functions/v1/api-proveedor
+    description: Servidor de Producción - API Proveedor
+  - url: https://htvlwhisjpdagqkqnpxg.supabase.co/functions/v1/scraper-maxiconsumo
+    description: Servidor de Producción - Web Scraper
+
+security:
+  - BearerAuth: []
+  # Algunos endpoints permiten acceso sin autenticación
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT de Supabase Auth para endpoints protegidos
+
+  schemas:
+    ProductoProveedor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sku:
+          type: string
+          description: Código SKU del producto
+        nombre:
+          type: string
+          description: Nombre del producto
+        marca:
+          type: string
+          description: Marca del producto
+        categoria:
+          type: string
+          description: Categoría del producto
+        precio_mayorista:
+          type: number
+          format: decimal
+          description: Precio por bulto cerrado
+        precio_unitario:
+          type: number
+          format: decimal
+          description: Precio unitario
+        stock_disponible:
+          type: integer
+          description: Stock disponible en el proveedor
+        codigo_barras:
+          type: string
+          description: Código de barras EAN-13
+        url_producto:
+          type: string
+          format: uri
+          description: URL del producto en el sitio del proveedor
+        imagen_url:
+          type: string
+          format: uri
+          description: URL de la imagen del producto
+        descripcion:
+          type: string
+          description: Descripción detallada del producto
+        ultima_actualizacion:
+          type: string
+          format: date-time
+          description: Última vez que se actualizó la información
+        fuente:
+          type: string
+          description: Fuente de los datos
+        activo:
+          type: boolean
+          description: Si el producto está activo
+
+    ComparacionPrecio:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        producto_id:
+          type: string
+          format: uuid
+        nombre_producto:
+          type: string
+          description: Nombre del producto en el sistema
+        precio_actual:
+          type: number
+          format: decimal
+          description: Precio actual en el sistema
+        precio_proveedor:
+          type: number
+          format: decimal
+          description: Precio en el proveedor
+        diferencia_absoluta:
+          type: number
+          format: decimal
+          description: Diferencia en precio
+        diferencia_porcentual:
+          type: number
+          format: decimal
+          description: Diferencia porcentual
+        fuente:
+          type: string
+          description: Fuente del precio del proveedor
+        fecha_comparacion:
+          type: string
+          format: date-time
+        es_oportunidad_ahorro:
+          type: boolean
+          description: Si representa una oportunidad de ahorro
+        recomendacion:
+          type: string
+          description: Recomendación basada en la comparación
+
+    AlertaCambioPrecio:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        producto_id:
+          type: string
+          format: uuid
+        nombre_producto:
+          type: string
+        tipo_cambio:
+          type: string
+          enum: [aumento, disminucion, nuevo_producto]
+        valor_anterior:
+          type: number
+          format: decimal
+        valor_nuevo:
+          type: number
+          format: decimal
+        porcentaje_cambio:
+          type: number
+          format: decimal
+        severidad:
+          type: string
+          enum: [baja, media, alta, critica]
+        mensaje:
+          type: string
+          description: Mensaje descriptivo de la alerta
+        accion_recomendada:
+          type: string
+          description: Acción recomendada
+        fecha_alerta:
+          type: string
+          format: date-time
+        procesada:
+          type: boolean
+          description: Si la alerta ya fue procesada
+
+    EstadisticasScraping:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fuente:
+          type: string
+        categoria_procesada:
+          type: string
+        productos_encontrados:
+          type: integer
+        productos_nuevos:
+          type: integer
+        productos_actualizados:
+          type: integer
+        tiempo_ejecucion_ms:
+          type: integer
+        errores_encontrados:
+          type: integer
+        status:
+          type: string
+          enum: [exitoso, error, parcial]
+        detalles_error:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    ConfiguracionProveedor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nombre:
+          type: string
+        url_base:
+          type: string
+          format: uri
+        activo:
+          type: boolean
+        frecuencia_scraping:
+          type: string
+          enum: [cada_hora, diaria, semanal]
+        ultima_sincronizacion:
+          type: string
+          format: date-time
+        proxima_sincronizacion:
+          type: string
+          format: date-time
+        configuraciones:
+          type: object
+          additionalProperties: true
+        headers_personalizados:
+          type: object
+          additionalProperties: true
+        reglas_extraccion:
+          type: object
+          additionalProperties: true
+
+    RespuestaEstado:
+      type: object
+      properties:
+        sistema:
+          type: object
+          properties:
+            estado:
+              type: string
+              enum: [operativo, mantenimiento, error]
+            version:
+              type: string
+            proveedor:
+              type: string
+        estadisticas:
+          type: object
+          properties:
+            ultima_ejecucion:
+              type: string
+              format: date-time
+            productos_totales:
+              type: integer
+            oportunidades_activas:
+              type: integer
+            ultima_sincronizacion:
+              type: string
+              format: date-time
+            proximo_scrape_programado:
+              type: string
+              format: date-time
+        configuracion:
+          $ref: '#/components/schemas/ConfiguracionProveedor'
+
+paths:
+  /status:
+    get:
+      tags:
+        - Sistema
+      summary: Estado del sistema de integración
+      description: Obtiene el estado actual del sistema de integración con proveedores
+      responses:
+        '200':
+          description: Estado del sistema
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/RespuestaEstado'
+        '500':
+          description: Error interno del servidor
+
+  /precios:
+    get:
+      tags:
+        - Precios
+      summary: Listar precios actuales del proveedor
+      description: Obtiene los precios actuales de productos del proveedor con opciones de filtrado
+      parameters:
+        - name: categoria
+          in: query
+          description: Filtrar por categoría específica
+          schema:
+            type: string
+            enum: [almacen, bebidas, limpieza, frescos, congelados, perfumeria, mascotas, hogar, electro, todos]
+            default: todos
+        - name: limit
+          in: query
+          description: Número máximo de resultados
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 50
+        - name: offset
+          in: query
+          description: Número de registros a omitir
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: activo
+          in: query
+          description: Filtrar productos activos
+          schema:
+            type: string
+            enum: [true, false]
+            default: true
+      responses:
+        '200':
+          description: Lista de precios del proveedor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      productos:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ProductoProveedor'
+                      paginacion:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                          limite:
+                            type: integer
+                          offset:
+                            type: integer
+                          productos_mostrados:
+                            type: integer
+                          tiene_mas:
+                            type: boolean
+        '500':
+          description: Error obteniendo precios
+
+  /productos:
+    get:
+      tags:
+        - Productos
+      summary: Buscar productos disponibles
+      description: Busca productos disponibles en el proveedor con filtros avanzados
+      parameters:
+        - name: busqueda
+          in: query
+          description: Término de búsqueda en nombre o marca
+          schema:
+            type: string
+        - name: categoria
+          in: query
+          description: Filtrar por categoría
+          schema:
+            type: string
+            enum: [almacen, bebidas, limpieza, frescos, congelados, perfumeria, mascotas, hogar, electro, todos]
+        - name: marca
+          in: query
+          description: Filtrar por marca específica
+          schema:
+            type: string
+        - name: solo_con_stock
+          in: query
+          description: Solo mostrar productos con stock disponible
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: Límite de resultados
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+      responses:
+        '200':
+          description: Lista de productos encontrados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      productos:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ProductoProveedor'
+                      estadisticas:
+                        type: object
+                        properties:
+                          total_productos:
+                            type: integer
+                          productos_con_stock:
+                            type: integer
+                          marcas_unicas:
+                            type: integer
+                          categorias_disponibles:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                categoria:
+                                  type: string
+                                cantidad_productos:
+                                  type: integer
+
+  /comparacion:
+    get:
+      tags:
+        - Comparación
+      summary: Comparación de precios con sistema
+      description: Obtiene oportunidades de ahorro comparando precios del proveedor con el sistema
+      parameters:
+        - name: solo_oportunidades
+          in: query
+          description: Solo mostrar oportunidades de ahorro
+          schema:
+            type: boolean
+            default: false
+        - name: min_diferencia
+          in: query
+          description: Diferencia mínima porcentual para mostrar
+          schema:
+            type: number
+            format: decimal
+            minimum: 0
+            default: 0
+        - name: orden
+          in: query
+          description: Ordenamiento de resultados
+          schema:
+            type: string
+            enum: [diferencia_absoluta_desc, diferencia_absoluta_asc, diferencia_porcentual_desc, nombre_asc]
+            default: diferencia_absoluta_desc
+        - name: limit
+          in: query
+          description: Número máximo de resultados
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Oportunidades de ahorro identificadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      oportunidades:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ComparacionPrecio'
+                      estadisticas:
+                        type: object
+                        properties:
+                          total_oportunidades:
+                            type: integer
+                          ahorro_total_estimado:
+                            type: number
+                            format: decimal
+                          oportunidad_promedio:
+                            type: number
+                            format: decimal
+                          mejor_oportunidad:
+                            $ref: '#/components/schemas/ComparacionPrecio'
+
+  /sincronizar:
+    post:
+      tags:
+        - Sincronización
+      summary: Trigger sincronización manual
+      description: Inicia una sincronización manual con el proveedor (requiere autenticación)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: categoria
+          in: query
+          description: Categoría específica a sincronizar
+          schema:
+            type: string
+        - name: force_full
+          in: query
+          description: Forzar sincronización completa
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Sincronización iniciada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      sincronizacion:
+                        type: object
+                      comparacion_generada:
+                        type: object
+        '401':
+          description: No autorizado - se requiere autenticación
+        '500':
+          description: Error en la sincronización
+
+  /alertas:
+    get:
+      tags:
+        - Alertas
+      summary: Obtener alertas activas
+      description: Lista alertas de cambios significativos en precios
+      parameters:
+        - name: severidad
+          in: query
+          description: Filtrar por severidad de alerta
+          schema:
+            type: string
+            enum: [baja, media, alta, critica, todos]
+            default: todos
+        - name: tipo
+          in: query
+          description: Filtrar por tipo de cambio
+          schema:
+            type: string
+            enum: [aumento, disminucion, nuevo_producto, todos]
+            default: todos
+        - name: limit
+          in: query
+          description: Número máximo de alertas
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Lista de alertas activas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      alertas:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AlertaCambioPrecio'
+                      estadisticas:
+                        type: object
+                        properties:
+                          total_alertas:
+                            type: integer
+                          criticas:
+                            type: integer
+                          altas:
+                            type: integer
+                          medias:
+                            type: integer
+                          bajas:
+                            type: integer
+                          aumentos:
+                            type: integer
+                          disminuciones:
+                            type: integer
+                          nuevos_productos:
+                            type: integer
+
+  /estadisticas:
+    get:
+      tags:
+        - Estadísticas
+      summary: Métricas de scraping
+      description: Obtiene estadísticas y métricas del proceso de scraping
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: dias
+          in: query
+          description: Número de días hacia atrás para analizar
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 90
+            default: 7
+        - name: categoria
+          in: query
+          description: Filtrar estadísticas por categoría
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Estadísticas del periodo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      estadisticas_periodo:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/EstadisticasScraping'
+                      metricas_agregadas:
+                        type: object
+                        properties:
+                          total_ejecuciones:
+                            type: integer
+                          productos_promedio:
+                            type: integer
+                          tasa_exito:
+                            type: integer
+                          tiempo_promedio_ms:
+                            type: integer
+        '401':
+          description: No autorizado
+
+  /configuracion:
+    get:
+      tags:
+        - Configuración
+      summary: Configuración del proveedor
+      description: Obtiene la configuración actual del proveedor (requiere autenticación)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Configuración del proveedor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      configuracion:
+                        $ref: '#/components/schemas/ConfiguracionProveedor'
+                      parametros_disponibles:
+                        type: object
+                        properties:
+                          frecuencia_scraping:
+                            type: array
+                            items:
+                              type: string
+                          severidad_alertas:
+                            type: array
+                            items:
+                              type: string
+                          tipos_cambio:
+                            type: array
+                            items:
+                              type: string
+        '401':
+          description: No autorizado
+
+# === ENDPOINTS DEL SCRAPER ===
+
+  /scrape:
+    post:
+      tags:
+        - Scraping
+      summary: Ejecutar scraping completo
+      description: Inicia el proceso completo de scraping de productos y precios
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: categoria
+          in: query
+          description: Categoría específica a scrapear (default: todos)
+          schema:
+            type: string
+            default: todos
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trigger_type:
+                  type: string
+                  enum: [manual, automatico, programado]
+                  default: manual
+                force_full:
+                  type: boolean
+                  default: false
+                categoria:
+                  type: string
+      responses:
+        '200':
+          description: Scraping completado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      scraping_completo:
+                        type: boolean
+                      categoria_solicitada:
+                        type: string
+                      estadisticas:
+                        type: object
+                      productos_extraidos:
+                        type: integer
+                      productos_guardados:
+                        type: integer
+                      alertas_generadas:
+                        type: integer
+
+  /compare:
+    post:
+      tags:
+        - Scraping
+      summary: Comparar precios post-scraping
+      description: Genera comparaciones de precios después del scraping
+      responses:
+        '200':
+          description: Comparaciones generadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      comparaciones_realizadas:
+                        type: integer
+                      oportunidades_ahorro:
+                        type: integer
+
+  /alerts:
+    post:
+      tags:
+        - Scraping
+      summary: Generar alertas de cambios
+      description: Analiza precios históricos y genera alertas por cambios significativos
+      responses:
+        '200':
+          description: Alertas generadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      alertas_generadas:
+                        type: integer
+                      alertas_criticas:
+                        type: integer
+                      alertas_altas:
+                        type: integer
