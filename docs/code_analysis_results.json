@@ -1,0 +1,2170 @@
+{
+  "summary": {
+    "files_analyzed": 8,
+    "total_lines": 8371,
+    "total_functions": 310,
+    "total_complexity": 1640,
+    "security_issues_count": 3,
+    "code_smells_count": 31,
+    "quality_score": 5.5
+  },
+  "detailed_results": {
+    "/workspace/supabase/functions/scraper-maxiconsumo/index.ts": {
+      "path": "/workspace/supabase/functions/scraper-maxiconsumo/index.ts",
+      "lines": 3213,
+      "non_empty_lines": 2771,
+      "functions": 134,
+      "complexity": 682,
+      "duplicates": [
+        {
+          "line": "total: number;",
+          "occurrences": 2
+        },
+        {
+          "line": "producto_id: string;",
+          "occurrences": 2
+        },
+        {
+          "line": "nombre_producto: string;",
+          "occurrences": 2
+        },
+        {
+          "line": "const now = Date.now();",
+          "occurrences": 4
+        },
+        {
+          "line": "'Content-Type': 'application/json',",
+          "occurrences": 3
+        },
+        {
+          "line": "timestamp: new Date().toISOString()",
+          "occurrences": 5
+        },
+        {
+          "line": "throw new Error(`Acci\u00f3n no v\u00e1lida: ${sanitizedAction}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "console.log(JSON.stringify({",
+          "occurrences": 23
+        },
+        {
+          "line": "...structuredLog,",
+          "occurrences": 21
+        },
+        {
+          "line": "if (['status', 'health'].includes(sanitizedAction)) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const cached = getFromCache(cacheKey);",
+          "occurrences": 4
+        },
+        {
+          "line": "if (cached) {",
+          "occurrences": 3
+        },
+        {
+          "line": "return new Response(JSON.stringify({",
+          "occurrences": 5
+        },
+        {
+          "line": "fromCache: true,",
+          "occurrences": 4
+        },
+        {
+          "line": "headers: { ...corsHeaders, 'Content-Type': 'application/json' }",
+          "occurrences": 10
+        },
+        {
+          "line": "let response: Response;",
+          "occurrences": 2
+        },
+        {
+          "line": "} catch (e) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const duration = Date.now() - startTime;",
+          "occurrences": 2
+        },
+        {
+          "line": "return response;",
+          "occurrences": 3
+        },
+        {
+          "line": "} catch (error) {",
+          "occurrences": 24
+        },
+        {
+          "line": "message: error.message,",
+          "occurrences": 3
+        },
+        {
+          "line": "stack: error.stack",
+          "occurrences": 3
+        },
+        {
+          "line": "timestamp: new Date().toISOString(),",
+          "occurrences": 3
+        },
+        {
+          "line": "supabaseUrl: string,",
+          "occurrences": 14
+        },
+        {
+          "line": "serviceRoleKey: string,",
+          "occurrences": 10
+        },
+        {
+          "line": "corsHeaders: Record<string, string>,",
+          "occurrences": 5
+        },
+        {
+          "line": "requestId: string,",
+          "occurrences": 5
+        },
+        {
+          "line": "structuredLog: any",
+          "occurrences": 7
+        },
+        {
+          "line": "): Promise<Response> {",
+          "occurrences": 5
+        },
+        {
+          "line": "const errores: string[] = [];",
+          "occurrences": 2
+        },
+        {
+          "line": "const batches = [];",
+          "occurrences": 3
+        },
+        {
+          "line": "for (const batch of batches) {",
+          "occurrences": 2
+        },
+        {
+          "line": "errores.push(errorMsg);",
+          "occurrences": 2
+        },
+        {
+          "line": "structuredLog",
+          "occurrences": 5
+        },
+        {
+          "line": "...scrapingLog,",
+          "occurrences": 4
+        },
+        {
+          "line": "categoria: cat,",
+          "occurrences": 2
+        },
+        {
+          "line": "console.error(JSON.stringify({",
+          "occurrences": 12
+        },
+        {
+          "line": "error: error.message",
+          "occurrences": 9
+        },
+        {
+          "line": "productosExtraidos,",
+          "occurrences": 2
+        },
+        {
+          "line": "connectionPool,",
+          "occurrences": 2
+        },
+        {
+          "line": "supabaseUrl,",
+          "occurrences": 3
+        },
+        {
+          "line": "serviceRoleKey,",
+          "occurrences": 3
+        },
+        {
+          "line": "const resultado = {",
+          "occurrences": 4
+        },
+        {
+          "line": "success: true,",
+          "occurrences": 5
+        },
+        {
+          "line": "return new Response(JSON.stringify(resultado), {",
+          "occurrences": 4
+        },
+        {
+          "line": "error: error.message,",
+          "occurrences": 4
+        },
+        {
+          "line": "throw error;",
+          "occurrences": 7
+        },
+        {
+          "line": "const productos: ProductoMaxiconsumo[] = [];",
+          "occurrences": 4
+        },
+        {
+          "line": "retryCount++;",
+          "occurrences": 2
+        },
+        {
+          "line": "console.warn(JSON.stringify({",
+          "occurrences": 5
+        },
+        {
+          "line": "...categoriaLog,",
+          "occurrences": 4
+        },
+        {
+          "line": "retry_count: retryCount",
+          "occurrences": 2
+        },
+        {
+          "line": "return productos;",
+          "occurrences": 6
+        },
+        {
+          "line": "const response = await fetch(url, {",
+          "occurrences": 2
+        },
+        {
+          "line": "if (response.ok) {",
+          "occurrences": 13
+        },
+        {
+          "line": "status: response.status,",
+          "occurrences": 2
+        },
+        {
+          "line": "return Math.max(0, Math.min(100, score));",
+          "occurrences": 2
+        },
+        {
+          "line": "const precio = parseFloat(precioTexto);",
+          "occurrences": 3
+        },
+        {
+          "line": "const producto: ProductoMaxiconsumo = {",
+          "occurrences": 2
+        },
+        {
+          "line": "marca: extraerMarcaDelNombre(nombre),",
+          "occurrences": 3
+        },
+        {
+          "line": "precio_unitario: precio,",
+          "occurrences": 3
+        },
+        {
+          "line": "metadata: {",
+          "occurrences": 4
+        },
+        {
+          "line": "productos.push(producto);",
+          "occurrences": 2
+        },
+        {
+          "line": "return name",
+          "occurrences": 2
+        },
+        {
+          "line": "while ((match = productoPattern.exec(html)) !== null) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const nombre = match[1].trim();",
+          "occurrences": 2
+        },
+        {
+          "line": "const precioTexto = match[2].replace(',', '.');",
+          "occurrences": 2
+        },
+        {
+          "line": "ultima_actualizacion: new Date().toISOString()",
+          "occurrences": 2
+        },
+        {
+          "line": "if (productos.length === 0) {",
+          "occurrences": 2
+        },
+        {
+          "line": "max_productos: 200",
+          "occurrences": 2
+        },
+        {
+          "line": "max_productos: 150",
+          "occurrences": 2
+        },
+        {
+          "line": "max_productos: 100",
+          "occurrences": 2
+        },
+        {
+          "line": "const userAgents = [",
+          "occurrences": 2
+        },
+        {
+          "line": "'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/120.0',",
+          "occurrences": 2
+        },
+        {
+          "line": "'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],",
+          "occurrences": 2
+        },
+        {
+          "line": "'Connection': 'keep-alive',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Upgrade-Insecure-Requests': '1',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Sec-Fetch-Dest': 'document',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Sec-Fetch-Mode': 'navigate',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Sec-Fetch-Site': 'none',",
+          "occurrences": 2
+        },
+        {
+          "line": "connectionPool: any,",
+          "occurrences": 2
+        },
+        {
+          "line": "): Promise<number> {",
+          "occurrences": 4
+        },
+        {
+          "line": "...saveLog,",
+          "occurrences": 4
+        },
+        {
+          "line": "const response = await fetch(query, {",
+          "occurrences": 6
+        },
+        {
+          "line": "'apikey': serviceRoleKey,",
+          "occurrences": 19
+        },
+        {
+          "line": "'Authorization': `Bearer ${serviceRoleKey}`,",
+          "occurrences": 19
+        },
+        {
+          "line": "const data = await response.json();",
+          "occurrences": 6
+        },
+        {
+          "line": "nombre: producto.nombre,",
+          "occurrences": 2
+        },
+        {
+          "line": "marca: producto.marca,",
+          "occurrences": 2
+        },
+        {
+          "line": "categoria: producto.categoria,",
+          "occurrences": 3
+        },
+        {
+          "line": "precio_unitario: producto.precio_unitario,",
+          "occurrences": 2
+        },
+        {
+          "line": "precio_promocional: producto.precio_promocional,",
+          "occurrences": 2
+        },
+        {
+          "line": "stock_disponible: producto.stock_disponible,",
+          "occurrences": 2
+        },
+        {
+          "line": "stock_nivel_minimo: producto.stock_nivel_minimo,",
+          "occurrences": 2
+        },
+        {
+          "line": "url_producto: producto.url_producto,",
+          "occurrences": 2
+        },
+        {
+          "line": "imagen_url: producto.imagen_url,",
+          "occurrences": 2
+        },
+        {
+          "line": "descripcion: producto.descripcion,",
+          "occurrences": 2
+        },
+        {
+          "line": "hash_contenido: producto.hash_contenido,",
+          "occurrences": 2
+        },
+        {
+          "line": "score_confiabilidad: producto.score_confiabilidad,",
+          "occurrences": 2
+        },
+        {
+          "line": "ultima_actualizacion: producto.ultima_actualizacion,",
+          "occurrences": 2
+        },
+        {
+          "line": "fuente: 'Maxiconsumo Necochea',",
+          "occurrences": 2
+        },
+        {
+          "line": "activo: true,",
+          "occurrences": 2
+        },
+        {
+          "line": "method: 'POST',",
+          "occurrences": 5
+        },
+        {
+          "line": "'Prefer': 'return=representation'",
+          "occurrences": 2
+        },
+        {
+          "line": "productos: productos.length",
+          "occurrences": 2
+        },
+        {
+          "line": "const response = await fetch(",
+          "occurrences": 5
+        },
+        {
+          "line": "body: JSON.stringify({",
+          "occurrences": 2
+        },
+        {
+          "line": "await delay(100);",
+          "occurrences": 2
+        },
+        {
+          "line": "...compareLog,",
+          "occurrences": 3
+        },
+        {
+          "line": "event: 'DATA_FETCHED',",
+          "occurrences": 2
+        },
+        {
+          "line": "const analytics = {",
+          "occurrences": 2
+        },
+        {
+          "line": "analytics: analytics,",
+          "occurrences": 2
+        },
+        {
+          "line": "const productos = [];",
+          "occurrences": 2
+        },
+        {
+          "line": "const batchSize = 500;",
+          "occurrences": 2
+        },
+        {
+          "line": "let offset = 0;",
+          "occurrences": 2
+        },
+        {
+          "line": "while (true) {",
+          "occurrences": 2
+        },
+        {
+          "line": "if (!response.ok) {",
+          "occurrences": 3
+        },
+        {
+          "line": "const batch = await response.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "if (batch.length === 0) break;",
+          "occurrences": 2
+        },
+        {
+          "line": "productos.push(...batch);",
+          "occurrences": 2
+        },
+        {
+          "line": "offset += batchSize;",
+          "occurrences": 2
+        },
+        {
+          "line": "if (productos.length > 10000) break;",
+          "occurrences": 2
+        },
+        {
+          "line": "const normalizedProvName = normalizeProductName(productoProv.nombre);",
+          "occurrences": 2
+        },
+        {
+          "line": "confidence += 10;",
+          "occurrences": 2
+        },
+        {
+          "line": "const diferencia = precioActual - precioProveedor;",
+          "occurrences": 2
+        },
+        {
+          "line": "} else if (porcentaje > 5) {",
+          "occurrences": 2
+        },
+        {
+          "line": "} else if (diferencia > 0) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();",
+          "occurrences": 2
+        },
+        {
+          "line": "method: 'DELETE',",
+          "occurrences": 2
+        },
+        {
+          "line": "let saved = 0;",
+          "occurrences": 2
+        },
+        {
+          "line": "'Content-Type': 'application/json'",
+          "occurrences": 4
+        },
+        {
+          "line": "saved += batch.length;",
+          "occurrences": 2
+        },
+        {
+          "line": "return saved;",
+          "occurrences": 2
+        },
+        {
+          "line": "serviceRoleKey: string",
+          "occurrences": 4
+        },
+        {
+          "line": "...alertsLog,",
+          "occurrences": 3
+        },
+        {
+          "line": "return await response.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "fecha_alerta: new Date().toISOString(),",
+          "occurrences": 2
+        },
+        {
+          "line": "for (const alerta of alertas) {",
+          "occurrences": 2
+        },
+        {
+          "line": "producto_id: alerta.producto_id,",
+          "occurrences": 2
+        },
+        {
+          "line": "tipo_cambio: alerta.tipo_cambio,",
+          "occurrences": 2
+        },
+        {
+          "line": "valor_anterior: alerta.valor_anterior,",
+          "occurrences": 2
+        },
+        {
+          "line": "valor_nuevo: alerta.valor_nuevo,",
+          "occurrences": 2
+        },
+        {
+          "line": "porcentaje_cambio: alerta.porcentaje_cambio,",
+          "occurrences": 2
+        },
+        {
+          "line": "severidad: alerta.severidad,",
+          "occurrences": 2
+        },
+        {
+          "line": "mensaje: alerta.mensaje,",
+          "occurrences": 2
+        },
+        {
+          "line": "accion_recomendada: alerta.accion_recomendada,",
+          "occurrences": 2
+        },
+        {
+          "line": "fecha_alerta: alerta.fecha_alerta,",
+          "occurrences": 2
+        },
+        {
+          "line": "async function generarYEnviarAlertas(",
+          "occurrences": 2
+        },
+        {
+          "line": "productosExtraidos: ProductoMaxiconsumo[],",
+          "occurrences": 3
+        },
+        {
+          "line": "console.log(`\ud83d\udce7 Simulando env\u00edo de alertas para ${productosExtraidos.length} productos...`);",
+          "occurrences": 2
+        },
+        {
+          "line": "return productosExtraidos.length;",
+          "occurrences": 3
+        },
+        {
+          "line": "health_score: healthScore,",
+          "occurrences": 2
+        },
+        {
+          "line": "...statusLog,",
+          "occurrences": 2
+        },
+        {
+          "line": "return null;",
+          "occurrences": 2
+        },
+        {
+          "line": "return data[0]?.count || 0;",
+          "occurrences": 2
+        },
+        {
+          "line": "const memory = performance.memory ? {",
+          "occurrences": 2
+        },
+        {
+          "line": "used: performance.memory.usedJSHeapSize,",
+          "occurrences": 2
+        },
+        {
+          "line": "total: performance.memory.totalJSHeapSize,",
+          "occurrences": 2
+        },
+        {
+          "line": "percentage: Math.round((performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize) * 100)",
+          "occurrences": 2
+        },
+        {
+          "line": "} : { used: 0, total: 0, percentage: 0 };",
+          "occurrences": 2
+        },
+        {
+          "line": "const now = new Date();",
+          "occurrences": 2
+        },
+        {
+          "line": "const nextScrape = new Date(now.getTime() + 4 * 60 * 60 * 1000);",
+          "occurrences": 2
+        },
+        {
+          "line": "return nextScrape.toISOString();",
+          "occurrences": 2
+        },
+        {
+          "line": "corsHeaders: Record<string, string>",
+          "occurrences": 3
+        },
+        {
+          "line": "GLOBAL_CACHE.delete(key);",
+          "occurrences": 2
+        },
+        {
+          "line": "const breaker = CIRCUIT_BREAKERS.get(name) || initializeCircuitBreaker(name);",
+          "occurrences": 3
+        },
+        {
+          "line": "CIRCUIT_BREAKERS.set(name, breaker);",
+          "occurrences": 3
+        },
+        {
+          "line": "return true;",
+          "occurrences": 2
+        },
+        {
+          "line": "health.status = 'degraded';",
+          "occurrences": 3
+        }
+      ],
+      "security_issues": [
+        {
+          "pattern": "\\.exec\\s*\\(",
+          "message": "Uso de exec() - Riesgo de inyecci\u00f3n",
+          "occurrences": 7,
+          "matches": [
+            ".exec(",
+            ".exec(",
+            ".exec("
+          ]
+        },
+        {
+          "pattern": "console\\.log\\s*\\(",
+          "message": "Console.log en producci\u00f3n",
+          "occurrences": 43,
+          "matches": [
+            "console.log(",
+            "console.log(",
+            "console.log("
+          ]
+        }
+      ],
+      "code_smells": [
+        "Archivo muy largo (>200 l\u00edneas)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Magic numbers detectados (46)",
+        "Posible callback hell"
+      ],
+      "imports": {
+        "total_imports": 0,
+        "external_dependencies": [],
+        "internal_dependencies": [],
+        "unused_imports": []
+      }
+    },
+    "/workspace/supabase/functions/api-proveedor/index.ts": {
+      "path": "/workspace/supabase/functions/api-proveedor/index.ts",
+      "lines": 3549,
+      "non_empty_lines": 3027,
+      "functions": 162,
+      "complexity": 712,
+      "duplicates": [
+        {
+          "line": "const now = Date.now();",
+          "occurrences": 3
+        },
+        {
+          "line": "'Content-Type': 'application/json',",
+          "occurrences": 3
+        },
+        {
+          "line": "timestamp: new Date().toISOString()",
+          "occurrences": 19
+        },
+        {
+          "line": "throw new Error(`Endpoint no v\u00e1lido: ${sanitizedEndpoint}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "return new Response(JSON.stringify({",
+          "occurrences": 7
+        },
+        {
+          "line": "success: false,",
+          "occurrences": 6
+        },
+        {
+          "line": "code: 'AUTH_REQUIRED',",
+          "occurrences": 3
+        },
+        {
+          "line": "status: 401,",
+          "occurrences": 3
+        },
+        {
+          "line": "headers: { ...corsHeaders, 'Content-Type': 'application/json' }",
+          "occurrences": 23
+        },
+        {
+          "line": "console.log(JSON.stringify({",
+          "occurrences": 16
+        },
+        {
+          "line": "...requestLog,",
+          "occurrences": 28
+        },
+        {
+          "line": "endpoint: sanitizedEndpoint,",
+          "occurrences": 3
+        },
+        {
+          "line": "if (cacheableEndpoints.includes(sanitizedEndpoint)) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const duration = Date.now() - startTime;",
+          "occurrences": 3
+        },
+        {
+          "line": "updateRequestMetrics(true, duration);",
+          "occurrences": 2
+        },
+        {
+          "line": "console.error(JSON.stringify({",
+          "occurrences": 10
+        },
+        {
+          "line": "return response;",
+          "occurrences": 2
+        },
+        {
+          "line": "} catch (error) {",
+          "occurrences": 27
+        },
+        {
+          "line": "message: error.message,",
+          "occurrences": 2
+        },
+        {
+          "line": "timestamp: new Date().toISOString(),",
+          "occurrences": 3
+        },
+        {
+          "line": "API_CACHE.delete(key);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (success) {",
+          "occurrences": 2
+        },
+        {
+          "line": "supabaseUrl: string,",
+          "occurrences": 17
+        },
+        {
+          "line": "serviceRoleKey: string,",
+          "occurrences": 17
+        },
+        {
+          "line": "corsHeaders: Record<string, string>,",
+          "occurrences": 16
+        },
+        {
+          "line": "isAuthenticated: boolean",
+          "occurrences": 7
+        },
+        {
+          "line": "const categoria = url.searchParams.get('categoria') || 'todos';",
+          "occurrences": 4
+        },
+        {
+          "line": "const limite = parseInt(url.searchParams.get('limit') || '50');",
+          "occurrences": 2
+        },
+        {
+          "line": "const activo = url.searchParams.get('activo') || 'true';",
+          "occurrences": 2
+        },
+        {
+          "line": "let query = `${supabaseUrl}/rest/v1/precios_proveedor?select=*&fuente=eq.Maxiconsumo Necochea&activo=eq.${activo}`;",
+          "occurrences": 2
+        },
+        {
+          "line": "if (categoria !== 'todos') {",
+          "occurrences": 6
+        },
+        {
+          "line": "query += `&categoria=eq.${encodeURIComponent(categoria)}`;",
+          "occurrences": 3
+        },
+        {
+          "line": "query += `&order=ultima_actualizacion.desc&limit=${limite}&offset=${offset}`;",
+          "occurrences": 2
+        },
+        {
+          "line": "const response = await fetch(query, {",
+          "occurrences": 8
+        },
+        {
+          "line": "'apikey': serviceRoleKey,",
+          "occurrences": 17
+        },
+        {
+          "line": "'Authorization': `Bearer ${serviceRoleKey}`,",
+          "occurrences": 19
+        },
+        {
+          "line": "if (!response.ok) {",
+          "occurrences": 11
+        },
+        {
+          "line": "const productos = await response.json();",
+          "occurrences": 5
+        },
+        {
+          "line": "const resultado = {",
+          "occurrences": 17
+        },
+        {
+          "line": "success: true,",
+          "occurrences": 17
+        },
+        {
+          "line": "productos: productos,",
+          "occurrences": 2
+        },
+        {
+          "line": "paginacion: {",
+          "occurrences": 2
+        },
+        {
+          "line": "total: total,",
+          "occurrences": 2
+        },
+        {
+          "line": "limite: limite,",
+          "occurrences": 2
+        },
+        {
+          "line": "offset: offset,",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros_aplicados: {",
+          "occurrences": 8
+        },
+        {
+          "line": "categoria: categoria,",
+          "occurrences": 10
+        },
+        {
+          "line": "activo: activo",
+          "occurrences": 2
+        },
+        {
+          "line": "return new Response(JSON.stringify(resultado), {",
+          "occurrences": 17
+        },
+        {
+          "line": "throw error;",
+          "occurrences": 9
+        },
+        {
+          "line": "const solo_con_stock = url.searchParams.get('solo_con_stock') === 'true';",
+          "occurrences": 2
+        },
+        {
+          "line": "const filtros = [];",
+          "occurrences": 4
+        },
+        {
+          "line": "if (busqueda) {",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros.push(`or=(nombre.ilike.*${encodeURIComponent(busqueda)}*,marca.ilike.*${encodeURIComponent(busqueda)}*)`);",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros.push(`categoria=eq.${encodeURIComponent(categoria)}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (marca) {",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros.push(`marca=ilike.*${encodeURIComponent(marca)}*`);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (solo_con_stock) {",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros.push(`stock_disponible=gt.0`);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (filtros.length > 0) {",
+          "occurrences": 3
+        },
+        {
+          "line": "query += '&' + filtros.join('&');",
+          "occurrences": 3
+        },
+        {
+          "line": "estadisticas: {",
+          "occurrences": 3
+        },
+        {
+          "line": "busqueda: busqueda,",
+          "occurrences": 2
+        },
+        {
+          "line": "marca: marca,",
+          "occurrences": 2
+        },
+        {
+          "line": "const solo_oportunidades = url.searchParams.get('solo_oportunidades') === 'true';",
+          "occurrences": 2
+        },
+        {
+          "line": "const orden = url.searchParams.get('orden') || 'diferencia_absoluta_desc';",
+          "occurrences": 2
+        },
+        {
+          "line": "if (solo_oportunidades) {",
+          "occurrences": 2
+        },
+        {
+          "line": "query += `&diferencia_porcentual=gte.${min_diferencia}`;",
+          "occurrences": 2
+        },
+        {
+          "line": "switch (orden) {",
+          "occurrences": 2
+        },
+        {
+          "line": "query += `&order=diferencia_absoluta.desc`;",
+          "occurrences": 2
+        },
+        {
+          "line": "case 'nombre_asc':",
+          "occurrences": 2
+        },
+        {
+          "line": "throw new Error(`Error obteniendo comparaci\u00f3n: ${response.statusText}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "const oportunidades = await response.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "estadisticas: estadisticas,",
+          "occurrences": 5
+        },
+        {
+          "line": "solo_oportunidades: solo_oportunidades,",
+          "occurrences": 2
+        },
+        {
+          "line": "min_diferencia: min_diferencia,",
+          "occurrences": 2
+        },
+        {
+          "line": "if (!isAuthenticated) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const force_full = url.searchParams.get('force_full') === 'true';",
+          "occurrences": 2
+        },
+        {
+          "line": "method: 'POST',",
+          "occurrences": 4
+        },
+        {
+          "line": "'Authorization': req.headers.get('Authorization') || '',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Content-Type': 'application/json'",
+          "occurrences": 2
+        },
+        {
+          "line": "body: JSON.stringify({",
+          "occurrences": 2
+        },
+        {
+          "line": "trigger_type: 'manual',",
+          "occurrences": 2
+        },
+        {
+          "line": "force_full: force_full,",
+          "occurrences": 4
+        },
+        {
+          "line": "let resultadoComparacion = null;",
+          "occurrences": 2
+        },
+        {
+          "line": "if (resultadoScraping.success) {",
+          "occurrences": 2
+        },
+        {
+          "line": "const comparacionUrl = `${supabaseUrl}/functions/v1/scraper-maxiconsumo/compare`;",
+          "occurrences": 2
+        },
+        {
+          "line": "if (comparacionResponse.ok) {",
+          "occurrences": 2
+        },
+        {
+          "line": "resultadoComparacion = await comparacionResponse.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "comparacion_generada: resultadoComparacion,",
+          "occurrences": 2
+        },
+        {
+          "line": "parametros: {",
+          "occurrences": 4
+        },
+        {
+          "line": "`${supabaseUrl}/rest/v1/estadisticas_scraping?select=*&order=created_at.desc&limit=1`,",
+          "occurrences": 2
+        },
+        {
+          "line": "`${supabaseUrl}/rest/v1/precios_proveedor?select=count&fuente=eq.Maxiconsumo Necochea&activo=eq.true`,",
+          "occurrences": 2
+        },
+        {
+          "line": "`${supabaseUrl}/rest/v1/vista_oportunidades_ahorro?select=count`,",
+          "occurrences": 2
+        },
+        {
+          "line": "`${supabaseUrl}/rest/v1/configuracion_proveedor?select=*&nombre=eq.Maxiconsumo Necochea`,",
+          "occurrences": 4
+        },
+        {
+          "line": "ultima_ejecucion: ultimaEstadistica?.created_at || 'Nunca',",
+          "occurrences": 2
+        },
+        {
+          "line": "productos_totales: totalProductos,",
+          "occurrences": 2
+        },
+        {
+          "line": "oportunidades_activas: totalOportunidades,",
+          "occurrences": 2
+        },
+        {
+          "line": "ultima_sincronizacion: configuracion?.ultima_sincronizacion || 'Nunca',",
+          "occurrences": 2
+        },
+        {
+          "line": "configuracion: configuracion,",
+          "occurrences": 2
+        },
+        {
+          "line": "endpoints_disponibles: [",
+          "occurrences": 2
+        },
+        {
+          "line": "'GET /proveedor/precios',",
+          "occurrences": 2
+        },
+        {
+          "line": "'GET /proveedor/productos',",
+          "occurrences": 2
+        },
+        {
+          "line": "'GET /proveedor/comparacion',",
+          "occurrences": 2
+        },
+        {
+          "line": "'POST /proveedor/sincronizar',",
+          "occurrences": 2
+        },
+        {
+          "line": "'GET /proveedor/status',",
+          "occurrences": 2
+        },
+        {
+          "line": "'GET /proveedor/alertas',",
+          "occurrences": 2
+        },
+        {
+          "line": "'GET /proveedor/estadisticas',",
+          "occurrences": 2
+        },
+        {
+          "line": "const severidad = url.searchParams.get('severidad') || 'todos';",
+          "occurrences": 2
+        },
+        {
+          "line": "const tipo = url.searchParams.get('tipo') || 'todos';",
+          "occurrences": 2
+        },
+        {
+          "line": "const solo_no_procesadas = url.searchParams.get('solo_no_procesadas') !== 'false';",
+          "occurrences": 2
+        },
+        {
+          "line": "if (severidad !== 'todos') {",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros.push(`severidad=eq.${severidad}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (tipo !== 'todos') {",
+          "occurrences": 2
+        },
+        {
+          "line": "filtros.push(`tipo_cambio=eq.${tipo}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "throw new Error(`Error obteniendo alertas: ${response.statusText}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "const alertas = await response.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "const estadisticas = {",
+          "occurrences": 3
+        },
+        {
+          "line": "severidad: severidad,",
+          "occurrences": 2
+        },
+        {
+          "line": "tipo: tipo,",
+          "occurrences": 2
+        },
+        {
+          "line": "const fechaInicio = new Date();",
+          "occurrences": 2
+        },
+        {
+          "line": "fechaInicio.setDate(fechaInicio.getDate() - dias);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (categoria) {",
+          "occurrences": 2
+        },
+        {
+          "line": "query += `&categoria_procesada=eq.${encodeURIComponent(categoria)}`;",
+          "occurrences": 2
+        },
+        {
+          "line": "throw new Error(`Error obteniendo estad\u00edsticas: ${response.statusText}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "const estadisticas = await response.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "estadisticas_periodo: estadisticas,",
+          "occurrences": 2
+        },
+        {
+          "line": "dias_analizados: dias,",
+          "occurrences": 2
+        },
+        {
+          "line": "fecha_inicio: fechaInicio.toISOString(),",
+          "occurrences": 2
+        },
+        {
+          "line": "const response = await fetch(",
+          "occurrences": 5
+        },
+        {
+          "line": "throw new Error(`Error obteniendo configuraci\u00f3n: ${response.statusText}`);",
+          "occurrences": 2
+        },
+        {
+          "line": "const configuraciones = await response.json();",
+          "occurrences": 2
+        },
+        {
+          "line": "const configuracion = configuraciones[0] || null;",
+          "occurrences": 2
+        },
+        {
+          "line": "parametros_disponibles: {",
+          "occurrences": 2
+        },
+        {
+          "line": "frecuencia_scraping: ['cada_hora', 'diaria', 'semanal'],",
+          "occurrences": 2
+        },
+        {
+          "line": "severidad_alertas: ['baja', 'media', 'alta', 'critica'],",
+          "occurrences": 2
+        },
+        {
+          "line": "isAuthenticated: boolean,",
+          "occurrences": 7
+        },
+        {
+          "line": "requestLog: any",
+          "occurrences": 9
+        },
+        {
+          "line": "const limite = Math.min(parseInt(url.searchParams.get('limit') || '50'), 500); // Cap m\u00e1ximo",
+          "occurrences": 2
+        },
+        {
+          "line": "productos.map(async (producto: any) => {",
+          "occurrences": 2
+        },
+        {
+          "line": "...producto,",
+          "occurrences": 2
+        },
+        {
+          "line": ".filter(result => result.status === 'fulfilled')",
+          "occurrences": 4
+        },
+        {
+          "line": ".map(result => (result as PromiseFulfilledResult<any>).value);",
+          "occurrences": 4
+        },
+        {
+          "line": "productos: productosFinales,",
+          "occurrences": 2
+        },
+        {
+          "line": "productos: productosFinales.length,",
+          "occurrences": 2
+        },
+        {
+          "line": "error: error.message",
+          "occurrences": 10
+        },
+        {
+          "line": "const categoria = sanitizeSearchInput(url.searchParams.get('categoria') || 'todos');",
+          "occurrences": 2
+        },
+        {
+          "line": "rango_precios: {",
+          "occurrences": 2
+        },
+        {
+          "line": "cache_score: 'high'",
+          "occurrences": 2
+        },
+        {
+          "line": "const incluir_analisis = url.searchParams.get('incluir_analisis') === 'true';",
+          "occurrences": 2
+        },
+        {
+          "line": "const analisisPromise = incluir_analisis ?",
+          "occurrences": 2
+        },
+        {
+          "line": "Promise.allSettled([",
+          "occurrences": 3
+        },
+        {
+          "line": "]) : Promise.resolve(null);",
+          "occurrences": 3
+        },
+        {
+          "line": "incluir_analisis: incluir_analisis",
+          "occurrences": 2
+        },
+        {
+          "line": "priority: priority,",
+          "occurrences": 2
+        },
+        {
+          "line": "request_id: requestLog.requestId,",
+          "occurrences": 2
+        },
+        {
+          "line": "'X-Request-ID': requestLog.requestId",
+          "occurrences": 2
+        },
+        {
+          "line": "fetchWithTimeout(",
+          "occurrences": 5
+        },
+        {
+          "line": "{ headers: { 'apikey': serviceRoleKey, 'Authorization': `Bearer ${serviceRoleKey}` } },",
+          "occurrences": 4
+        },
+        {
+          "line": "version: '2.0.0',",
+          "occurrences": 2
+        },
+        {
+          "line": "health_score: systemHealth.score,",
+          "occurrences": 2
+        },
+        {
+          "line": "environment: Deno.env.get('DENO_DEPLOYMENT_ID') ? 'production' : 'development'",
+          "occurrences": 2
+        },
+        {
+          "line": "configuracion: {",
+          "occurrences": 2
+        },
+        {
+          "line": "...configuracion,",
+          "occurrences": 2
+        },
+        {
+          "line": "hit_rate: (REQUEST_METRICS.cacheHits / Math.max(REQUEST_METRICS.total, 1) * 100).toFixed(2)",
+          "occurrences": 2
+        },
+        {
+          "line": "`${supabaseUrl}/rest/v1/precios_proveedor?select=categoria&fuente=eq.Maxiconsumo Necochea&activo=eq.true`,",
+          "occurrences": 2
+        },
+        {
+          "line": "if (!response.ok) return [];",
+          "occurrences": 2
+        },
+        {
+          "line": "const categorias = productos.reduce((acc: any, producto: any) => {",
+          "occurrences": 2
+        },
+        {
+          "line": "const cat = producto.categoria || 'Sin categor\u00eda';",
+          "occurrences": 2
+        },
+        {
+          "line": "acc[cat] = (acc[cat] || 0) + 1;",
+          "occurrences": 2
+        },
+        {
+          "line": "return acc;",
+          "occurrences": 6
+        },
+        {
+          "line": "return Object.entries(categorias).map(([nombre, cantidad]) => ({",
+          "occurrences": 2
+        },
+        {
+          "line": "categoria: nombre,",
+          "occurrences": 2
+        },
+        {
+          "line": "console.error('Error obteniendo estad\u00edsticas por categor\u00edas:', error);",
+          "occurrences": 2
+        },
+        {
+          "line": "if (oportunidades.length === 0) {",
+          "occurrences": 2
+        },
+        {
+          "line": "total_oportunidades: 0,",
+          "occurrences": 2
+        },
+        {
+          "line": "ahorro_total_estimado: 0,",
+          "occurrences": 2
+        },
+        {
+          "line": "oportunidad_promedio: 0,",
+          "occurrences": 2
+        },
+        {
+          "line": "const ahorroTotal = oportunidades.reduce((sum, opp) => sum + opp.diferencia_absoluta, 0);",
+          "occurrences": 2
+        },
+        {
+          "line": "const oportunidadPromedio = ahorroTotal / oportunidades.length;",
+          "occurrences": 2
+        },
+        {
+          "line": "const mejorOportunidad = oportunidades.reduce((best, opp) =>",
+          "occurrences": 2
+        },
+        {
+          "line": "opp.diferencia_absoluta > best.diferencia_absoluta ? opp : best",
+          "occurrences": 2
+        },
+        {
+          "line": "total_oportunidades: oportunidades.length,",
+          "occurrences": 2
+        },
+        {
+          "line": "ahorro_total_estimado: Math.round(ahorroTotal * 100) / 100,",
+          "occurrences": 2
+        },
+        {
+          "line": "oportunidad_promedio: Math.round(oportunidadPromedio * 100) / 100,",
+          "occurrences": 2
+        },
+        {
+          "line": "if (estadisticas.length === 0) {",
+          "occurrences": 2
+        },
+        {
+          "line": "total_ejecuciones: 0,",
+          "occurrences": 2
+        },
+        {
+          "line": "productos_promedio: 0,",
+          "occurrences": 2
+        },
+        {
+          "line": "tasa_exito: 0,",
+          "occurrences": 2
+        },
+        {
+          "line": "const totalEjecuciones = estadisticas.length;",
+          "occurrences": 2
+        },
+        {
+          "line": "const productosTotales = estadisticas.reduce((sum, stat) => sum + (stat.productos_encontrados || 0), 0);",
+          "occurrences": 2
+        },
+        {
+          "line": "const productosPromedio = Math.round(productosTotales / totalEjecuciones);",
+          "occurrences": 2
+        },
+        {
+          "line": "const ejecucionesExitosas = estadisticas.filter(stat => stat.status === 'exitoso').length;",
+          "occurrences": 2
+        },
+        {
+          "line": "const tasaExito = Math.round((ejecucionesExitosas / totalEjecuciones) * 100);",
+          "occurrences": 2
+        },
+        {
+          "line": "const tiempoTotal = estadisticas.reduce((sum, stat) => sum + (stat.tiempo_ejecucion_ms || 0), 0);",
+          "occurrences": 2
+        },
+        {
+          "line": "const tiempoPromedio = Math.round(tiempoTotal / totalEjecuciones);",
+          "occurrences": 2
+        },
+        {
+          "line": "total_ejecuciones: totalEjecuciones,",
+          "occurrences": 2
+        },
+        {
+          "line": "productos_promedio: productosPromedio,",
+          "occurrences": 2
+        },
+        {
+          "line": "tasa_exito: tasaExito,",
+          "occurrences": 2
+        },
+        {
+          "line": "return fetch(query, {",
+          "occurrences": 3
+        },
+        {
+          "line": "'apikey': Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '',",
+          "occurrences": 3
+        },
+        {
+          "line": "'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''}`,",
+          "occurrences": 3
+        },
+        {
+          "line": "return { status: 'unhealthy', score: 0, error: error.message };",
+          "occurrences": 2
+        },
+        {
+          "line": "score: 100,",
+          "occurrences": 3
+        },
+        {
+          "line": "status: 'healthy',",
+          "occurrences": 2
+        },
+        {
+          "line": "let totalScore = 0;",
+          "occurrences": 2
+        },
+        {
+          "line": "let score = 100;",
+          "occurrences": 2
+        },
+        {
+          "line": "const insights = [];",
+          "occurrences": 2
+        },
+        {
+          "line": "insights.push({",
+          "occurrences": 4
+        },
+        {
+          "line": "return insights;",
+          "occurrences": 2
+        },
+        {
+          "line": "clearTimeout(timeoutId);",
+          "occurrences": 2
+        },
+        {
+          "line": "const breaker = CIRCUIT_BREAKERS.get(key) || { state: 'CLOSED' as const, failures: 0, lastFailure: 0 };",
+          "occurrences": 2
+        },
+        {
+          "line": "CIRCUIT_BREAKERS.set(key, breaker);",
+          "occurrences": 2
+        },
+        {
+          "line": "return REQUEST_METRICS.total > 0 ?",
+          "occurrences": 2
+        },
+        {
+          "line": "alerts.push({",
+          "occurrences": 3
+        },
+        {
+          "line": "level: 'warning',",
+          "occurrences": 2
+        },
+        {
+          "line": "const recommendations = [];",
+          "occurrences": 2
+        },
+        {
+          "line": "recommendations.push({",
+          "occurrences": 2
+        },
+        {
+          "line": "return recommendations;",
+          "occurrences": 2
+        },
+        {
+          "line": "{ headers: { 'apikey': serviceRoleKey, 'Authorization': `Bearer ${serviceRoleKey}` } }",
+          "occurrences": 2
+        },
+        {
+          "line": "needsUpdate = true;",
+          "occurrences": 2
+        },
+        {
+          "line": "suggestions.push({",
+          "occurrences": 2
+        },
+        {
+          "line": "severity: 'medium'",
+          "occurrences": 2
+        },
+        {
+          "line": "return patterns;",
+          "occurrences": 2
+        },
+        {
+          "line": "if (alerta.stock_disponible < 10) {",
+          "occurrences": 2
+        },
+        {
+          "line": "}, {} as Record<string, number>);",
+          "occurrences": 2
+        },
+        {
+          "line": ".sort(([,a], [,b]) => b - a)",
+          "occurrences": 2
+        }
+      ],
+      "security_issues": [
+        {
+          "pattern": "console\\.log\\s*\\(",
+          "message": "Console.log en producci\u00f3n",
+          "occurrences": 30,
+          "matches": [
+            "console.log(",
+            "console.log(",
+            "console.log("
+          ]
+        }
+      ],
+      "code_smells": [
+        "Archivo muy largo (>200 l\u00edneas)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (6)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Funci\u00f3n con muchos par\u00e1metros (7)",
+        "Magic numbers detectados (49)",
+        "Posible callback hell"
+      ],
+      "imports": {
+        "total_imports": 0,
+        "external_dependencies": [],
+        "internal_dependencies": [],
+        "unused_imports": []
+      }
+    },
+    "/workspace/supabase/functions/api-minimarket/index.ts": {
+      "path": "/workspace/supabase/functions/api-minimarket/index.ts",
+      "lines": 723,
+      "non_empty_lines": 615,
+      "functions": 1,
+      "complexity": 134,
+      "duplicates": [
+        {
+          "line": "'Authorization': `Bearer ${serviceRoleKey}`,",
+          "occurrences": 4
+        },
+        {
+          "line": "'apikey': serviceRoleKey,",
+          "occurrences": 4
+        },
+        {
+          "line": "'Content-Type': 'application/json'",
+          "occurrences": 2
+        },
+        {
+          "line": "if (!response.ok) {",
+          "occurrences": 4
+        },
+        {
+          "line": "const error = await response.text();",
+          "occurrences": 4
+        },
+        {
+          "line": "return await response.json();",
+          "occurrences": 4
+        },
+        {
+          "line": "method: 'POST',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Content-Type': 'application/json',",
+          "occurrences": 2
+        },
+        {
+          "line": "'Prefer': 'return=representation'",
+          "occurrences": 2
+        },
+        {
+          "line": "body: JSON.stringify(data)",
+          "occurrences": 2
+        },
+        {
+          "line": "{ activo: true },",
+          "occurrences": 2
+        },
+        {
+          "line": "{ order: 'nombre' }",
+          "occurrences": 2
+        },
+        {
+          "line": "return new Response(JSON.stringify({",
+          "occurrences": 31
+        },
+        {
+          "line": "success: true,",
+          "occurrences": 19
+        },
+        {
+          "line": "headers: { ...corsHeaders, 'Content-Type': 'application/json' }",
+          "occurrences": 31
+        },
+        {
+          "line": "const id = path.split('/')[2];",
+          "occurrences": 5
+        },
+        {
+          "line": "success: false,",
+          "occurrences": 12
+        },
+        {
+          "line": "status: 404,",
+          "occurrences": 6
+        },
+        {
+          "line": "let filters = {};",
+          "occurrences": 2
+        },
+        {
+          "line": "message: 'Producto no encontrado'",
+          "occurrences": 3
+        },
+        {
+          "line": "checkRole(['admin', 'deposito']);",
+          "occurrences": 4
+        },
+        {
+          "line": "const body = await req.json();",
+          "occurrences": 6
+        },
+        {
+          "line": "status: 400,",
+          "occurrences": 5
+        },
+        {
+          "line": "data: producto[0],",
+          "occurrences": 2
+        },
+        {
+          "line": "status: 201,",
+          "occurrences": 3
+        },
+        {
+          "line": "const producto = await updateTable('productos', id, {",
+          "occurrences": 2
+        },
+        {
+          "line": "updated_at: new Date().toISOString(),",
+          "occurrences": 2
+        },
+        {
+          "line": "updated_by: user.id",
+          "occurrences": 2
+        },
+        {
+          "line": "if (producto.length === 0) {",
+          "occurrences": 2
+        },
+        {
+          "line": "checkRole(['admin']);",
+          "occurrences": 2
+        },
+        {
+          "line": "p_producto_id: producto_id,",
+          "occurrences": 3
+        },
+        {
+          "line": "data: result,",
+          "occurrences": 3
+        },
+        {
+          "line": "const productoId = path.split('/')[3];",
+          "occurrences": 3
+        },
+        {
+          "line": "p_producto_id: productoId",
+          "occurrences": 2
+        },
+        {
+          "line": "producto_id: productoId,",
+          "occurrences": 2
+        },
+        {
+          "line": "p_cantidad: parseInt(cantidad),",
+          "occurrences": 2
+        },
+        {
+          "line": "p_usuario_id: user.id",
+          "occurrences": 2
+        },
+        {
+          "line": "timestamp: new Date().toISOString()",
+          "occurrences": 2
+        }
+      ],
+      "security_issues": [],
+      "code_smells": [
+        "Archivo muy largo (>200 l\u00edneas)",
+        "TODOs/FIXMEs pendientes (1)",
+        "Posible callback hell"
+      ],
+      "imports": {
+        "total_imports": 0,
+        "external_dependencies": [],
+        "internal_dependencies": [],
+        "unused_imports": []
+      }
+    },
+    "/workspace/supabase/functions/alertas-stock/index.ts": {
+      "path": "/workspace/supabase/functions/alertas-stock/index.ts",
+      "lines": 161,
+      "non_empty_lines": 139,
+      "functions": 0,
+      "complexity": 26,
+      "duplicates": [
+        {
+          "line": "'apikey': serviceRoleKey,",
+          "occurrences": 4
+        },
+        {
+          "line": "'Authorization': `Bearer ${serviceRoleKey}`,",
+          "occurrences": 4
+        },
+        {
+          "line": "} catch (error) {",
+          "occurrences": 2
+        },
+        {
+          "line": "return new Response(JSON.stringify({",
+          "occurrences": 2
+        },
+        {
+          "line": "headers: { ...corsHeaders, 'Content-Type': 'application/json' }",
+          "occurrences": 2
+        }
+      ],
+      "security_issues": [],
+      "code_smells": [],
+      "imports": {
+        "total_imports": 0,
+        "external_dependencies": [],
+        "internal_dependencies": [],
+        "unused_imports": []
+      }
+    },
+    "/workspace/supabase/functions/notificaciones-tareas/index.ts": {
+      "path": "/workspace/supabase/functions/notificaciones-tareas/index.ts",
+      "lines": 127,
+      "non_empty_lines": 109,
+      "functions": 0,
+      "complexity": 18,
+      "duplicates": [
+        {
+          "line": "'apikey': serviceRoleKey,",
+          "occurrences": 3
+        },
+        {
+          "line": "'Authorization': `Bearer ${serviceRoleKey}`,",
+          "occurrences": 3
+        },
+        {
+          "line": "} catch (error) {",
+          "occurrences": 2
+        },
+        {
+          "line": "return new Response(JSON.stringify({",
+          "occurrences": 2
+        },
+        {
+          "line": "headers: { ...corsHeaders, 'Content-Type': 'application/json' }",
+          "occurrences": 2
+        }
+      ],
+      "security_issues": [],
+      "code_smells": [],
+      "imports": {
+        "total_imports": 0,
+        "external_dependencies": [],
+        "internal_dependencies": [],
+        "unused_imports": []
+      }
+    },
+    "/workspace/minimarket-system/src/App.tsx": {
+      "path": "/workspace/minimarket-system/src/App.tsx",
+      "lines": 114,
+      "non_empty_lines": 105,
+      "functions": 3,
+      "complexity": 4,
+      "duplicates": [
+        {
+          "line": "<ProtectedRoute>",
+          "occurrences": 6
+        },
+        {
+          "line": "</ProtectedRoute>",
+          "occurrences": 6
+        }
+      ],
+      "security_issues": [],
+      "code_smells": [],
+      "imports": {
+        "total_imports": 10,
+        "external_dependencies": [
+          "react-router-dom"
+        ],
+        "internal_dependencies": [
+          "./contexts/AuthContext",
+          "./components/Layout",
+          "./pages/Login",
+          "./pages/Dashboard",
+          "./pages/Deposito",
+          "./pages/Stock",
+          "./pages/Tareas",
+          "./pages/Productos",
+          "./pages/Proveedores"
+        ],
+        "unused_imports": []
+      }
+    },
+    "/workspace/minimarket-system/src/pages/Dashboard.tsx": {
+      "path": "/workspace/minimarket-system/src/pages/Dashboard.tsx",
+      "lines": 168,
+      "non_empty_lines": 151,
+      "functions": 3,
+      "complexity": 18,
+      "duplicates": [
+        {
+          "line": ".select('*')",
+          "occurrences": 2
+        },
+        {
+          "line": "<div className=\"bg-white p-6 rounded-lg shadow\">",
+          "occurrences": 4
+        },
+        {
+          "line": "<div className=\"flex items-center justify-between\">",
+          "occurrences": 4
+        },
+        {
+          "line": "tarea.prioridad === 'urgente'",
+          "occurrences": 2
+        },
+        {
+          "line": ": tarea.prioridad === 'normal'",
+          "occurrences": 2
+        }
+      ],
+      "security_issues": [],
+      "code_smells": [],
+      "imports": {
+        "total_imports": 4,
+        "external_dependencies": [
+          "react",
+          "lucide-react"
+        ],
+        "internal_dependencies": [
+          "../lib/supabase",
+          "../types/database"
+        ],
+        "unused_imports": []
+      }
+    },
+    "/workspace/minimarket-system/src/pages/Deposito.tsx": {
+      "path": "/workspace/minimarket-system/src/pages/Deposito.tsx",
+      "lines": 316,
+      "non_empty_lines": 285,
+      "functions": 7,
+      "complexity": 46,
+      "duplicates": [
+        {
+          "line": "const { data } = await supabase",
+          "occurrences": 2
+        },
+        {
+          "line": ".select('*')",
+          "occurrences": 3
+        },
+        {
+          "line": ".eq('activo', true)",
+          "occurrences": 2
+        },
+        {
+          "line": ".order('nombre')",
+          "occurrences": 2
+        },
+        {
+          "line": "producto_id: selectedProducto.id,",
+          "occurrences": 2
+        },
+        {
+          "line": ".from('stock_deposito')",
+          "occurrences": 3
+        },
+        {
+          "line": "await supabase",
+          "occurrences": 2
+        },
+        {
+          "line": "setSearchTerm('')",
+          "occurrences": 2
+        },
+        {
+          "line": "<label className=\"block text-sm font-medium text-gray-700 mb-2\">",
+          "occurrences": 6
+        },
+        {
+          "line": "type=\"button\"",
+          "occurrences": 3
+        },
+        {
+          "line": "className={`flex-1 py-4 px-6 rounded-lg border-2 font-medium transition-all ${",
+          "occurrences": 2
+        },
+        {
+          "line": ": 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'",
+          "occurrences": 2
+        },
+        {
+          "line": "className=\"w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg\"",
+          "occurrences": 4
+        }
+      ],
+      "security_issues": [],
+      "code_smells": [
+        "Archivo muy largo (>200 l\u00edneas)",
+        "Posible callback hell"
+      ],
+      "imports": {
+        "total_imports": 5,
+        "external_dependencies": [
+          "react",
+          "lucide-react"
+        ],
+        "internal_dependencies": [
+          "../lib/supabase",
+          "../contexts/AuthContext",
+          "../types/database"
+        ],
+        "unused_imports": []
+      }
+    }
+  },
+  "security_issues": [
+    {
+      "pattern": "\\.exec\\s*\\(",
+      "message": "Uso de exec() - Riesgo de inyecci\u00f3n",
+      "occurrences": 7,
+      "matches": [
+        ".exec(",
+        ".exec(",
+        ".exec("
+      ]
+    },
+    {
+      "pattern": "console\\.log\\s*\\(",
+      "message": "Console.log en producci\u00f3n",
+      "occurrences": 43,
+      "matches": [
+        "console.log(",
+        "console.log(",
+        "console.log("
+      ]
+    },
+    {
+      "pattern": "console\\.log\\s*\\(",
+      "message": "Console.log en producci\u00f3n",
+      "occurrences": 30,
+      "matches": [
+        "console.log(",
+        "console.log(",
+        "console.log("
+      ]
+    }
+  ],
+  "code_smells": [
+    "Archivo muy largo (>200 l\u00edneas)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Magic numbers detectados (46)",
+    "Posible callback hell",
+    "Archivo muy largo (>200 l\u00edneas)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (6)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Funci\u00f3n con muchos par\u00e1metros (7)",
+    "Magic numbers detectados (49)",
+    "Posible callback hell",
+    "Archivo muy largo (>200 l\u00edneas)",
+    "TODOs/FIXMEs pendientes (1)",
+    "Posible callback hell",
+    "Archivo muy largo (>200 l\u00edneas)",
+    "Posible callback hell"
+  ]
+}

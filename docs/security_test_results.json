@@ -1,0 +1,157 @@
+{
+  "owasp_tests": [
+    {
+      "test": "A01_Broken_Access_Control",
+      "result": {
+        "secure": true,
+        "vulnerabilities": [],
+        "message": "Found 0 potential access control issues"
+      },
+      "timestamp": "2025-11-02T12:48:01.875994"
+    },
+    {
+      "test": "A02_Cryptographic_Failures",
+      "result": {
+        "secure": false,
+        "issues": [
+          "HTTP not redirected to HTTPS"
+        ],
+        "message": "Found 1 cryptographic/header issues"
+      },
+      "timestamp": "2025-11-02T12:48:32.602938"
+    },
+    {
+      "test": "A03_Injection",
+      "result": {
+        "secure": true,
+        "vulnerabilities": [],
+        "message": "Found 0 potential injection vulnerabilities"
+      },
+      "timestamp": "2025-11-02T12:48:35.512672"
+    },
+    {
+      "test": "A04_Insecure_Design",
+      "result": {
+        "secure": false,
+        "issues": [
+          "No rate limiting detected"
+        ],
+        "message": "Found 1 insecure design patterns"
+      },
+      "timestamp": "2025-11-02T12:48:43.510365"
+    },
+    {
+      "test": "A05_Security_Misconfiguration",
+      "result": {
+        "secure": true,
+        "misconfigurations": [],
+        "message": "Found 0 security misconfigurations"
+      },
+      "timestamp": "2025-11-02T12:48:44.612928"
+    },
+    {
+      "test": "A06_Vulnerable_Components",
+      "result": {
+        "secure": true,
+        "message": "Component vulnerability scanning requires access to package manifests"
+      },
+      "timestamp": "2025-11-02T12:48:44.612965"
+    },
+    {
+      "test": "A07_Auth_Failures",
+      "result": {
+        "secure": false,
+        "issues": [
+          "Protected endpoint accessible without authentication"
+        ],
+        "message": "Found 1 authentication issues"
+      },
+      "timestamp": "2025-11-02T12:48:45.312906"
+    },
+    {
+      "test": "A08_Software_Integrity",
+      "result": {
+        "secure": true,
+        "issues": [],
+        "message": "Found 0 integrity issues"
+      },
+      "timestamp": "2025-11-02T12:48:45.744773"
+    },
+    {
+      "test": "A09_Logging_Monitoring",
+      "result": {
+        "secure": true,
+        "message": "Logging monitoring requires log access for proper testing"
+      },
+      "timestamp": "2025-11-02T12:48:45.744808"
+    },
+    {
+      "test": "A10_SSRF",
+      "result": {
+        "secure": true,
+        "issues": [],
+        "message": "Found 0 SSRF vulnerabilities"
+      },
+      "timestamp": "2025-11-02T12:48:46.647340"
+    }
+  ],
+  "injection_tests": [
+    {
+      "api_security": {
+        "auth_bypass": false,
+        "rate_limiting": true,
+        "parameter_pollution": false,
+        "mass_assignment": false
+      },
+      "timestamp": "2025-11-02T12:48:46.647403"
+    }
+  ],
+  "auth_tests": [
+    {
+      "authentication": {
+        "jwt_security": true,
+        "session_management": true,
+        "rbac": true,
+        "password_policy": false
+      },
+      "timestamp": "2025-11-02T12:48:46.647426"
+    }
+  ],
+  "edge_cases": [
+    {
+      "issues": [],
+      "timestamp": "2025-11-02T12:48:59.011697"
+    }
+  ],
+  "chaos_tests": [
+    {
+      "resilience": {
+        "db_failure_handling": true,
+        "api_failure_handling": true,
+        "memory_pressure": false,
+        "network_latency": true
+      },
+      "timestamp": "2025-11-02T12:48:59.011921"
+    }
+  ],
+  "load_tests": [
+    {
+      "load_limits": {
+        "max_concurrent_users": 100,
+        "requests_per_second_limit": 213,
+        "memory_usage_peak": 596,
+        "response_time_p95": 1800,
+        "passes_sla": false
+      },
+      "timestamp": "2025-11-02T12:48:59.011943"
+    }
+  ],
+  "summary": {
+    "total_tests_run": 15,
+    "owasp_failures": 3,
+    "security_score": 70,
+    "critical_issues": 3,
+    "overall_security_level": "MEDIUM",
+    "timestamp": "2025-11-02T12:48:59.011958"
+  }
+}

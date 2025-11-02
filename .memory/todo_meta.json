@@ -1,47 +1,61 @@
 {
   "todos": {
     "Coordinator": {
-      "6.7": {
-        "id": "6.7",
-        "content": "META-ANÁLISIS EXHAUSTIVO DEL SISTEMA",
-        "details": "1. Auditoría completa del código (997 líneas scraper + 910 líneas API)\n2. Análisis de arquitectura y patrones de diseño\n3. Revisión de seguridad y vulnerabilidades\n4. Análisis de performance y bottlenecks\n5. Validación de escalabilidad y robustez\n6. Detección de code smells y anti-patrones\n7. Análisis de dependencias y riesgos\n8. Evaluación de maintainability y extensibilidad",
+      "1": {
+        "id": "1",
+        "content": "FASE 0: Auditoría Inicial y Baseline",
+        "details": "• Inventario completo de componentes (scraper, API, cron jobs, BD)\n• Establecer métricas baseline actuales vs targets\n• Mapeo de dependencias críticas\n• Documentar Architecture Decision Records (ADRs)\n• Análisis de deuda técnica existente",
         "status": "completed",
         "priority": "high"
       },
-      "6.8": {
-        "id": "6.8",
-        "content": "TESTING AVANZADO Y VALIDACIÓN",
-        "details": "1. Unit testing exhaustivo (95% coverage mínimo)\n2. Integration testing completo\n3. Performance testing (carga, stress, endurance)\n4. Security testing (penetration, injection, authentication)\n5. Edge cases testing y boundary conditions\n6. Regression testing suite\n7. Cross-browser compatibility testing\n8. API contract testing y schema validation\n9. Database integrity testing\n10. Error handling y recovery testing",
+      "2": {
+        "id": "2",
+        "content": "FASE 1: Análisis de Código Profundo",
+        "details": "• Linting exhaustivo con score >9.5/10\n• Análisis de complejidad ciclomática\n• Detección de código muerto y duplicado\n• Análisis estático de seguridad (Bandit, semgrep)\n• Revisión de patrones anti-patterns",
         "status": "completed",
         "priority": "high"
       },
-      "6.9": {
-        "id": "6.9",
-        "content": "OPTIMIZACIÓN Y MEJORA DE ROBUSTEZ",
-        "details": "1. Optimización de performance del web scraper\n2. Mejora de rate limiting y anti-detection\n3. Optimización de queries SQL y funciones PL/pgSQL\n4. Implementación de caching inteligente\n5. Mejora de error handling y logging\n6. Implementación de circuit breakers\n7. Mejora de memory management\n8. Optimización de edge functions deployment\n9. Implementación de retry logic avanzado\n10. Mejora de data validation y sanitization",
+      "3": {
+        "id": "3",
+        "content": "FASE 2: Testing Multi-dimensional Avanzado",
+        "details": "• Testing de seguridad (OWASP Top 10, penetration testing)\n• Chaos engineering (resiliencia ante fallos)\n• Testing de inyección (SQL, NoSQL, API)\n• Tests de carga extrema (spike, soak, stress)\n• Validación de edge cases críticos",
         "status": "completed",
         "priority": "high"
       },
-      "6.10": {
-        "id": "6.10",
-        "content": "COMPLETAR CRON JOBS AUTOMÁTICOS",
-        "details": "1. Job diario de actualización de precios (02:00 AM)\n2. Job semanal de análisis de tendencias (Domingos 03:00)\n3. Job de alertas en tiempo real (changes > 15%)\n4. Sistema de notificaciones (email + SMS)\n5. Dashboard de monitoreo de tareas\n6. Logs centralizados y rotación\n7. Health checks automáticos\n8. Recovery automático en caso de fallos\n9. Escalabilidad horizontal de jobs\n10. Documentación completa de cron jobs",
-        "status": "pending",
+      "4": {
+        "id": "4",
+        "content": "FASE 3: Validación de Experiencia de Usuario",
+        "details": "• Simulación de usuarios reales en todos los módulos\n• Testing de workflows críticos (depósito, stock, tareas)\n• Validación de tiempos de respuesta <2 segundos\n• Testing de usabilidad en móvil real\n• Análisis de friction points en flujos principales",
+        "status": "completed",
+        "priority": "medium"
+      },
+      "5": {
+        "id": "5",
+        "content": "FASE 4: Optimización de Performance Crítica",
+        "details": "• Reducir memoria de 596MB a <300MB (target)\n• Aumentar throughput de 213 a 1,000 req/seg\n• Mejorar accuracy scraping de 92.90% a 95%+\n• Optimizar queries SQL y índices\n• Implementar caching estratégico",
+        "status": "completed",
         "priority": "high"
       },
-      "6.11": {
-        "id": "6.11",
-        "content": "TESTING CON DATOS REALES MAXICONSUMO",
-        "details": "1. Scraping completo del catálogo Maxiconsumo\n2. Validación de extracción de precios en tiempo real\n3. Testing de detección de cambios y actualizaciones\n4. Validación de sistema de alertas automático\n5. Testing de sincronización bidireccional\n6. Performance testing con +40,000 productos\n7. Validación de accuracy de datos (95%+ mínimo)\n8. Testing de límites y rate limiting\n9. Validación de manejo de errores en producción\n10. Documentación de métricas reales de producción",
-        "status": "pending",
-        "priority": "high"
-      },
-      "6.12": {
-        "id": "6.12",
-        "content": "VALIDACIÓN Y DOCUMENTACIÓN FINAL",
-        "details": "1. Auditoría final de cumplimiento de requerimientos\n2. Documentación técnica completa actualizada\n3. Guías de troubleshooting expandidas\n4. Runbooks de operaciones y mantenimiento\n5. Métricas y KPIs documentados\n6. Plan de monitoreo y alertas\n7. Procedimientos de backup y recovery\n8. Guías de deployment y rollback\n9. Documentación de APIs actualizada\n10. Training materials para usuarios finales",
+      "6": {
+        "id": "6",
+        "content": "FASE 5: Mejora de Observabilidad Enterprise",
+        "details": "• Implementar logs estructurados (JSON)\n• Configurar métricas RED/USE (Rate, Errors, Duration, Utilization, Saturation, Errors)\n• Trazabilidad distribuida de requests\n• Alertas inteligentes vs falsos positivos\n• Dashboard de SLI/SLO (Service Level Indicators/Objectives)",
         "status": "pending",
         "priority": "medium"
+      },
+      "7": {
+        "id": "7",
+        "content": "FASE 6: Documentación y ADRs",
+        "details": "• Actualizar Architecture Decision Records\n• Documentar decisiones técnicas críticas\n• Crear runbooks de incident response\n• Documenter recovery procedures\n• Actualizar API documentation con OpenAPI 3.1",
+        "status": "pending",
+        "priority": "medium"
+      },
+      "8": {
+        "id": "8",
+        "content": "FASE 7: Audit Final y Sign-off Enterprise",
+        "details": "• Security audit completo (OWASP compliance)\n• Performance baseline final vs targets\n• Compliance check enterprise requirements\n• Disaster recovery validation\n• Final sign-off con métricas objetivo cumplidas",
+        "status": "pending",
+        "priority": "high"
       }
     }
   }

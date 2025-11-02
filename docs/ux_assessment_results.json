@@ -1,0 +1,140 @@
+{
+  "ux_score": 4.6,
+  "usability_heuristics": {
+    "scores": {
+      "visibility_system_status": 8,
+      "match_real_world": 7,
+      "user_control_freedom": 6,
+      "consistency_standards": 9,
+      "error_prevention": 6,
+      "recognition_vs_recall": 7,
+      "flexibility_efficiency": 6,
+      "aesthetic_minimalist": 10,
+      "error_recovery": 7,
+      "help_documentation": 3
+    },
+    "average": 6.9,
+    "total": 69
+  },
+  "performance_ux": {
+    "score": 2,
+    "metrics": {
+      "api_response_time": 1800,
+      "page_load_time": 2100,
+      "time_to_interactive": 2800,
+      "largest_contentful_paint": 2200,
+      "cumulative_layout_shift": 0.15,
+      "first_input_delay": 100
+    },
+    "issues": [
+      "API response time exceeds 1s target",
+      "Page load time exceeds 2s target",
+      "Time to interactive too high"
+    ]
+  },
+  "responsive_design": {
+    "score": 7,
+    "mobile_ready_components": 4,
+    "issues": [
+      "Mobile usability testing required",
+      "Touch target sizes need verification"
+    ]
+  },
+  "user_feedback": {
+    "score": 7,
+    "feedback_mechanisms": 11,
+    "improvements": [
+      "Add more contextual help",
+      "Improve error message clarity",
+      "Add success confirmations"
+    ]
+  },
+  "friction_points": [
+    {
+      "area": "Authentication",
+      "issue": "Password policy too weak",
+      "impact": "MEDIUM",
+      "user_experience": "Security concerns, potential account issues"
+    },
+    {
+      "area": "System Performance",
+      "issue": "High memory usage (596MB)",
+      "impact": "HIGH",
+      "user_experience": "System may slow down or crash under load"
+    },
+    {
+      "area": "Mobile Experience",
+      "issue": "Mobile testing not completed",
+      "impact": "MEDIUM",
+      "user_experience": "Unknown mobile usability issues"
+    },
+    {
+      "area": "User Guidance",
+      "issue": "Limited help and documentation",
+      "impact": "MEDIUM",
+      "user_experience": "Users may struggle with complex features"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "area": "Performance",
+      "action": "Optimize API response times to <1s",
+      "impact": "Immediate improvement in user experience",
+      "effort": "High (4-6 weeks)",
+      "roi": "High"
+    },
+    {
+      "priority": "HIGH",
+      "area": "Error Handling",
+      "action": "Implement comprehensive error recovery system",
+      "impact": "Better user guidance when things go wrong",
+      "effort": "Medium (2-3 weeks)",
+      "roi": "High"
+    },
+    {
+      "priority": "HIGH",
+      "area": "Mobile Experience",
+      "action": "Complete mobile usability testing",
+      "impact": "Ensure excellent mobile UX",
+      "effort": "Low (1 week)",
+      "roi": "Medium"
+    },
+    {
+      "priority": "MEDIUM",
+      "area": "Help & Documentation",
+      "action": "Add contextual help and tooltips",
+      "impact": "Reduce learning curve for new users",
+      "effort": "Medium (2 weeks)",
+      "roi": "Medium"
+    },
+    {
+      "priority": "MEDIUM",
+      "area": "User Feedback",
+      "action": "Enhance success/error messaging",
+      "impact": "Better user confidence and clarity",
+      "effort": "Low (1 week)",
+      "roi": "High"
+    }
+  ],
+  "summary": {
+    "final_score": 4.614999999999999,
+    "level": "NECESITA MEJORAS",
+    "strengths": [
+      "Dise\u00f1o consistente con Tailwind CSS",
+      "Buena terminolog\u00eda de dominio",
+      "Estructura de componentes limpia"
+    ],
+    "weaknesses": [
+      "Performance por debajo de targets",
+      "Manejo de errores limitado",
+      "Falta de ayuda contextual",
+      "Mobile testing incompleto"
+    ],
+    "priority_fixes": [
+      "Optimizar performance de APIs",
+      "Mejorar error handling",
+      "Completar testing mobile"
+    ]
+  }
+}
